@@ -10,7 +10,7 @@ Tested with IntelliJ IDEA 15.0.3.
 
 1. Watch Play Tutorial https://www.youtube.com/watch?v=bLrmnjPQsZc
 2. Checkout https://github.com/Project-Helin/server
-3. Import server Project in IntellJ: 
+3. Import server Project in IntelliJ: 
     * File -> Open -> select 'server' folder
     * 'Import Project from SBT' Dialog appears, setup as follows:
         * ☑ Use auto-import
