@@ -15,6 +15,11 @@ libraryDependencies ++= Seq(
   */
 libraryDependencies += "junit" % "junit" % "4.12" % "test"
 
+/**
+  * RabbitMQ: For connection with the Android-App on the phone
+  */
+libraryDependencies += "com.rabbitmq" % "amqp-client" % "3.6.0"
+
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator

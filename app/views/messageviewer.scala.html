@@ -2,9 +2,15 @@
 
 @main("Message Viewer") {
 
+    <script type='text/javascript' src='@routes.Assets.at("javascripts/message-viewer.js")'></script>
+
     <div class="row">
+        <input type="button" value="Send Sample Message" id="myButton"/>
+    </div>
 
-        NaNaNaNaNaNaNaNaNaNa
-
+    <div class="row">
+        <h3>Incoming messages</h3>
+        <div id="incomingMessages">
+        </div>
     </div>
 }
