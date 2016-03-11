@@ -24,3 +24,5 @@ rabbitmq-plugins enable rabbitmq_management
 sudo rabbitmqctl add_user admin helin
 sudo rabbitmqctl set_user_tags admin administrator
 sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
+
+# TODO: Install PostgreSQL
