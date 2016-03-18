@@ -6,7 +6,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
 libraryDependencies ++= Seq(
   javaJpa,
-  "org.hibernate" % "hibernate-entitymanager" % "4.3.7.Final"
+  "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
+  evolutions
 )
 
 /**
@@ -19,6 +20,12 @@ libraryDependencies += "junit" % "junit" % "4.12" % "test"
   * RabbitMQ: For connection with the Android-App on the phone
   */
 libraryDependencies += "com.rabbitmq" % "amqp-client" % "3.6.0"
+
+/**
+  * JDBC Driver for PostgreSQL
+  */
+libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
+
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
