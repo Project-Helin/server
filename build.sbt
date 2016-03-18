@@ -26,6 +26,12 @@ libraryDependencies += "com.rabbitmq" % "amqp-client" % "3.6.0"
   */
 libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
 
+/**
+  * Extension for Hibernate and PostGIS
+  */
+libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
+
+
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.

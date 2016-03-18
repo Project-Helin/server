@@ -31,7 +31,8 @@ sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
 sudo apt-get install -y postgresql postgresql-contrib
 
 # Install PostGIS 2.x
-sudo apt-get install -y postgis
+sudo apt-get install -y postgresql-9.3-postgis-2.1
+
 
 # create new user and DB
 sudo -u postgres createdb $DB_USER 

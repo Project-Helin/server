@@ -1,0 +1,60 @@
+@import java.util
+@(zones: util.List[Zone])
+
+@main("Project Helin") {
+    <div class="row">
+        <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
+        <script src="http://openlayers.org/en/v3.14.2/build/ol.js"></script>
+        <div id="map" class="map"></div>
+
+        <script>
+                var raster = new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                });
+
+                var wkt = 'POLYGON((10.689 -25.092, 34.595 ' +
+                        '-20.170, 38.814 -35.639, 13.502 ' +
+                        '-39.155, 10.689 -25.092))';
+
+                var format = new ol.format.WKT();
+
+                var features = [];
+
+
+                @for(zone <- zones) {
+                    features.push(
+                        format.readFeature('@zone.wktStringHack', {
+                            dataProjection: 'EPSG:4326',
+                            featureProjection: 'EPSG:3857'
+                        })
+                    );
+                }
+
+
+                var vector = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        features: features
+                    })
+                });
+
+                var map = new ol.Map({
+                    layers: [raster, vector],
+                    target: 'map',
+                    view: new ol.View({
+
+                        center: [981481.3,5978619.7],
+                        zoom: 18
+                    })
+                });
+        </script>
+
+
+
+        @for(zone <- zones) {
+            <div class="gesture-item">
+                <p>@zone.getId</p>
+                <p>@zone.getGeom</p>
+            </div>
+        }
+    </div>
+}
