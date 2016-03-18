@@ -23,4 +23,7 @@ Vagrant.configure(VAGRANT_API) do |config|
   # For Management UI
   config.vm.network :forwarded_port, host: 15672, guest: 15672
 
+  # PostgreSQL
+  config.vm.network :forwarded_port, host: 5432, guest: 5432
+
 end
