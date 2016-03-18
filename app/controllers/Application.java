@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Person;
+import models.Organisation;
 import play.data.Form;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
@@ -20,14 +20,18 @@ public class Application extends Controller {
 
     @Transactional
     public Result addPerson() {
-        Person person = Form.form(Person.class).bindFromRequest().get();
+        Organisation person = Form.form(Organisation.class).bindFromRequest().get();
+        if (person.getName() == null) {
+            throw new NullPointerException("Name is empty");
+        }
         JPA.em().persist(person);
         return redirect(routes.Application.index());
     }
 
     @Transactional(readOnly = true)
     public Result getPersons() {
-        List<Person> persons = (List<Person>) JPA.em().createQuery("select p from Person p").getResultList();
+        List<Organisation> persons = (List<Organisation>)
+            JPA.em().createQuery("select p from Organisation p").getResultList();
         return ok(toJson(persons));
     }
 }
