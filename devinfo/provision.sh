@@ -30,11 +30,15 @@ sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
 # Install PostgreSQL
 sudo apt-get install -y postgresql postgresql-contrib
 
+# Install PostGIS 2.x
+sudo apt-get install -y postgis
+
 # create new user and DB
 sudo -u postgres createdb $DB_USER 
 sudo -u postgres createuser $DB_USER -s       # -s for superuser
 # change password
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_USER';"
+
 
 # We need to alter vagrant configuration, so that we can connect from
 # outside of the virtual machine to the db
