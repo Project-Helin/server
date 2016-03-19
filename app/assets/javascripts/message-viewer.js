@@ -29,5 +29,6 @@ $(function() {
         console.log("Send message");
         return $.get("/sendSampleMessage");
     });
+
 });
 
