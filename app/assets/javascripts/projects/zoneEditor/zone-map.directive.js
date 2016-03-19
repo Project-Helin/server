@@ -1,9 +1,10 @@
 (function () {
-    angular.module('ZoneEditorApp').directive('zoneMap', [function () {
+    angular.module('ProjectsApp').directive('zoneMap', [function () {
         return {
             restrict: 'E',
             scope: {
-                zones: '='
+                zones: '=',
+                center: '='
             },
             replace: true,
             template: '<div id="map" class="map"></div>',
@@ -13,7 +14,7 @@
                     source: new ol.source.OSM()
                 });
 
-                var map = new ol.Map({
+                scope.map = new ol.Map({
                     target: 'map',
                     layers: [raster],
                     view: new ol.View({
