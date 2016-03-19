@@ -14,6 +14,14 @@ GET         /messageviewer/register        controllers.MessageViewer.register()
 
 GET         /zone                          controllers.ZoneCrudController.index()
 
+#Project
+GET         /projects                       controllers.Projects.index()
+GET         /projects/:id                   controllers.Projects.show(id : String)
+GET         /projects/:id/edit              controllers.Projects.edit(id : String)
+GET         /projects/new                   controllers.Projects.createNew()
+POST        /projects/create                controllers.Projects.create()
+PUT         /projects/:id/update            controllers.Projects.update(id : String)
+DELETE      /projects/:id/delete            controllers.Projects.delete(id : String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
