@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.geolatte.geom.Polygon;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class Zone {
     private UUID id;
 
     @Column
+    @JsonBackReference
     private Polygon geom;
 
     @Column(name = "height")
@@ -44,5 +46,14 @@ public class Zone {
 
     public String wktStringHack(){
         return geom.toString().replace("SRID=4326;", "");
+    }
+
+    @Override
+    public String toString() {
+        return "Zone{" +
+                "id=" + id +
+                ", geom=" + geom +
+                ", height='" + height + '\'' +
+                '}';
     }
 }

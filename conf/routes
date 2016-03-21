@@ -13,6 +13,7 @@ GET         /sendSampleMessage             controllers.MessageViewer.sendSampleM
 GET         /messageviewer/register        controllers.MessageViewer.register()
 
 GET         /zone                          controllers.ZoneCrudController.index()
+GET         /getRoute                      controllers.ZoneCrudController.calcRoute()
 
 
 # Map static resources from the /public folder to the /assets URL path
