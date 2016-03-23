@@ -4,7 +4,7 @@
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%coloredLevel - %logger - %message%n%xException</pattern>
+      <pattern>%highlight(%-5level) %d{yyyy-MM-dd HH:mm:ss.SSS} %yellow([%thread]) %blue(%logger{36}\(%class{0}.java:%line\)) %msg%n</pattern>
     </encoder>
   </appender>
 
@@ -15,7 +15,7 @@
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 
-  <root level="ERROR">
+  <root level="DEBUG">
     <appender-ref ref="STDOUT" />
   </root>
 
