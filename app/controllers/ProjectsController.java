@@ -3,12 +3,12 @@ package controllers;
 
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.edit;
 import views.html.messageviewer;
-import views.html.show;
+import views.html.projects.edit;
+import views.html.projects.show;
 
 
-public class Projects extends Controller {
+public class ProjectsController extends Controller {
 
     public Result index() {
         return ok(messageviewer.render());
