@@ -17,7 +17,8 @@ public class MessageConnection {
 
     public MessageConnection() {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("127.0.0.1");
+        factory.setHost("151.80.44.117");
+        factory.setPort(8080);
         factory.setUsername("admin");
         factory.setPassword("helin");
 
