@@ -5,6 +5,12 @@
 * Java 8
 * Enough Coffee 
 * RabbitMQ 
+* PostgreSQL
+
+## Database
+
+1. create Login-Role 'helin' with superuser permissions
+2. Create local database named 'helin'
 
 ## Server Setup
 Tested with IntelliJ IDEA 15.0.3.
@@ -37,4 +43,5 @@ Tested with IntelliJ IDEA 15.0.3.
  vagrant up
  ```
 3. Go to http://localhost:15672 to verify if server has started correctly
+
 

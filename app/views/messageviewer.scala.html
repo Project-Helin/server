@@ -1,31 +1,31 @@
 @()
 
-    @main("Message Viewer") {
+@main("Message Viewer") {
 
-        <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js'></script>
-        <script type='text/javascript' src='@routes.Assets.at("javascripts/message-viewer.js")'></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js'></script>
+    <script type='text/javascript' src='@routes.Assets.at("javascripts/message-viewer.js")'></script>
 
-        <div ng-app="debugApp" ng-controller="MainController">
-            <div class="row">
-                <input type="button" value="Send Sample Message" id="myButton"/>
-            </div>
-
-            <div class="row">
-                <h3>Incoming messages</h3>
-                <div id="incomingMessages">
-                </div>
-            </div>
-            <div class="row">
-                <input type="button" value="Send Mission Message" ng-click="triggerMissionMessage()"/>
-            </div>
-            <div class="row">
-                <h3>Responses</h3>
-                <div ng-repeat="response in responses">
-                    {{response}}
-                </div>
-            </div>
-
-
+    <div ng-app="debugApp" ng-controller="MainController">
+        <div class="row">
+            <input type="button" value="Send Sample Message" id="myButton"/>
         </div>
 
-    }
+        <div class="row">
+            <h3>Incoming messages</h3>
+            <div id="incomingMessages">
+            </div>
+        </div>
+        <div class="row">
+            <input type="button" value="Send Mission Message" ng-click="triggerMissionMessage()"/>
+        </div>
+        <div class="row">
+            <h3>Responses</h3>
+            <div ng-repeat="response in responses">
+                {{response}}
+            </div>
+        </div>
+
+
+    </div>
+
+}

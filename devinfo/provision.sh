@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 export DB_USER=helin
+export DB_USER_TEST=test
 
 # update before the show begins
 apt-get update
@@ -39,6 +40,11 @@ sudo -u postgres createdb $DB_USER
 sudo -u postgres createuser $DB_USER -s       # -s for superuser
 # change password
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_USER';"
+
+# Create test user
+sudo -u postgres createdb $DB_USER_TEST
+sudo -u postgres createuser $DB_USER_TEST -s       # -s for superuser
+sudo -u postgres psql -c "alter user $DB_USER_TEST with password '$DB_USER_TEST';"
 
 
 # We need to alter vagrant configuration, so that we can connect from
