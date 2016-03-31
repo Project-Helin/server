@@ -18,11 +18,11 @@
 
                 var format = new ol.format.WKT();
 
-                var features = [];
+                var readOnlyFeatures = [];
 
 
                 @for(zone <- zones) {
-                    features.push(
+                    readOnlyFeatures.push(
                         format.readFeature('@zone.wktStringHack', {
                             dataProjection: 'EPSG:4326',
                             featureProjection: 'EPSG:3857'
@@ -33,7 +33,7 @@
 
                 var vector = new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        features: features
+                        readOnlyFeatures: readOnlyFeatures
                     })
                 });
 
