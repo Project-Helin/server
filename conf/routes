@@ -3,28 +3,36 @@
 # ~~~~
 
 # Home page
-GET         /                              controllers.Application.index()
-POST        /person                        controllers.Application.addPerson()
-GET         /persons                       controllers.Application.getPersons
+GET           /                               controllers.Application.index()
+POST          /person                         controllers.Application.addPerson()
+GET           /persons                        controllers.Application.getPersons
 
 # Message Viewer
-GET         /messageviewer                 controllers.MessageViewer.index()
-GET         /sendSampleMessage             controllers.MessageViewer.sendSampleMessage()
-GET         /messageviewer/register        controllers.MessageViewer.register()
+GET           /messageviewer                  controllers.MessageViewer.index()
+GET           /sendSampleMessage              controllers.MessageViewer.sendSampleMessage()
+GET           /messageviewer/register         controllers.MessageViewer.register()
 
-GET         /zone                          controllers.ZoneCrudController.index()
+GET           /zone                           controllers.ZoneCrudController.index()
+
+#Organisation
+GET           /organisations                   controllers.organisations.Organisations.index()
+GET           /organisations/:id               controllers.organisations.Organisations.show(id : java.util.UUID)
+GET           /organisations/:id/edit          controllers.organisations.Organisations.edit(id : java.util.UUID)
+PUT           /organisations/:id/update        controllers.organisations.Organisations.update(id : String)
 
 #Project
-GET         /projects                       controllers.ProjectsController.index()
-GET         /projects/:id                   controllers.ProjectsController.show(id : String)
-GET         /projects/:id/edit              controllers.ProjectsController.edit(id : String)
-PUT         /projects/:id/update            controllers.ProjectsController.update(id : String)
-GET         /projects/new                   controllers.ProjectsController.createNew()
-POST        /projects/create                controllers.ProjectsController.create()
-DELETE      /projects/:id/delete            controllers.ProjectsController.delete(id : String)
+GET           /projects                       controllers.ProjectsController.index()
+GET           /projects/:id                   controllers.ProjectsController.show(id : String)
+GET           /projects/:id/edit              controllers.ProjectsController.edit(id : String)
+PUT           /projects/:id/update            controllers.ProjectsController.update(id : String)
+
+GET           /projects/new                   controllers.ProjectsController.createNew()
+POST          /projects/create                controllers.ProjectsController.create()
+DELETE        /projects/:id/delete            controllers.ProjectsController.delete(id : String)
+
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+GET           /assets/*file                   controllers.Assets.at(path="/public", file)
 
 
 #API

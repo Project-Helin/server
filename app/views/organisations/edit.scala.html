@@ -1,0 +1,10 @@
+@import controllers.organisations.routes
+@(organisationForm : Form[Organisation])
+
+@main("Project") {
+@*edit(organisationForm.get().getId)*@
+    @helper.form(action = routes.Organisations.index()) {
+        @helper.inputText(organisationForm("name"))
+    }
+
+}
