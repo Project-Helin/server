@@ -52,6 +52,16 @@
                     type: 'Polygon'
                 });
 
+                scope.drawInteraction.on('drawend',function(event){
+                    var drawedFeature = event.feature;
+
+                    var zone = scope.zones.filter(function (zone) {
+                        return zone.id === drawedFeature.getId();
+                    })[0];
+
+                    scope.selectedZone.polygon = getWKTFromFeature(drawedFeature);
+                });
+
                 function getModifyInteraction(zone) {
                     var modifyFeatures = new ol.Collection();
                     modifyFeatures.push(removeFeatureFromReadonlyCollection(zone));
@@ -76,8 +86,6 @@
                         })[0];
 
                         zone.polygon = getWKTFromFeature(modifiedFeature);
-
-                        console.log("feature id is", event.features.getArray()[0].getId());
                     });
 
                     return modifyInteraction;
