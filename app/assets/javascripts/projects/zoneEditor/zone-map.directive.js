@@ -29,7 +29,7 @@
                     target: 'map',
                     layers: [raster, vector],
                     view: new ol.View({
-                        center: [981481.3,5978619.7],
+                        center: [981481.3, 5978619.7],
                         zoom: 18
                     })
                 });
@@ -39,7 +39,7 @@
                     // the SHIFT key must be pressed to delete vertices, so
                     // that new vertices can be drawn at the same position
                     // of existing vertices
-                    deleteCondition: function(event) {
+                    deleteCondition: function (event) {
                         return ol.events.condition.shiftKeyOnly(event) &&
                             ol.events.condition.singleClick(event);
                     }
@@ -74,7 +74,6 @@
                 }
 
                 addInteraction();
-
             },
             controller: 'ZoneMapCtrl'
         };
