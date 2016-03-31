@@ -1,0 +1,7 @@
+.main-header .sidebar-toggle:before {
+    content: ''
+}
+
+.main-header .sidebar-toggle {
+    padding: 0 15px 8px 15px;
+}

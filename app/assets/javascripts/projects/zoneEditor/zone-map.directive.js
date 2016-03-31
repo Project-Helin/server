@@ -34,8 +34,30 @@
                     })
                 });
 
+                var modify = new ol.interaction.Modify({
+                    features: scope.polygons,
+                    // the SHIFT key must be pressed to delete vertices, so
+                    // that new vertices can be drawn at the same position
+                    // of existing vertices
+                    deleteCondition: function(event) {
+                        return ol.events.condition.shiftKeyOnly(event) &&
+                            ol.events.condition.singleClick(event);
+                    }
+                });
+
+                scope.map.addInteraction(modify);
+
+                function addInteraction() {
+                    var draw = new ol.interaction.Draw({
+                        features: scope.polygons,
+                        type: 'Polygon'
+                    });
+
+                    scope.map.addInteraction(draw);
+                }
+
                 function getPolygonsFromZones(zones) {
-                    var polygons = [];
+                    var polygons = new ol.Collection();
 
                     zones.forEach(function (zone) {
                         if (zone.polygon !== null) {
@@ -50,6 +72,8 @@
 
                     return polygons;
                 }
+
+                addInteraction();
 
             },
             controller: 'ZoneMapCtrl'
