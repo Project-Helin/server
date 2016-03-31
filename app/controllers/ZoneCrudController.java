@@ -13,12 +13,16 @@ public class ZoneCrudController extends Controller {
 
     @Transactional(readOnly = true)
     public Result index() {
-        List<Zone> zones = JPA.em()
-                .createQuery("select p from Zone p", Zone.class)
-                .getResultList();
+        List<Zone> zones = (List<Zone>)
+
+        //JPA.em().createQuery("select id, ST_asText(geom) as polygon, height FROM zone").getResultList();
+
+        JPA.em().createQuery("select p from Zone p").getResultList();
+
 
         return ok(zone.render(zones));
     }
+
 
 
 }

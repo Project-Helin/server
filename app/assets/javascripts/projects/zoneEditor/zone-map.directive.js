@@ -4,6 +4,7 @@
             restrict: 'E',
             scope: {
                 zones: '=',
+                selectedZone: '=',
                 center: '='
             },
             replace: true,
