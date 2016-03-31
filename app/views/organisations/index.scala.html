@@ -4,31 +4,40 @@
 @main("Organisations") {
 
     <div class="row">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            @for(organisation <- organisations) {
-                <tr>
-                    <th>@organisation.getId</th>
-                    <th>@organisation.getName</th>
-                    <th>
-                        <a href="@controllers.organisations.routes.Organisations.show(organisation.getId)"
-                            class="btn btn-info"
-                            role="button">Show</a>
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="example2" class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(organisation <- organisations) {
+                            <tr>
+                                <th>@organisation.getId</th>
+                                <th>@organisation.getName</th>
+                                <th>
+                                    <a href="@controllers.organisations.routes.Organisations.show(organisation.getId)"
+                                    class="btn btn-info"
+                                    role="button">Show</a>
 
-                        <a href="@controllers.organisations.routes.Organisations.edit(organisation.getId)"
-                        class="btn btn-info"
-                        role="button">Edit</a>
-                    </th>
-                </tr>
-            }
-            </tbody>
-        </table>
+                                    <a href="@controllers.organisations.routes.Organisations.edit(organisation.getId)"
+                                    class="btn btn-info"
+                                    role="button">Edit</a>
+                                </th>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                    <!-- /.box-body -->
+            </div>
+        </div>
     </div>
+
 }
