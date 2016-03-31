@@ -2,15 +2,20 @@ package controllers;
 
 
 import commons.MessageConnection;
+import org.slf4j.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 import views.html.messageviewer;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
 public class MessageViewer extends Controller {
+
+    private static final Logger logger = getLogger(MessageViewer.class);
 
     public WebSocket<String> register() {
         return new WebSocket<String>() {
@@ -23,7 +28,7 @@ public class MessageViewer extends Controller {
 
                 // When the socket is closed.
                 in.onClose(messageConnection::closeConnection);
-                System.out.println("Got connection");
+                logger.info("Got connection");
             }
         };
     }
