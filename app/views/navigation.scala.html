@@ -1,22 +1,6 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Project Helin</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="@routes.Application.index()">Home</a></li>
-                <li><a href="@routes.MessageViewer.index()">Message Viewer</a></li>
-                <li><a href="@routes.ZoneCrudController.index()">Zone</a></li>
-                <li><a href="@routes.ProjectsController.index()">Project</a></li>
-                <li><a href="@controllers.organisations.routes.Organisations.index()" >Organisation</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<ul class="sidebar-menu">
+    <li><a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> Home</a></li>
+    <li><a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> Message Viewer</a></li>
+    <li><a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i>Zone</a></li>
+    <li><a href="@routes.ProjectsController.edit("bla")"><i class="glyphicon glyphicon-map-marker"></i>Project</a></li>
+</ul>
