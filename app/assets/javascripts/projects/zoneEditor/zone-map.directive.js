@@ -24,7 +24,6 @@
                     }
                 });
 
-
                 var raster = new ol.layer.Tile({
                     source: new ol.source.OSM()
                 });
@@ -57,7 +56,8 @@
                     var modifyFeatures = new ol.Collection();
                     modifyFeatures.push(removeFeatureFromReadonlyCollection(zone));
 
-                    return new ol.interaction.Modify({
+
+                    var modifyInteraction = new ol.interaction.Modify({
                         features: modifyFeatures,
                         // the SHIFT key must be pressed to delete vertices, so
                         // that new vertices can be drawn at the same position
@@ -67,6 +67,20 @@
                                 ol.events.condition.singleClick(event);
                         }
                     });
+
+                    modifyInteraction.on('modifyend',function(event){
+                        var modifiedFeature = event.features.getArray()[0];
+
+                        var zone = scope.zones.filter(function (zone) {
+                            return zone.id === modifiedFeature.getId();
+                        })[0];
+
+                        zone.polygon = getWKTFromFeature(modifiedFeature);
+
+                        console.log("feature id is", event.features.getArray()[0].getId());
+                    });
+
+                    return modifyInteraction;
                 }
 
                 function removeCurrentInteractions() {
@@ -110,6 +124,19 @@
                     return feature;
 
                 }
+
+                function getWKTFromFeature(feature) {
+
+                    var wkt = format.writeFeature(feature, {
+                        dataProjection: 'EPSG:4326',
+                        featureProjection: 'EPSG:3857'
+                    });
+
+                    return wkt;
+
+                }
+
+
 
             },
             controller: 'ZoneMapCtrl'
