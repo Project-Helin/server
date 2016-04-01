@@ -60,16 +60,17 @@
                 });
 
                 function styleFunction() {
-                    var image = new ol.style.Circle({
+                    var circlesAtEdges = new ol.style.Circle({
                         radius: 5,
                         fill:  new ol.style.Fill({
                             color: 'rgba(0, 0, 255, 0.8)'
                         }),
                         stroke: null
                     });
+
                     return [
                         new ol.style.Style({
-                            image: image,
+                            image: circlesAtEdges,
                             geometry: function (feature) {
                                 if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
                                     var coordinates = feature.getGeometry().getCoordinates()[0];
