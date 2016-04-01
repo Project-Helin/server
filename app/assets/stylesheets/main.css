@@ -10,3 +10,7 @@
     width: 100%;
     height: 500px;
 }
+
+.panel.active {
+    border: 2px solid deepskyblue;
+}

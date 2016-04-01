@@ -12,16 +12,7 @@
             link: function (scope) {
 
                 scope.$watch('selectedZone', function (newValue, oldValue) {
-                    removeCurrentInteractions();
-
-                    if (newValue && newValue !== oldValue) {
-                        if (newValue.polygon === null) {
-                            scope.map.addInteraction(scope.drawInteraction);
-                        } else {
-                            scope.modifyInteraction = getModifyInteraction(newValue);
-                            scope.map.addInteraction(scope.modifyInteraction);
-                        }
-                    }
+                    updateInteractionPossibilities(newValue);
                 });
 
                 var raster = new ol.layer.Tile({
@@ -52,20 +43,35 @@
                     type: 'Polygon'
                 });
 
-                scope.drawInteraction.on('drawend',function(event){
+                scope.drawInteraction.on('drawend', function (event) {
                     var drawedFeature = event.feature;
 
-                    var zone = scope.zones.filter(function (zone) {
-                        return zone.id === drawedFeature.getId();
-                    })[0];
-
-                    scope.selectedZone.polygon = getWKTFromFeature(drawedFeature);
+                    drawedFeature.setId(scope.selectedZone.id);
+                    scope.$apply(function () {
+                        scope.selectedZone.polygon = getWKTFromFeature(drawedFeature);
+                    });
                 });
+
+                scope.readOnlyFeatures.on('add', function (event) {
+                    updateInteractionPossibilities(scope.selectedZone);
+                });
+
+                function updateInteractionPossibilities(currentZone) {
+                    removeCurrentInteractions();
+
+                    if (currentZone) {
+                        if (currentZone.polygon === null) {
+                            scope.map.addInteraction(scope.drawInteraction);
+                        } else {
+                            scope.modifyInteraction = getModifyInteraction(currentZone);
+                            scope.map.addInteraction(scope.modifyInteraction);
+                        }
+                    }
+                }
 
                 function getModifyInteraction(zone) {
                     var modifyFeatures = new ol.Collection();
                     modifyFeatures.push(removeFeatureFromReadonlyCollection(zone));
-
 
                     var modifyInteraction = new ol.interaction.Modify({
                         features: modifyFeatures,
@@ -78,14 +84,18 @@
                         }
                     });
 
-                    modifyInteraction.on('modifyend',function(event){
+                    modifyInteraction.on('modifyend', function (event) {
                         var modifiedFeature = event.features.getArray()[0];
 
                         var zone = scope.zones.filter(function (zone) {
                             return zone.id === modifiedFeature.getId();
                         })[0];
 
-                        zone.polygon = getWKTFromFeature(modifiedFeature);
+                        scope.$apply(function () {
+                                zone.polygon = getWKTFromFeature(modifiedFeature);
+                            }
+                        );
+
                     });
 
                     return modifyInteraction;
@@ -114,14 +124,13 @@
                     return readOnlyFeatures;
                 }
 
-                function removeFeatureFromReadonlyCollection (zone) {
+                function removeFeatureFromReadonlyCollection(zone) {
                     if (scope.readOnlyFeatures) {
                         return vectorLayer.getSource().getFeatureById(zone.id);
                     }
                 }
 
                 function getFeatureFromZone(zone) {
-
                     var feature = format.readFeature(zone.polygon, {
                         dataProjection: 'EPSG:4326',
                         featureProjection: 'EPSG:3857'
@@ -130,20 +139,15 @@
                     feature.setId(zone.id);
 
                     return feature;
-
                 }
 
                 function getWKTFromFeature(feature) {
 
-                    var wkt = format.writeFeature(feature, {
+                    return format.writeFeature(feature, {
                         dataProjection: 'EPSG:4326',
                         featureProjection: 'EPSG:3857'
                     });
-
-                    return wkt;
-
                 }
-
 
 
             },
