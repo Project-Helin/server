@@ -13,9 +13,7 @@
 
                 scope.$watch('selectedZone', function (newValue, oldValue) {
                     updateInteractionPossibilities(newValue);
-                    if (newValue) {
-                        getFeatureForZone(newValue).changed();
-                    }
+                    updateStyle(newValue, oldValue);
 
                 });
 
@@ -64,8 +62,10 @@
                 function styleFunction() {
                     var image = new ol.style.Circle({
                         radius: 5,
-                        fill: null,
-                        stroke: new ol.style.Stroke({color: 'orange', width: 2})
+                        fill:  new ol.style.Fill({
+                            color: 'rgba(0, 0, 255, 0.8)'
+                        }),
+                        stroke: null
                     });
                     return [
                         new ol.style.Style({
@@ -78,12 +78,9 @@
                             }
                         }),
                         new ol.style.Style({
-                            stroke: new ol.style.Stroke({
-                                color: 'blue',
-                                width: 3
-                            }),
+                            stroke: null,
                             fill: new ol.style.Fill({
-                                color: 'rgba(0, 0, 255, 0.1)'
+                                color: 'rgba(0, 0, 255, 0.5)'
                             })
                         })
                     ];
@@ -102,12 +99,22 @@
                     }
                 }
 
+                function updateStyle(newZone, oldZone) {
+                    if (newZone && newZone.polygon) {
+                        getFeatureForZone(newZone).changed();
+                    }
+
+                    if (oldZone && oldZone.polygon) {
+                        getFeatureForZone(oldZone).changed();
+                    }
+                }
+
                 function getModifyInteraction(zone) {
-                    scope.modifyFeatures = new ol.Collection();
-                    scope.modifyFeatures.push(getFeatureForZone(zone));
+                    var modifyFeatures = new ol.Collection();
+                    modifyFeatures.push(getFeatureForZone(zone));
 
                     var modifyInteraction = new ol.interaction.Modify({
-                        features: scope.modifyFeatures,
+                        features: modifyFeatures,
                         // the SHIFT key must be pressed to delete vertices, so
                         // that new vertices can be drawn at the same position
                         // of existing vertices
