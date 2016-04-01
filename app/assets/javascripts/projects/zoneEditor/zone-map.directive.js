@@ -13,6 +13,10 @@
 
                 scope.$watch('selectedZone', function (newValue, oldValue) {
                     updateInteractionPossibilities(newValue);
+                    if (newValue) {
+                        getFeatureForZone(newValue).changed();
+                    }
+
                 });
 
                 var raster = new ol.layer.Tile({
@@ -26,7 +30,8 @@
                 var vectorLayer = new ol.layer.Vector({
                     source: new ol.source.Vector({
                         features: scope.readOnlyFeatures
-                    })
+                    }),
+                    style: styleFunction()
                 });
 
                 scope.map = new ol.Map({
@@ -48,13 +53,41 @@
 
                     drawedFeature.setId(scope.selectedZone.id);
                     scope.$apply(function () {
-                        scope.selectedZone.polygon = getWKTFromFeature(drawedFeature);
+                        scope.selectedZone.polygon = convertFeatureToWKT(drawedFeature);
                     });
                 });
 
                 scope.readOnlyFeatures.on('add', function (event) {
                     updateInteractionPossibilities(scope.selectedZone);
                 });
+
+                function styleFunction() {
+                    var image = new ol.style.Circle({
+                        radius: 5,
+                        fill: null,
+                        stroke: new ol.style.Stroke({color: 'orange', width: 2})
+                    });
+                    return [
+                        new ol.style.Style({
+                            image: image,
+                            geometry: function (feature) {
+                                if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
+                                    var coordinates = feature.getGeometry().getCoordinates()[0];
+                                    return new ol.geom.MultiPoint(coordinates);
+                                }
+                            }
+                        }),
+                        new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: 'blue',
+                                width: 3
+                            }),
+                            fill: new ol.style.Fill({
+                                color: 'rgba(0, 0, 255, 0.1)'
+                            })
+                        })
+                    ];
+                }
 
                 function updateInteractionPossibilities(currentZone) {
                     removeCurrentInteractions();
@@ -70,11 +103,11 @@
                 }
 
                 function getModifyInteraction(zone) {
-                    var modifyFeatures = new ol.Collection();
-                    modifyFeatures.push(removeFeatureFromReadonlyCollection(zone));
+                    scope.modifyFeatures = new ol.Collection();
+                    scope.modifyFeatures.push(getFeatureForZone(zone));
 
                     var modifyInteraction = new ol.interaction.Modify({
-                        features: modifyFeatures,
+                        features: scope.modifyFeatures,
                         // the SHIFT key must be pressed to delete vertices, so
                         // that new vertices can be drawn at the same position
                         // of existing vertices
@@ -92,7 +125,7 @@
                         })[0];
 
                         scope.$apply(function () {
-                                zone.polygon = getWKTFromFeature(modifiedFeature);
+                                zone.polygon = convertFeatureToWKT(modifiedFeature);
                             }
                         );
 
@@ -116,7 +149,7 @@
 
                     zones.forEach(function (zone) {
                             if (zone.polygon !== null) {
-                                readOnlyFeatures.push(getFeatureFromZone(zone));
+                                readOnlyFeatures.push(convertZoneToFeature(zone));
                             }
                         }
                     );
@@ -124,13 +157,11 @@
                     return readOnlyFeatures;
                 }
 
-                function removeFeatureFromReadonlyCollection(zone) {
-                    if (scope.readOnlyFeatures) {
-                        return vectorLayer.getSource().getFeatureById(zone.id);
-                    }
+                function getFeatureForZone(zone) {
+                    return vectorLayer.getSource().getFeatureById(zone.id);
                 }
 
-                function getFeatureFromZone(zone) {
+                function convertZoneToFeature(zone) {
                     var feature = format.readFeature(zone.polygon, {
                         dataProjection: 'EPSG:4326',
                         featureProjection: 'EPSG:3857'
@@ -141,7 +172,7 @@
                     return feature;
                 }
 
-                function getWKTFromFeature(feature) {
+                function convertFeatureToWKT(feature) {
 
                     return format.writeFeature(feature, {
                         dataProjection: 'EPSG:4326',
