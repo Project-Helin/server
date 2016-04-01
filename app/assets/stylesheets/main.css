@@ -14,3 +14,7 @@
 .panel.active {
     border: 2px solid deepskyblue;
 }
+
+.panel {
+    cursor: pointer;
+}
