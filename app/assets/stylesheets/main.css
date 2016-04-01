@@ -18,3 +18,19 @@
 .panel {
     cursor: pointer;
 }
+
+.OrderZone {
+    background-color: rgba(0, 192, 239, 0.1);
+}
+
+.FlightZone {
+    background-color: rgba(0, 28, 247, 0.3);
+}
+
+.DeliveryZone {
+    background-color: rgba(0, 166, 90, 0.3);
+}
+
+.LoadingZone {
+    background-color: rgba(243, 156, 18, 0.3);
+}

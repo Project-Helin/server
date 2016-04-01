@@ -23,7 +23,7 @@
             </div>
 
             <div class="row panel panel-info" ng-class="{'active': selectedZone === zone}" ng-repeat="zone in zones" ng-click="selectZone(zone)">
-                <div class="panel-body col-xs-12">
+                <div class="panel-body col-xs-12" ng-class="zone.type">
                     <div class="row" ng-hide="selectedZone === zone">
                         <div class="col-xs-6" ng-hide="zone.name">
                             {{zone.type}}
