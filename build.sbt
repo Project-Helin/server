@@ -4,6 +4,13 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
+/**
+  * We need this, so that SBT can also resolve dependencies from mvn local repository
+  */
+resolvers += (
+  "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
+)
+
 libraryDependencies ++= Seq(
   javaJpa,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
@@ -31,6 +38,7 @@ libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
   */
 libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
 
+libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
 
 
 // Play provides two styles of routers, one expects its actions to be injected, the
