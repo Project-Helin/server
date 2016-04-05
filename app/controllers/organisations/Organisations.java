@@ -15,7 +15,6 @@ import views.html.organisations.index;
 import java.util.List;
 import java.util.UUID;
 
-
 @Transactional
 public class Organisations extends Controller {
 
@@ -28,8 +27,6 @@ public class Organisations extends Controller {
     public Result index() {
         List<Organisation> all =
             organisationsDao.findAll();
-
-
         return ok(index.render(all));
     }
 
@@ -42,8 +39,9 @@ public class Organisations extends Controller {
     }
 
     public Result create() {
-        Form<Organisation> form =
-            formFactory.form(Organisation.class).bindFromRequest(request());
+        Form<Organisation> form = formFactory
+            .form(Organisation.class)
+            .bindFromRequest(request());
 
         Organisation organisation = form.get();
         organisation.setId(UUID.randomUUID());
@@ -59,8 +57,10 @@ public class Organisations extends Controller {
             return forbidden("Organisation not found!");
         }
 
-        Form<Organisation> form =
-            formFactory.form(Organisation.class).fill(found);
+        Form<Organisation> form = formFactory
+            .form(Organisation.class)
+            .fill(found);
+
         return ok(edit.render(form));
     }
 
