@@ -1,5 +1,6 @@
 package dao;
 
+import models.Organisation;
 import play.db.jpa.JPA;
 
 import java.util.List;
@@ -24,4 +25,9 @@ public abstract class AbstractDao<T> {
         return JPA.em().find(entityClass, id);
     }
 
+    public void persist(Organisation organisation){
+        // JPA.em().merge(organisation);
+        JPA.em().persist(organisation);
+    }
 }
+
