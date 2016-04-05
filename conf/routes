@@ -10,7 +10,7 @@ GET           /persons                        controllers.Application.getPersons
 # Message Viewer
 GET           /messageviewer                  controllers.MessageViewer.index()
 GET           /sendSampleMessage              controllers.MessageViewer.sendSampleMessage()
-GET           /messageviewer/register         controllers.MessageViewer.register()
+#GET           /messageviewer/register         controllers.MessageViewer.register()
 
 GET           /zone                           controllers.ZoneCrudController.index()
 
