@@ -30,8 +30,15 @@ public abstract class AbstractDao<T> {
     }
 
     public void persist(Organisation organisation){
-        // JPA.em().merge(organisation);
         jpaApi.em().persist(organisation);
+    }
+
+    public void delete(Organisation found){
+        jpaApi.em().remove(found);
+    }
+
+    public void remove(Organisation found){
+        delete(found);
     }
 }
 
