@@ -58,13 +58,33 @@
                     });
                 }
 
+                function selectZoneIfnotInDrawMode(event) {
+                    if(!scope.inDrawMode) {
+                        scope.map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
+                            if (feature.getId()) {
+                                scope.$apply(function () {
+                                    scope.selectedZone = getZone(feature.getId());
+                                })
+                            }
+                        });
+                    }
+                }
+
                 function addMapListeners() {
+                    scope.drawInteraction.on('drawstart', function (event) {
+                        scope.inDrawMode = true;
+                    });
                     scope.drawInteraction.on('drawend', function (event) {
+                        scope.inDrawMode = false;
                         writePolygonValueToZone(event);
                     });
 
                     scope.readOnlyFeatures.on('add', function (event) {
                         updateInteractionPossibilities(scope.selectedZone);
+                    });
+
+                    scope.map.on("click", function(e) {
+                        selectZoneIfnotInDrawMode(e);
                     });
                 }
 
@@ -217,6 +237,12 @@
                     })[0];
                     var featureToDelete = getFeatureForZone(deletedZone);
                     scope.vectorLayer.getSource().removeFeature(featureToDelete);
+                }
+
+                function getZone(id) {
+                    return scope.zones.filter(function(zone) {
+                        return zone.id === id;
+                    })[0];
                 }
 
                 function zoneWasDeleted(newValue, oldValue) {
