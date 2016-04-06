@@ -38,7 +38,7 @@ DELETE        /projects/:id/delete             controllers.ProjectsController.de
 GET           /assets/*file                    controllers.Assets.at(path="/public", file)
 
 # Register Drone
-GET         /registerDrone                  controllers.RegisterController.index()
+GET         /registerDrone                  controllers.RegisterDroneController.index()
 
 
 #API
