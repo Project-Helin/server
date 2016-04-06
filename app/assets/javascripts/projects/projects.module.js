@@ -1,5 +1,5 @@
 (function () {
 
-    angular.module('ProjectsApp', []);
+    angular.module('ProjectsApp', ['common', 'ui.bootstrap']);
 
 }());
