@@ -1,7 +1,6 @@
 package controllers;
 
 
-import ch.helin.messages.experimental.MySimpleMessage;
 import commons.MessageConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class MessageViewer extends Controller {
     public Result sendSampleMessage() {
         logger.info("=> Send Sample Messages");
 
-        MySimpleMessage mySimpleMessage = new MySimpleMessage();
+        //MySimpleMessage mySimpleMessage = new MySimpleMessage();
 
         MessageConnection messageConnection = new MessageConnection();
         messageConnection.sendMessage("Hello Buddy, time is " + System.currentTimeMillis());
