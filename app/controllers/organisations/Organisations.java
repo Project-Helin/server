@@ -4,38 +4,52 @@ import com.google.inject.Inject;
 import dao.OrganisationsDao;
 import models.Organisation;
 import play.data.Form;
+import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import views.html.organisations.add;
 import views.html.organisations.edit;
 import views.html.organisations.index;
-import views.html.organisations.show;
 
 import java.util.List;
 import java.util.UUID;
 
-
+@Transactional
 public class Organisations extends Controller {
 
     @Inject
     private OrganisationsDao organisationsDao;
 
-    @Transactional(readOnly = true)
+    @Inject
+    private FormFactory formFactory;
+
     public Result index() {
         List<Organisation> all =
-                organisationsDao.findAll();
-
-
+            organisationsDao.findAll();
         return ok(index.render(all));
     }
 
-    @Transactional
-    public Result show(UUID id) {
-        Organisation found = organisationsDao.findById(id);
-        return ok(show.render(found));
+    public Result add() {
+        Form<Organisation> form = formFactory
+            .form(Organisation.class)
+            .fill(new Organisation());
+
+        return ok(add.render(form));
     }
 
-    @Transactional
+    public Result create() {
+        Form<Organisation> form = formFactory
+            .form(Organisation.class)
+            .bindFromRequest(request());
+
+        Organisation organisation = form.get();
+        organisation.setId(UUID.randomUUID());
+        organisationsDao.persist(organisation);
+
+        return index();
+    }
+
     public Result edit(UUID id) {
         Organisation found = organisationsDao.findById(id);
 
@@ -43,15 +57,31 @@ public class Organisations extends Controller {
             return forbidden("Organisation not found!");
         }
 
-        Form<Organisation> form = Form.form(Organisation.class);
-        form = form.fill(found);
+        Form<Organisation> form = formFactory
+            .form(Organisation.class)
+            .fill(found);
+
         return ok(edit.render(form));
     }
 
+    public Result update(UUID id) {
+        Organisation found = organisationsDao.findById(id);
 
+        if (found == null) {
+            return forbidden("Organisation not found!");
+        }
+        organisationsDao.persist(found);
 
-    public Result update(String id) {
-        return play.mvc.Results.TODO;
+        return index();
     }
 
+    public Result delete(UUID id) {
+        Organisation found = organisationsDao.findById(id);
+
+        if (found == null) {
+            return forbidden("Organisation not found!");
+        }
+        organisationsDao.delete(found);
+        return index();
+    }
 }
