@@ -54,6 +54,12 @@
             $scope.selectZone(newZone);
         };
 
+        $scope.deleteZone = function (zoneToDelete) {
+            $scope.zones = $scope.zones.filter(function (zone) {
+                return zone.id !== zoneToDelete.id;
+            });
+        };
+
         initialize();
 
 

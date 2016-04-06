@@ -11,58 +11,78 @@
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
 
-                scope.$watch('selectedZone', function (newValue, oldValue) {
-                    updateInteractionPossibilities(newValue);
-                    updateStyle(newValue, oldValue);
+                function activate() {
+                    createMap();
+                    createDrawInteraction();
+                    addScopeListeners();
+                    addMapListeners();
+                }
 
-                });
 
-                var raster = new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                });
-
-                var format = new ol.format.WKT();
-
-                scope.readOnlyFeatures = getFeaturesFromZones(scope.zones);
-
-                var vectorLayer = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features: scope.readOnlyFeatures
-                    }),
-                    style: styleFunction()
-                });
-
-                scope.map = new ol.Map({
-                    target: 'map',
-                    layers: [raster, vectorLayer],
-                    view: new ol.View({
-                        center: [981481.3, 5978619.7],
-                        zoom: 18
-                    })
-                });
-
-                scope.drawInteraction = new ol.interaction.Draw({
-                    features: scope.readOnlyFeatures,
-                    type: 'Polygon'
-                });
-
-                scope.drawInteraction.on('drawend', function (event) {
-                    var drawedFeature = event.feature;
-
-                    drawedFeature.setId(scope.selectedZone.id);
-                    scope.$apply(function () {
-                        scope.selectedZone.polygon = convertFeatureToWKT(drawedFeature);
+                function createMap() {
+                    var raster = new ol.layer.Tile({
+                        source: new ol.source.OSM()
                     });
-                });
 
-                scope.readOnlyFeatures.on('add', function (event) {
-                    updateInteractionPossibilities(scope.selectedZone);
-                });
+                    scope.format = new ol.format.WKT();
+
+                    createVectorLayer();
+
+                    scope.map = new ol.Map({
+                        target: 'map',
+                        layers: [raster, scope.vectorLayer],
+                        view: new ol.View({
+                            center: [981481.3, 5978619.7],
+                            zoom: 18
+                        })
+                    });
+                }
+
+                function createDrawInteraction() {
+                    scope.drawInteraction = new ol.interaction.Draw({
+                        features: scope.readOnlyFeatures,
+                        type: 'Polygon'
+                    });
+                }
+
+                function addScopeListeners() {
+                    scope.$watch('selectedZone', function (newValue, oldValue) {
+                        updateInteractionPossibilities(newValue);
+                        updateStyle(newValue, oldValue);
+                    });
+
+                    scope.$watch('zones', function (newValue, oldValue) {
+                        if (zoneWasDeleted(newValue, oldValue)) {
+                            removeDeletedZoneFromMap(oldValue, newValue);
+                        }
+                    });
+                }
+
+                function addMapListeners() {
+                    scope.drawInteraction.on('drawend', function (event) {
+                        writePolygonValueToZone(event);
+                    });
+
+                    scope.readOnlyFeatures.on('add', function (event) {
+                        updateInteractionPossibilities(scope.selectedZone);
+                    });
+                }
+
+                function createVectorLayer() {
+                    scope.readOnlyFeatures = getFeaturesFromZones(scope.zones);
+
+                    scope.vectorLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: scope.readOnlyFeatures
+                        }),
+                        style: styleFunction()
+                    });
+                }
 
                 function styleFunction() {
                     var circlesAtEdges = new ol.style.Circle({
                         radius: 5,
-                        fill:  new ol.style.Fill({
+                        fill: new ol.style.Fill({
                             color: 'rgba(0, 0, 255, 0.8)'
                         }),
                         stroke: null
@@ -106,9 +126,12 @@
                     }
 
                     if (oldZone && oldZone.polygon) {
-                        getFeatureForZone(oldZone).changed();
+                        if (getFeatureForZone(oldZone)) {
+                            getFeatureForZone(oldZone).changed();
+                        }
                     }
                 }
+
 
                 function getModifyInteraction(zone) {
                     var modifyFeatures = new ol.Collection();
@@ -166,11 +189,11 @@
                 }
 
                 function getFeatureForZone(zone) {
-                    return vectorLayer.getSource().getFeatureById(zone.id);
+                    return scope.vectorLayer.getSource().getFeatureById(zone.id);
                 }
 
                 function convertZoneToFeature(zone) {
-                    var feature = format.readFeature(zone.polygon, {
+                    var feature = scope.format.readFeature(zone.polygon, {
                         dataProjection: 'EPSG:4326',
                         featureProjection: 'EPSG:3857'
                     });
@@ -182,19 +205,41 @@
 
                 function convertFeatureToWKT(feature) {
 
-                    return format.writeFeature(feature, {
+                    return scope.format.writeFeature(feature, {
                         dataProjection: 'EPSG:4326',
                         featureProjection: 'EPSG:3857'
                     });
                 }
 
+                function removeDeletedZoneFromMap(oldValue, newValue) {
+                    var deletedZone = oldValue.filter(function (i) {
+                        return newValue.indexOf(i) < 0;
+                    })[0];
+                    var featureToDelete = getFeatureForZone(deletedZone);
+                    scope.vectorLayer.getSource().removeFeature(featureToDelete);
+                }
 
+                function zoneWasDeleted(newValue, oldValue) {
+                    return newValue.length < oldValue.length;
+                }
+
+                function writePolygonValueToZone(event) {
+                    var drawedFeature = event.feature;
+
+                    drawedFeature.setId(scope.selectedZone.id);
+                    scope.$apply(function () {
+                        scope.selectedZone.polygon = convertFeatureToWKT(drawedFeature);
+                    });
+                }
+
+                activate();
             },
             controller: 'ZoneMapCtrl'
         };
 
 
-    }]);
-
+    }
+    ])
+    ;
 
 }());

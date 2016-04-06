@@ -48,10 +48,15 @@
                             </div>
 
                         </div>
-                        <div class="col-xs-12 m-t-md">
+                        <div class="col-xs-11 m-t-md">
                             <div class="btn-group">
                                 <label class="btn btn-primary btn-sm" ng-repeat="type in zoneTypes" ng-model="selectedZone.type" uib-btn-radio="type">
                                     {{type}}</label>
+                            </div>
+                        </div>
+                        <div class="col-xs-1 m-t-md">
+                            <div class="m-t">
+                              <a href="#" ng-click="deleteZone(selectedZone)"><i class="glyphicon glyphicon-trash"></i></a>
                             </div>
                         </div>
                     </div>
