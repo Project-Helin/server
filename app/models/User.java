@@ -25,6 +25,9 @@ public class User {
     @Column
     private String confirmationToken;
 
+    @Column
+    private boolean validated = false;
+
     @ManyToMany
     private List<Organisation> organisations;
 
@@ -66,5 +69,13 @@ public class User {
 
     public void setConfirmationToken(String confirmationToken) {
         this.confirmationToken = confirmationToken;
+    }
+
+    public boolean isValidated() {
+        return validated;
+    }
+
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 }

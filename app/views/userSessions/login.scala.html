@@ -1,0 +1,22 @@
+@import models.authentication.Login
+@(loginForm: Form[Login])
+
+@main("Project") {
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+
+                @helper.form(action = routes.UserSessionsController.login()) {
+                    @helper.inputText(loginForm("email"))
+                    @helper.inputPassword(loginForm("password"))
+                    <input type="submit" class="btn btn-primary" value="Speichern" />
+                }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
