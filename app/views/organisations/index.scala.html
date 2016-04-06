@@ -1,0 +1,51 @@
+@import java.util
+@(organisations: util.List[Organisation])
+
+    @main("Organisations") {
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                                <tr>
+                                    @*<th>ID</th>*@
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for(organisation <- organisations) {
+                                    <tr>
+                                        @*<th>@organisation.getId</th>*@
+                                    <th>@organisation.getName</th>
+                                    <th>
+                                        <a href="@controllers.organisations.routes.Organisations.edit(organisation.getId)"
+                                        class="btn btn-info btn-sm"
+                                        role="button">Edit</a>
+
+                                        <a href="@controllers.organisations.routes.Organisations.delete(organisation.getId)"
+                                        class="btn btn-danger btn-sm" role="button">Delete</a>
+                                    </th>
+                                    </tr>
+                                }
+
+                                <tr>
+                                    <th></th>
+                                    <th>
+                                        <a href="@controllers.organisations.routes.Organisations.add()" class="btn btn-primary">
+                                            Add</a>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div> <!-- /.box-body -->
+                </div>
+
+            </div>
+        </div>
+
+    }

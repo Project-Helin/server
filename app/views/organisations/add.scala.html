@@ -1,0 +1,24 @@
+@import controllers.organisations.routes
+@(organisationForm: Form[Organisation])
+
+    @main("Project") {
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+
+                    @helper.form(action = routes.Organisations.create()) {
+                        @helper.inputText(organisationForm("Name"))
+
+                        <input type="submit" class="btn btn-primary" value="Speichern" />
+                        <a href="@routes.Organisations.index()" class="btn btn-default">Zurück</a>
+
+                    }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }

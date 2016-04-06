@@ -1,6 +1,7 @@
 name := """server"""
 
 version := "1.0-SNAPSHOT"
+scalaVersion := "2.11.7"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
@@ -31,7 +32,10 @@ libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
   */
 libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
 
-
+/**
+  * For testing
+  */
+libraryDependencies += "org.easytesting" % "fest-assert" % "1.4"
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
