@@ -1,4 +1,4 @@
-@(project: Project)
+@(projectId: java.util.UUID)
 
 @main("Project") {
     <div ng-app="ProjectsApp" ng-controller="ProjectsController">
@@ -17,10 +17,18 @@
 
         <div class="col-xs-4">
 
+            <input type="hidden" id="projectId" value="@projectId" />
+
             <div class="row panel panel-info" ng-click="createZone()">
                 <div class="panel-body">
                     <i class="glyphicon glyphicon-plus"></i>
                     Create new Zone
+                </div>
+            </div>
+
+            <div class="row panel panel-info">
+                <div class="panel-body">
+                    <input type="text" class="form-control" placeholder="Projectname" ng-model="projectName"/>
                 </div>
             </div>
 
@@ -68,10 +76,16 @@
 
             </div>
 
+            <div class="row" >
+                <input type="button" class="btn btn-primary pull-right" value="Save" ng-click="save()" />
+            </div>
         </div>
+
+
         <div class="col-xs-8">
             <zone-map zones="zones" selected-zone="selectedZone"></zone-map>
         </div>
+
 
     </div>
 }

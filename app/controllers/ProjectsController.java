@@ -11,7 +11,6 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.projects.add;
 import views.html.projects.index;
 import views.html.projects.edit;
 
@@ -42,11 +41,8 @@ public class ProjectsController extends Controller {
     }
 
     public Result add(UUID organisationId) {
-        Form<Project> form = formFactory
-                .form(Project.class)
-                .fill(new Project());
-
-        return ok(add.render(organisationId, form));
+        UUID newProjectId = UUID.randomUUID();
+        return ok(edit.render(newProjectId));
     }
 
     public Result create(UUID organisationId) {
@@ -63,13 +59,7 @@ public class ProjectsController extends Controller {
     }
 
     public Result edit(UUID organisationId, UUID id) {
-        Project project = projectsDao.findById(id);
-
-        if (project == null) {
-            return forbidden("Project not found!");
-        }
-
-        return ok(edit.render(project));
+        return ok(edit.render(id));
     }
 
     public Result update(UUID organisationId, UUID id) {

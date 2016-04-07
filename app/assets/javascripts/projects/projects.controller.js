@@ -4,6 +4,7 @@
         function initialize() {
             $scope.selectedZone = null;
             $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
+            $scope.projectId = document.getElementById('projectId').value;
         }
 
         var defaultZoneTemplate = {
@@ -13,6 +14,8 @@
             type: 'OrderZone'
         };
 
+        $scope.projectName = "";
+        
         $scope.zones = [
             {
                 id: 1,
@@ -59,6 +62,14 @@
                 return zone.id !== zoneToDelete.id;
             });
         };
+
+        $scope.save = function(){
+            console.log("Save");
+            console.log($scope.projectName);
+            console.log($scope.zones);
+            console.log($scope.projectId);
+        };
+
 
         initialize();
 
