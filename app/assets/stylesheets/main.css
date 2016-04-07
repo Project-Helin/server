@@ -34,3 +34,7 @@
 .LoadingZone {
     background-color: rgba(243, 156, 18, 0.3);
 }
+
+.error-content {
+    color: red;
+}
