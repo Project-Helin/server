@@ -6,7 +6,6 @@ import play.data.validation.Constraints;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity(name="Users")
@@ -58,7 +57,9 @@ public class User {
 
     public void setPassword(String password) {
         try {
-            this.password = AuthenticationHelper.createPassword(password);
+            if (password != null && !password.isEmpty()) {
+                this.password = AuthenticationHelper.createPassword(password);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

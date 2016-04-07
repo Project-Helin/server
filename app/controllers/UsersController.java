@@ -2,7 +2,6 @@ package controllers;
 
 import com.google.inject.Inject;
 import dao.UserDao;
-import models.Organisation;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -30,7 +29,7 @@ public class UsersController extends Controller {
         return ok(login.render(form));
     }
 
-        @Transactional
+    @Transactional
     public Result loginPost() {
         Form<Login> form = formFactory
                 .form(Login.class)
@@ -43,16 +42,15 @@ public class UsersController extends Controller {
             if (user == null) {
                 flash("error", "Wrong user or password");
                 return badRequest(login.render(form));
-            } else if (!user.isValidated()) {
-                flash("error", "Account not validated, please check your email");
-                return badRequest(login.render(form));
+                //TODO add Mailservice and validate Email
+//            } else if (!user.isValidated()) {
+//                flash("error", "Account not validated, please check your email");
+//                return badRequest(login.render(form));
             } else {
                 session("email", form.get().getEmail());
-                redirect(routes.Application.index());
+                return redirect("/");
             }
         }
-
-        return ok();
     }
 
     public Result add() {
@@ -73,12 +71,10 @@ public class UsersController extends Controller {
         } else {
             User user = form.get();
             user.setId(UUID.randomUUID());
+            user.setConfirmationToken(UUID.randomUUID().toString());
             userDao.persist(user);
             flash("info", "You should have received an E-Mail confirmation, please click on the link in the E-Mail");
-            redirect(routes.Application.index());
+            return redirect("/");
         }
-
-
-        return ok();
     }
 }
