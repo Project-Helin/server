@@ -115,25 +115,33 @@ public class ProjectsController extends Controller {
                 Json.fromJson(request().body().asJson(), ProjectDto.class);
         // set all fields
         project.setName(fromRequest.getName());
-
-        doMagic(project, fromRequest);
-
-
+        addZonesToProject(project, fromRequest);
         projectsDao.persist(project);
 
         return ok();
     }
 
-    // TODO Kiru: write documentation
-    private void doMagic(Project project, ProjectDto fromRequest) {
+    /**
+     * This needs a special handling - because we need to check if
+     * there are already saved sones, or new ones.
+     */
+    private void addZonesToProject(Project project,
+                                   ProjectDto fromRequest) {
+
         Set<Zone> zones = project.getZones();
         HashSet<Zone> previousZones = new HashSet<>(zones);
 
+        /**
+         * we cannot set a new HashSet because, jpa need to track changes
+         */
         project.getZones().clear();
         project.getZones().addAll(mapAll(fromRequest, project, previousZones));
     }
 
-    private List<Zone> mapAll(ProjectDto fromRequest, Project project, HashSet<Zone> previousZones) {
+    private List<Zone> mapAll(ProjectDto fromRequest,
+                              Project project,
+                              Set<Zone> previousZones) {
+
         return fromRequest
                 .getZones()
                 .stream()
@@ -142,7 +150,7 @@ public class ProjectsController extends Controller {
                     zone.setId(zoneDto.getId());
 
                     if(previousZones.contains(zone)){
-                        zone = previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
+                        zone = findById(previousZones, zoneDto);
                     }
 
                     zone.setType(zoneDto.getType());
@@ -152,6 +160,10 @@ public class ProjectsController extends Controller {
                     zone.setProject(project);
                     return zone;
                 }).collect(Collectors.toList());
+    }
+
+    private Zone findById(Set<Zone> previousZones, ZoneDto zoneDto) {
+        return previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
     }
 
     public Result delete(UUID projectID) {
