@@ -12,7 +12,7 @@
                             <tr>
                                 @*<th>ID</th>*@
                                 <th>Name</th>
-                                <th>Head quarter</th>
+                                @*<th>Head quarter</th>*@
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -21,7 +21,7 @@
                                 <tr>
                                     @*<th>@organisation.getId</th>*@
                                 <th>@project.getName</th>
-                                <th>@project.getHeadquarterPosition</th>
+                                @*<th>@project.getHeadquarterPosition</th>*@
                                 <th>
                                     <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
 
@@ -52,7 +52,6 @@
                             }
 
                             <tr>
-                                <th></th>
                                 <th></th>
                                 <th>
                                     <a href="@controllers.routes.ProjectsController.create()" class="btn btn-primary">
