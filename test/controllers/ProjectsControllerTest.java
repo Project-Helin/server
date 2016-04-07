@@ -9,6 +9,7 @@ import models.Organisation;
 import models.Project;
 import org.junit.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -49,18 +50,16 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     }
 
     private Project createNewProject() {
-        Organisation organisation = new Organisation();
-        organisation.setId(UUID.randomUUID());
-        organisation.setName("Super HSR " + System.currentTimeMillis());
 
         Project project = new Project();
-        project.setOrganisation(organisation);
         project.setId(UUID.randomUUID());
-        project.setHeadquarterPosition(GisHelper.createPoint(30, 10));
         project.setName("First Demo");
 
         jpaapi.withTransaction(() -> {
-            organisationsDao.persist(organisation);
+            Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
+            assertThat(first.isPresent()).isTrue();
+
+            project.setOrganisation(first.get());
             projectsDao.persist(project);
         });
 
