@@ -1,4 +1,4 @@
-package controllers;
+package commons;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -2,8 +2,6 @@ package commons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import controllers.JsonPointDeserializer;
-import controllers.JsonPointSerializer;
 import org.geolatte.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
