@@ -11,7 +11,7 @@ public abstract class AbstractDao<T> {
     private Class<T> entityClass;
 
     @Inject
-    private JPAApi jpaApi;
+    protected JPAApi jpaApi;
 
     public AbstractDao(Class<T> entityClass) {
         this.entityClass = entityClass;
