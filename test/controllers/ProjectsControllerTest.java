@@ -27,7 +27,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     public void shouldShowNewProject() {
         Project project = createNewProject();
 
-        browser.goTo(routes.ProjectsController.index(project.getOrganisation().getId()).url());
+        browser.goTo(routes.ProjectsController.index().url());
 
         // verify
         assertThat(browser.pageSource()).containsIgnoringCase(project.getName());
@@ -37,14 +37,14 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     public void shouldRemoveOrganisation() {
         Project project = createNewProject();
 
-        browser.goTo(routes.ProjectsController.index(project.getOrganisation().getId()).url());
+        browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).contains(project.getName());
 
         // remove that
         browser.click(withText("Delete"));
 
         // verify
-        browser.goTo(routes.ProjectsController.index(project.getOrganisation().getId()).url());
+        browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(project.getName());
     }
 

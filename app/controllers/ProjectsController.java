@@ -1,18 +1,12 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.inject.Inject;
-import commons.JsonPointDeserializer;
-import commons.JsonPointSerializer;
+import dao.OrganisationsDao;
 import dao.ProjectsDao;
-import models.Organisation;
 import models.Project;
-import org.geolatte.geom.Point;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import play.data.Form;
-import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -22,7 +16,6 @@ import views.html.projects.index;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Transactional
 public class ProjectsController extends Controller {
@@ -33,17 +26,22 @@ public class ProjectsController extends Controller {
     private ProjectsDao projectsDao;
 
     @Inject
-    private FormFactory formFactory;
+    private OrganisationsDao organisationsDao;
 
     public Result index() {
-        /**
-         * TODO Kiru: this should from from the current user
-         */
-        UUID organisationId = UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b");
+        UUID organisationId = getOrganisationId();
+
         logger.info("Organisation id {}", organisationId);
         List<Project> all = projectsDao.findByOrganisation(organisationId);
 
         return ok(index.render(all));
+    }
+
+    private UUID getOrganisationId() {
+        /**
+         * TODO Kiru: this should from from the current user
+         */
+        return UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b");
     }
 
     public Result add() {
@@ -85,15 +83,18 @@ public class ProjectsController extends Controller {
         return ok(Json.toJson(projectDto));
     }
 
-    public Result update(UUID organisationId, UUID id) {
-        Organisation found = null; // organisationsDao.findById(id);
+    public Result update(UUID projectId) {
+        ProjectDto projectDto = Json.fromJson(request().body().asJson(), ProjectDto.class);
+        System.out.println(ToStringBuilder.reflectionToString(projectDto));
 
-        if (found == null) {
-            return forbidden("Organisation not found!");
-        }
-//        organisationsDao.persist(found);
+        Project project = new Project();
+        project.setId(projectDto.getId());
+        project.setName(projectDto.getName());
+        project.setHeadquarterPosition(projectDto.getHeadquarterPosition());
+        project.setOrganisation(organisationsDao.findById(getOrganisationId()));
 
-        return index();
+        projectsDao.persist(project);
+        return ok();
     }
 
     public Result delete(UUID projectID) {
@@ -108,19 +109,4 @@ public class ProjectsController extends Controller {
         return index();
     }
 
-    public static class ProjectDto {
-        public final UUID id;
-        public final String name;
-
-        @JsonSerialize(using = JsonPointSerializer.class)
-        @JsonDeserialize(using = JsonPointDeserializer.class)
-        public final Point headquarterPosition;
-
-
-        public ProjectDto(UUID id, String name, Point headquarterPosition) {
-            this.id = id;
-            this.name = name;
-            this.headquarterPosition = headquarterPosition;
-        }
-    }
 }

@@ -12,6 +12,7 @@
                 url: 'http://localhost:9000/projects/' + $scope.projectId
             }).then(function successCallback(response) {
                 $scope.project = response.data;
+                console.log("Got project", $scope.project);
             }, function errorCallback(response) {
                 console.log("Failed to get response", e);
             });
@@ -74,12 +75,21 @@
         };
 
         $scope.save = function(){
-            console.log("Save");
-            console.log($scope.projectName);
-            console.log($scope.zones);
-            console.log($scope.projectId);
-        };
+            console.log("Save project");
+            console.log($scope.project);
 
+            var projectToSave = $scope.project;
+            $http({
+                method: 'POST',
+                url: 'http://localhost:9000/projects/' + $scope.projectId + '/update',
+                data: projectToSave
+            }).then(function successCallback(response) {
+                console.log("Saved successfully");
+            }, function errorCallback(response) {
+                console.log("Failed to save ...", response);
+            });
+
+        };
 
         initialize();
 
