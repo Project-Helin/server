@@ -1,6 +1,7 @@
 package dao;
 
 import com.google.inject.Inject;
+import models.Organisation;
 import play.db.jpa.JPAApi;
 
 import java.util.List;
@@ -37,6 +38,10 @@ public abstract class AbstractDao<T> {
 
     public void remove(T found){
         delete(found);
+    }
+
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 }
 
