@@ -40,12 +40,8 @@ public class UsersController extends Controller {
         } else {
             User user = userDao.authenticateAndGetUser(form.get().getEmail(), form.get().getPassword());
             if (user == null) {
-                flash("error", "Wrong user or password");
+                form.reject("Wrong user or password");
                 return badRequest(login.render(form));
-                //TODO add Mailservice and validate Email
-//            } else if (!user.isValidated()) {
-//                flash("error", "Account not validated, please check your email");
-//                return badRequest(login.render(form));
             } else {
                 session("email", user.getEmail());
                 session("name", user.getName());
@@ -80,7 +76,7 @@ public class UsersController extends Controller {
             user.setConfirmationToken(UUID.randomUUID().toString());
             userDao.persist(user);
             flash("info", "You should have received an E-Mail confirmation, please click on the link in the E-Mail");
-            return redirect("/");
+            return redirect(routes.UsersController.login());
         }
     }
 }
