@@ -17,8 +17,8 @@
         <a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zone</a>
     </li>
 
-    <li class="@activeLink(routes.ProjectsController.index(java.util.UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b")))">
-        <a href="@controllers.routes.ProjectsController.index(java.util.UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b"))"><i class="glyphicon glyphicon-map-marker"></i> Project</a>
+    <li class="@activeLink(controllers.routes.ProjectsController.index())">
+        <a href="@controllers.routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> Project</a>
     </li>
     <li class="@activeLink(controllers.organisations.routes.Organisations.index())">
         <a href="@controllers.organisations.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> Organisation</a>

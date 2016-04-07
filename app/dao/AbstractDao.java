@@ -1,7 +1,6 @@
 package dao;
 
 import com.google.inject.Inject;
-import models.Organisation;
 import play.db.jpa.JPAApi;
 
 import java.util.List;
