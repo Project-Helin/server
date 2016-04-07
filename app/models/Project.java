@@ -1,5 +1,6 @@
 package models;
 
+import commons.GisHelper;
 import org.geolatte.geom.Point;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.util.UUID;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
 	private UUID id;
 
     @Column()
@@ -17,6 +17,10 @@ public class Project {
 
     @Column()
     private Point headquarterPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organisation_id")
+    private Organisation organisation;
 
     public UUID getId() {
         return id;
@@ -40,5 +44,17 @@ public class Project {
 
     public void setHeadquarterPosition(Point headquarterPosition) {
         this.headquarterPosition = headquarterPosition;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+    }
+
+    public String headquarterPosition(){
+        return GisHelper.toWktStringWithoutSrid(headquarterPosition);
     }
 }

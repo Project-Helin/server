@@ -1,17 +1,15 @@
-# CREATE USER TABLE
+# CREATE ZONE TABLE
 
 # --- !Ups
-
-CREATE TABLE USERS
+CREATE TABLE project
 (
-  id        UUID                    NOT NULL PRIMARY KEY,
-  NAME      VARCHAR(255)            NOT NULL,
-  EMAIL     VARCHAR(255)            NOT NULL,
-  PASSWORD  VARCHAR(255)            NOT NULL,
-  VALIDATED  BOOLEAN                NOT NULL,
-  CONFIRMATION_TOKEN VARCHAR(255)   NOT NULL
+  id                  UUID                  NOT NULL PRIMARY KEY,
+
+  name                VARCHAR(200)          NOT NULL,
+  headquarterPosition GEOMETRY(POINT, 4326) NOT NULL,
+  organisation_id     UUID                  NOT NULL REFERENCES organisation (id)
 );
 
 # --- !Downs
 
-DROP TABLE USERS;
+DROP TABLE project;

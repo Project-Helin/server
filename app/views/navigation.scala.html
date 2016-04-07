@@ -1,5 +1,6 @@
+
 @activeLink(currentPath: Call) = @{
-    if(request.path.equals(currentPath.url())) {
+    if(request.path.contains(currentPath.url())) {
         "active"
     }
 }
@@ -15,8 +16,9 @@
     <li class="@activeLink(routes.ZoneCrudController.index())">
         <a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zone</a>
     </li>
-    <li class="@activeLink(routes.ProjectsController.index())">
-        <a href="@routes.ProjectsController.edit("bla")"><i class="glyphicon glyphicon-map-marker"></i> Project</a>
+
+    <li class="@activeLink(routes.ProjectsController.index(java.util.UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b")))">
+        <a href="@controllers.routes.ProjectsController.index(java.util.UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b"))"><i class="glyphicon glyphicon-map-marker"></i> Project</a>
     </li>
     <li class="@activeLink(controllers.organisations.routes.Organisations.index())">
         <a href="@controllers.organisations.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> Organisation</a>

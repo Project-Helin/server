@@ -1,45 +1,96 @@
 package controllers;
 
-
+import com.google.inject.Inject;
+import dao.ProjectsDao;
+import models.Organisation;
+import models.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import play.data.Form;
+import play.data.FormFactory;
+import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.messageviewer;
+import views.html.projects.add;
+import views.html.projects.index;
 import views.html.projects.edit;
-import views.html.projects.show;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Transactional
 public class ProjectsController extends Controller {
 
-    public Result index() {
-        return ok(messageviewer.render());
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
+
+    @Inject
+    private ProjectsDao projectsDao;
+
+    @Inject
+    private FormFactory formFactory;
+
+    public Result index(UUID organisationId) {
+        logger.info("Organisation id {}", organisationId);
+        List<Project> all = projectsDao
+                .findAll()
+                .stream()
+                .filter(o -> o.getOrganisation().getId().equals(organisationId))
+                .collect(Collectors.toList());
+
+        return ok(index.render(organisationId, all));
     }
 
-    public Result show(String id) {
-        return ok(show.render());
+    public Result add(UUID organisationId) {
+        Form<Project> form = formFactory
+                .form(Project.class)
+                .fill(new Project());
+
+        return ok(add.render(organisationId, form));
     }
 
-    public Result edit(String id) {
-        //TODO load Project from database and return it
-       return ok(edit.render());
+    public Result create(UUID organisationId) {
+
+        Form<Organisation> form = formFactory
+                .form(Organisation.class)
+                .bindFromRequest(request());
+
+        Organisation organisation = form.get();
+        organisation.setId(UUID.randomUUID());
+//         projectsDao.persist(organisation);
+
+        return index(organisationId);
     }
 
-    public Result update(String id) {
-        //TODO update project with that id
-        return ok();
+    public Result edit(UUID organisationId, UUID id) {
+        Project project = projectsDao.findById(id);
+
+        if (project == null) {
+            return forbidden("Project not found!");
+        }
+
+        return ok(edit.render(project));
     }
 
-    public Result createNew() {
-        //TODO return empty Project
-       return ok();
+    public Result update(UUID organisationId, UUID id) {
+        Organisation found = null; // organisationsDao.findById(id);
+
+        if (found == null) {
+            return forbidden("Organisation not found!");
+        }
+//        organisationsDao.persist(found);
+
+        return index(organisationId);
     }
 
-    public Result create() {
-        //TODO signInPost Project
-        return ok();
-    }
+    public Result delete(UUID organisationId, UUID id) {
+        Project found = projectsDao.findById(id);
+        if (found == null) {
+            return forbidden("Organisation not found!");
 
-    public Result delete(String id) {
-        //TODO delete Project
-        return ok();
+        }
+
+        projectsDao.delete(found);
+        return index(organisationId);
     }
 }

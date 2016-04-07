@@ -42,6 +42,9 @@ public class Zone {
         this.height = height;
     }
 
+    /**
+     * TODO: rename this ..
+     */
     public String wktStringHack(){
         return geom.toString().replace("SRID=4326;", "");
     }
