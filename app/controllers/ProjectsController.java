@@ -1,11 +1,11 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.GisHelper;
 import dao.OrganisationsDao;
 import dao.ProjectsDao;
 import models.Organisation;
 import models.Project;
+import models.Zone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.jpa.Transactional;
@@ -15,8 +15,7 @@ import play.mvc.Result;
 import views.html.projects.edit;
 import views.html.projects.index;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -87,9 +86,15 @@ public class ProjectsController extends Controller {
             return forbidden("Organisation not found!");
         }
 
+        List<ZoneDto> zones = new ArrayList<>();
+        for (Zone zone : found.getZones()) {
+            zones.add(new ZoneDto(zone.getId(), zone.getPolygon(), zone.getHeight(), zone.getType(), zone.getName()));
+        }
+
         ProjectDto projectDto = new ProjectDto(
                 found.getId(),
-                found.getName()
+                found.getName(),
+                zones
         );
 
         return ok(Json.toJson(projectDto));
@@ -110,9 +115,43 @@ public class ProjectsController extends Controller {
                 Json.fromJson(request().body().asJson(), ProjectDto.class);
         // set all fields
         project.setName(fromRequest.getName());
+
+        doMagic(project, fromRequest);
+
+
         projectsDao.persist(project);
 
         return ok();
+    }
+
+    // TODO Kiru: write documentation
+    private void doMagic(Project project, ProjectDto fromRequest) {
+        Set<Zone> zones = project.getZones();
+        HashSet<Zone> previousZones = new HashSet<>(zones);
+
+        project.getZones().clear();
+        project.getZones().addAll(mapAll(fromRequest, project, previousZones));
+    }
+
+    private List<Zone> mapAll(ProjectDto fromRequest, Project project, HashSet<Zone> previousZones) {
+        return fromRequest
+                .getZones()
+                .stream()
+                .map(zoneDto -> {
+                    Zone zone = new Zone();
+                    zone.setId(zoneDto.getId());
+
+                    if(previousZones.contains(zone)){
+                        zone = previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
+                    }
+
+                    zone.setType(zoneDto.getType());
+                    zone.setHeight(zoneDto.getHeight());
+                    zone.setPolygon(zoneDto.getPolygon());
+                    zone.setName(zoneDto.getName());
+                    zone.setProject(project);
+                    return zone;
+                }).collect(Collectors.toList());
     }
 
     public Result delete(UUID projectID) {

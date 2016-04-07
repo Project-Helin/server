@@ -4,6 +4,7 @@ import commons.GisHelper;
 import org.geolatte.geom.Point;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,9 +21,8 @@ public class Project {
     @JoinColumn(name = "organisation_id")
     private Organisation organisation;
 
-    @OneToMany
-    @JoinColumn(name ="project_id")
-    private Set<Zone> zones;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true)
+    private Set<Zone> zones = new HashSet<>();
 
     public UUID getId() {
         return id;

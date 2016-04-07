@@ -1,12 +1,6 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import commons.JsonPointDeserializer;
-import commons.JsonPointSerializer;
-import models.Project;
-import org.geolatte.geom.Point;
-
+import java.util.List;
 import java.util.UUID;
 
 
@@ -18,11 +12,12 @@ public class ProjectDto {
     private UUID id;
     private String name;
 
-    // TODO add zones here
+    private List<ZoneDto> zones;
 
-    public ProjectDto(UUID id, String name) {
+    public ProjectDto(UUID id, String name, List<ZoneDto> zones) {
         this.id = id;
         this.name = name;
+        this.zones = zones;
     }
 
     public ProjectDto() {
@@ -42,5 +37,13 @@ public class ProjectDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<ZoneDto> getZones() {
+        return zones;
+    }
+
+    public void setZones(List<ZoneDto> zones) {
+        this.zones = zones;
     }
 }
