@@ -23,7 +23,7 @@
 
                 @for(zone <- zones) {
                     readOnlyFeatures.push(
-                        format.readFeature('@zone.wktStringHack', {
+                        format.readFeature('', {
                             dataProjection: 'EPSG:4326',
                             featureProjection: 'EPSG:3857'
                         })

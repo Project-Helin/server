@@ -9,14 +9,21 @@ import java.util.UUID;
 public class Zone {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column
     private Polygon geom;
 
     @Column(name = "height")
-    private String height;
+    private Integer height;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private ZoneType zoneType;
+
+    @JoinColumn(name = "project_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Project project;
 
     public UUID getId() {
         return id;
@@ -34,18 +41,29 @@ public class Zone {
         this.geom = geom;
     }
 
-    public String getHeight() {
+    /*
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(Integer height) {
         this.height = height;
     }
+    */
 
-    /**
-     * TODO: rename this ..
-     */
-    public String wktStringHack(){
-        return geom.toString().replace("SRID=4326;", "");
+    public ZoneType getZoneType() {
+        return zoneType;
+    }
+
+    public void setZoneType(ZoneType zoneType) {
+        this.zoneType = zoneType;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Project getProject() {
+        return project;
     }
 }

@@ -4,6 +4,7 @@ import commons.GisHelper;
 import org.geolatte.geom.Point;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,6 +19,10 @@ public class Project {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organisation_id")
     private Organisation organisation;
+
+    @OneToMany
+    @JoinColumn(name ="project_id")
+    private Set<Zone> zones;
 
     public UUID getId() {
         return id;
@@ -41,5 +46,13 @@ public class Project {
 
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
+    }
+
+    public void setZones(Set<Zone> zones) {
+        this.zones = zones;
+    }
+
+    public Set<Zone> getZones() {
+        return zones;
     }
 }
