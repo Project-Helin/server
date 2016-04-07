@@ -1,6 +1,6 @@
 @import models.authentication.Login
+@import views.html.bootstrapHelpers._
 @(loginForm: Form[Login])
-
 @main("Project") {
 
     <div class="row">
@@ -8,11 +8,22 @@
             <div class="box">
                 <div class="box-body">
 
-                @helper.form(action = routes.UserSessionsController.login()) {
-                    @helper.inputText(loginForm("email"))
-                    @helper.inputPassword(loginForm("password"))
-                    <input type="submit" class="btn btn-primary" value="Speichern" />
-                }
+                    <fieldset>
+                        @text(loginForm("email"),
+                            label = "Email",
+                            placeholder = "Email Address",
+                            help = "Please enter your E-Mail. (required)")
+
+                        @password(loginForm("password"),
+                            label = "Password",
+                            placeholder = "",
+                            help = "Please enter a Password (required)")
+                    </fieldset>
+
+                    <div class="form-actions">
+                        <input type="submit" class="btn btn-primary" value="Log in">
+                        <small class="pull-right"><a href="#">Forgot Password</a></small>
+                    </div>
 
                 </div>
             </div>
