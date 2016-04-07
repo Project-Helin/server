@@ -35,7 +35,7 @@ DELETE        /projects/:id/delete             controllers.ProjectsController.de
 
 #Authentication
 GET    /login                      controllers.UserSessionsController.login()
-
+POST   /login                      controllers.UserSessionsController.create()
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                    controllers.Assets.at(path="/public", file)
 

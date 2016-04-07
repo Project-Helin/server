@@ -3,6 +3,8 @@ package dao;
 import models.User;
 import models.utils.AuthenticationHelper;
 
+import java.util.List;
+
 public class UserDao extends AbstractDao<User> {
 
     public UserDao() {
@@ -19,10 +21,17 @@ public class UserDao extends AbstractDao<User> {
     }
 
     public User findByEmail (String email) {
-        String sql = "select e from " + getEntityClass().getSimpleName() + " e where e.email=" + email;
-        return jpaApi.em()
+        String sql = "select e from Users e where e.email=:email";
+        List<User> resultList = jpaApi.em()
                 .createQuery(sql, getEntityClass())
-                .getSingleResult();
+                .setParameter("email", email)
+                .getResultList();
+
+        if (!resultList.isEmpty()) {
+            return resultList.get(0);
+        } else {
+            return null;
+        }
     }
 
 

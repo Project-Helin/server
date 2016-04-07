@@ -1,0 +1,17 @@
+# CREATE USER TABLE
+
+# --- !Ups
+
+CREATE TABLE USERS
+(
+  id        UUID                    NOT NULL PRIMARY KEY,
+  NAME      VARCHAR(255)            NOT NULL,
+  EMAIL     VARCHAR(255)            NOT NULL,
+  PASSWORD  VARCHAR(255)            NOT NULL,
+  VALIDATED  BOOLEAN                NOT NULL,
+  CONFIRMATION_TOKEN VARCHAR(255)   NOT NULL
+);
+
+# --- !Downs
+
+DROP TABLE USERS;
