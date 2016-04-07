@@ -3,34 +3,34 @@
 # ~~~~
 
 # Home page
-GET           /                                                        controllers.Application.index()
-POST          /person                                                  controllers.Application.addPerson()
-GET           /persons                                                 controllers.Application.getPersons
+GET         /                                                        controllers.Application.index()
+POST        /person                                                  controllers.Application.addPerson()
+GET         /persons                                                 controllers.Application.getPersons
 
 # Message Viewer
-GET           /messageviewer                                           controllers.MessageViewer.index()
-GET           /sendSampleMessage                                       controllers.MessageViewer.sendSampleMessage()
+GET         /messageviewer                                           controllers.MessageViewer.index()
+GET         /sendSampleMessage                                       controllers.MessageViewer.sendSampleMessage()
 #GET           /messageviewer/register         controllers.MessageViewer.register()
 
-GET           /zone                                                    controllers.ZoneCrudController.index()
+GET         /zone                                                    controllers.ZoneCrudController.index()
 
 #Organisation
-GET           /organisations                                           controllers.organisations.Organisations.index()
-GET           /organisations/add                                       controllers.organisations.Organisations.add()
-POST          /organisations/create                                    controllers.organisations.Organisations.create()
+GET         /organisations                                           controllers.organisations.Organisations.index()
+GET         /organisations/add                                       controllers.organisations.Organisations.add()
+POST        /organisations/create                                    controllers.organisations.Organisations.create()
 
-GET           /organisations/:id/edit                                  controllers.organisations.Organisations.edit(id : java.util.UUID)
-POST          /organisations/:id/update                                controllers.organisations.Organisations.update(id : java.util.UUID)
-GET           /organisations/:id/delete                                controllers.organisations.Organisations.delete(id : java.util.UUID)
+GET         /organisations/:id/edit                                  controllers.organisations.Organisations.edit(id : java.util.UUID)
+POST        /organisations/:id/update                                controllers.organisations.Organisations.update(id : java.util.UUID)
+GET         /organisations/:id/delete                                controllers.organisations.Organisations.delete(id : java.util.UUID)
 
 #Project
-GET           /organisations/:organisationId/project                   controllers.ProjectsController.index(organisationId : java.util.UUID)
-GET           /organisations/:organisationId/project/add               controllers.ProjectsController.add(organisationId : java.util.UUID)
-POST          /organisations/:organisationId/project/create            controllers.ProjectsController.create(organisationId : java.util.UUID)
+GET         /organisations/:organisationId/project                   controllers.ProjectsController.index(organisationId : java.util.UUID)
+GET         /organisations/:organisationId/project/add               controllers.ProjectsController.add(organisationId : java.util.UUID)
+POST        /organisations/:organisationId/project/create            controllers.ProjectsController.create(organisationId : java.util.UUID)
 
-GET           /organisations/:organisationId/project/:id/edit          controllers.ProjectsController.edit(organisationId : java.util.UUID, id : java.util.UUID)
-POST          /organisations/:organisationId/project/:id/update        controllers.ProjectsController.update(organisationId : java.util.UUID, id : java.util.UUID)
-GET           /organisations/:organisationId/project/:id/delete        controllers.ProjectsController.delete(organisationId : java.util.UUID, id : java.util.UUID)
+GET         /organisations/:organisationId/project/:id/edit          controllers.ProjectsController.edit(organisationId : java.util.UUID, id : java.util.UUID)
+POST        /organisations/:organisationId/project/:id/update        controllers.ProjectsController.update(organisationId : java.util.UUID, id : java.util.UUID)
+GET         /organisations/:organisationId/project/:id/delete        controllers.ProjectsController.delete(organisationId : java.util.UUID, id : java.util.UUID)
 
 #Project
 # TODO Kiru: fix this
@@ -44,15 +44,16 @@ GET           /organisations/:organisationId/project/:id/delete        controlle
 #DELETE        /projects/:id/delete                                     controllers.ProjectsController.delete(id : String)
 
 #Authentication
-GET    /login                      controllers.UsersController.login()
-POST   /login                      controllers.UsersController.loginPost()
-GET    /register                   controllers.UsersController.add()
-POST   /register                   controllers.UsersController.create()
+GET         /login                                                   controllers.UsersController.login()
+GET         /logout                                                  controllers.UsersController.logout()
+POST        /login                                                   controllers.UsersController.loginPost()
+GET         /register                                                controllers.UsersController.add()
+POST        /register                                                controllers.UsersController.create()
 # Map static resources from the /public folder to the /assets URL path
-GET           /assets/*file                                            controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                            controllers.Assets.at(path="/public", file)
 
 # Register Drone
-GET         /registerDrone                  controllers.RegisterDroneController.index()
+GET         /registerDrone                                           controllers.RegisterDroneController.index()
 
 
 #API

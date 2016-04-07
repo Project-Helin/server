@@ -47,10 +47,16 @@ public class UsersController extends Controller {
 //                flash("error", "Account not validated, please check your email");
 //                return badRequest(login.render(form));
             } else {
-                session("email", form.get().getEmail());
+                session("email", user.getEmail());
+                session("name", user.getName());
                 return redirect("/");
             }
         }
+    }
+
+    public Result logout() {
+        session().clear();
+        return redirect("/");
     }
 
     public Result add() {
