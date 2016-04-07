@@ -1,8 +1,12 @@
 package models;
 
+import models.utils.AuthenticationHelper;
+import play.data.validation.Constraints;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity(name="Users")
@@ -11,12 +15,15 @@ public class User {
     @Id
 	private UUID id;
 
+    @Constraints.Required
     @Column
     private String name;
 
+    @Constraints.Required
     @Column
     private String email;
 
+    @Constraints.Required
     @Column
     private String password;
 
@@ -50,7 +57,11 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        try {
+            this.password = AuthenticationHelper.createPassword(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getConfirmationToken() {

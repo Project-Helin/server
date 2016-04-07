@@ -34,8 +34,10 @@ POST          /projects/create                 controllers.ProjectsController.cr
 DELETE        /projects/:id/delete             controllers.ProjectsController.delete(id : String)
 
 #Authentication
-GET    /login                      controllers.UserSessionsController.login()
-POST   /login                      controllers.UserSessionsController.create()
+GET    /login                      controllers.UsersController.login()
+POST   /login                      controllers.UsersController.loginPost()
+GET    /register                   controllers.UsersController.add()
+POST   /register                   controllers.UsersController.create()
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                    controllers.Assets.at(path="/public", file)
 

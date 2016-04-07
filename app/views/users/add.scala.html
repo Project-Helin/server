@@ -1,21 +1,25 @@
-@import views.formdata.Login
 @import views.html.bootstrapHelpers._
-@(loginForm: Form[Login])
+@(userForm: Form[User])
     @main("Login") {
 
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-body">
-                    @helper.form(action = routes.UserSessionsController.create(), 'class -> "form-horizontal") {
+                    @helper.form(action = routes.UsersController.create(), 'class -> "form-horizontal") {
 
                         <fieldset>
-                            @text(loginForm("email"),
+                            @text(userForm("name"),
+                                label = "Name",
+                                placeholder = "Your Name"
+                            )
+
+                            @text(userForm("email"),
                                 label = "Email",
                                 placeholder = "Email Address"
                             )
 
-                            @password(loginForm("password"),
+                            @password(userForm("password"),
                                 label = "Password",
                                 placeholder = ""
                             )

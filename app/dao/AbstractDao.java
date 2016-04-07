@@ -28,7 +28,7 @@ public abstract class AbstractDao<T> {
         return jpaApi.em().find(entityClass, id);
     }
 
-    public void persist(Organisation organisation){
+    public void persist(Class organisation){
         jpaApi.em().persist(organisation);
     }
 
