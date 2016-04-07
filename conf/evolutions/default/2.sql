@@ -1,9 +1,6 @@
 # CREATE ZONE TABLE
 
 # --- !Ups
-CREATE EXTENSION postgis;
-CREATE EXTENSION "uuid-ossp";
-
 CREATE TABLE zone
 (
   id     UUID                    NOT NULL PRIMARY KEY,
@@ -30,5 +27,3 @@ INSERT INTO zone VALUES(
 # --- !Downs
 
 DROP TABLE zone;
-DROP EXTENSION IF EXISTS "postgis";
-DROP EXTENSION IF EXISTS "uuid-ossp";

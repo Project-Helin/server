@@ -1,35 +1,39 @@
 package models;
 
+import models.utils.AuthenticationHelper;
+import play.data.validation.Constraints;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Entity(name="Users")
 public class User {
 
     @Id
 	private UUID id;
 
+    @Constraints.Required
     @Column
     private String name;
 
+    @Constraints.Required
     @Column
-    private String eMail;
+    private String email;
 
+    @Constraints.Required
     @Column
     private String password;
 
-    @Column
+    @Column(name="confirmation_token")
     private String confirmationToken;
 
     @Column
     private boolean validated = false;
 
-    @ManyToMany
-    private List<Organisation> organisations;
+//    @ManyToMany
+//    private List<Organisation> organisations;
 
     public UUID getId() {
         return id;
@@ -47,20 +51,18 @@ public class User {
         this.name = name;
     }
 
-    public String geteMail() {
-        return eMail;
-    }
-
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
-    }
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        try {
+            if (password != null && !password.isEmpty()) {
+                this.password = AuthenticationHelper.createPassword(password);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getConfirmationToken() {
@@ -77,5 +79,13 @@ public class User {
 
     public void setValidated(boolean validated) {
         this.validated = validated;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

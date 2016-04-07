@@ -33,8 +33,11 @@ GET         /projects/:projectId/delete        controllers.ProjectsController.de
 POST        /projects/:projectId/update        controllers.ProjectsController.update(projectId : java.util.UUID)
 
 #Authentication
-GET         /login                             controllers.UserSessionsController.login()
-
+GET         /login                                                   controllers.UsersController.login()
+GET         /logout                                                  controllers.UsersController.logout()
+POST        /login                                                   controllers.UsersController.loginPost()
+GET         /register                                                controllers.UsersController.add()
+POST        /register                                                controllers.UsersController.create()
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                      controllers.Assets.at(path="/public", file)
 

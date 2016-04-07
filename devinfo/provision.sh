@@ -35,7 +35,7 @@ sudo apt-get install -y postgresql postgresql-contrib
 sudo apt-get install -y postgresql-9.3-postgis-2.1
 
 
-# create new user and DB
+# signInPost new user and DB
 sudo -u postgres createdb $DB_USER 
 sudo -u postgres createuser $DB_USER -s       # -s for superuser
 # change password
