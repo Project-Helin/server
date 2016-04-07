@@ -1,10 +1,11 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.GisHelper;
 import dao.OrganisationsDao;
 import dao.ProjectsDao;
+import models.Organisation;
 import models.Project;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.jpa.Transactional;
@@ -16,6 +17,8 @@ import views.html.projects.index;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Transactional
 public class ProjectsController extends Controller {
@@ -29,7 +32,7 @@ public class ProjectsController extends Controller {
     private OrganisationsDao organisationsDao;
 
     public Result index() {
-        UUID organisationId = getOrganisationId();
+        UUID organisationId = getOrganisation().getId();
 
         logger.info("Organisation id {}", organisationId);
         List<Project> all = projectsDao.findByOrganisation(organisationId);
@@ -37,11 +40,21 @@ public class ProjectsController extends Controller {
         return ok(index.render(all));
     }
 
-    private UUID getOrganisationId() {
+    private Organisation getOrganisation() {
+
         /**
-         * TODO Kiru: this should from from the current user
+         * For now -> HSR is always there
          */
-        return UUID.fromString("556963dd-94a3-46b0-9576-a27cb39fe62b");
+        return organisationsDao
+                .findAll()
+                .stream()
+                .filter(new Predicate<Organisation>() {
+                    @Override
+                    public boolean test(Organisation organisation) {
+                        return organisation.getName().equals("HSR");
+                    }
+                })
+                .collect(Collectors.toList()).get(0);
     }
 
     public Result add() {
@@ -84,16 +97,24 @@ public class ProjectsController extends Controller {
     }
 
     public Result update(UUID projectId) {
-        ProjectDto projectDto = Json.fromJson(request().body().asJson(), ProjectDto.class);
-        System.out.println(ToStringBuilder.reflectionToString(projectDto));
+        Project project = projectsDao.findById(projectId);
 
-        Project project = new Project();
-        project.setId(projectDto.getId());
-        project.setName(projectDto.getName());
-        project.setHeadquarterPosition(projectDto.getHeadquarterPosition());
-        project.setOrganisation(organisationsDao.findById(getOrganisationId()));
+        boolean isNewProject = project == null;
+        if (isNewProject) {
+            // create new project
+            project = new Project();
+            project.setId(UUID.randomUUID());
+            project.setOrganisation(getOrganisation());
+        }
 
+        ProjectDto fromRequest =
+                Json.fromJson(request().body().asJson(), ProjectDto.class);
+        // set all fields
+        project.setName(fromRequest.getName());
+        // TODO remove hard-coding
+        project.setHeadquarterPosition(GisHelper.createPoint(10, 10));
         projectsDao.persist(project);
+
         return ok();
     }
 
