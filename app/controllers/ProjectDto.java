@@ -18,17 +18,11 @@ public class ProjectDto {
     private UUID id;
     private String name;
 
-    @JsonSerialize(using = JsonPointSerializer.class)
-    @JsonDeserialize(using = JsonPointDeserializer.class)
-    private Point headquarterPosition;
-
     // TODO add zones here
 
-
-    public ProjectDto(UUID id, String name, Point headquarterPosition) {
+    public ProjectDto(UUID id, String name) {
         this.id = id;
         this.name = name;
-        this.headquarterPosition = headquarterPosition;
     }
 
     public ProjectDto() {
@@ -49,13 +43,4 @@ public class ProjectDto {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Point getHeadquarterPosition() {
-        return headquarterPosition;
-    }
-
-    public void setHeadquarterPosition(Point headquarterPosition) {
-        this.headquarterPosition = headquarterPosition;
-    }
-
 }

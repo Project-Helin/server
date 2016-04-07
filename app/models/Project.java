@@ -10,13 +10,10 @@ import java.util.UUID;
 public class Project {
 
     @Id
-	private UUID id;
+    private UUID id;
 
     @Column()
     private String name;
-
-    @Column()
-    private Point headquarterPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organisation_id")
@@ -38,23 +35,11 @@ public class Project {
         this.name = name;
     }
 
-    public Point getHeadquarterPosition() {
-        return headquarterPosition;
-    }
-
-    public void setHeadquarterPosition(Point headquarterPosition) {
-        this.headquarterPosition = headquarterPosition;
-    }
-
     public Organisation getOrganisation() {
         return organisation;
     }
 
     public void setOrganisation(Organisation organisation) {
         this.organisation = organisation;
-    }
-
-    public String headquarterPosition(){
-        return GisHelper.toWktStringWithoutSrid(headquarterPosition);
     }
 }

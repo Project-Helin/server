@@ -25,16 +25,10 @@ public class CustomApplicationLoaderTest {
 
         Project project = new Project();
         project.setId(UUID.randomUUID());
-        project.setHeadquarterPosition(point);
         project.setName("First Demo");
 
         JsonNode string = Json.toJson(project);
         String jsonRaw = string.toString();
         assertThat(jsonRaw).contains(GisHelper.toWktStringWithoutSrid(point));
-
-        // should parse it back
-        JsonNode parsedBack = Json.parse(jsonRaw);
-        Project parsedBackPoint = Json.fromJson(parsedBack, Project.class);
-        assertThat(parsedBackPoint.getHeadquarterPosition()).isEqualTo(point);
     }
 }

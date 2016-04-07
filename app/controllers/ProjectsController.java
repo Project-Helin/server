@@ -89,8 +89,7 @@ public class ProjectsController extends Controller {
 
         ProjectDto projectDto = new ProjectDto(
                 found.getId(),
-                found.getName(),
-                found.getHeadquarterPosition()
+                found.getName()
         );
 
         return ok(Json.toJson(projectDto));
@@ -111,8 +110,6 @@ public class ProjectsController extends Controller {
                 Json.fromJson(request().body().asJson(), ProjectDto.class);
         // set all fields
         project.setName(fromRequest.getName());
-        // TODO remove hard-coding
-        project.setHeadquarterPosition(GisHelper.createPoint(10, 10));
         projectsDao.persist(project);
 
         return ok();
