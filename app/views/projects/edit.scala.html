@@ -1,3 +1,5 @@
+@(project: Project)
+
 @main("Project") {
     <div ng-app="ProjectsApp" ng-controller="ProjectsController">
         <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
@@ -70,7 +72,6 @@
         <div class="col-xs-8">
             <zone-map zones="zones" selected-zone="selectedZone"></zone-map>
         </div>
-
 
     </div>
 }
