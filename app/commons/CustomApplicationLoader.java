@@ -3,6 +3,7 @@ package commons;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.api.ApplicationLoader;
@@ -32,8 +33,12 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
          * for why need this.
          */
         SimpleModule module = new SimpleModule();
-        module.addSerializer(Point.class, new JsonPointSerializer());
-        module.addDeserializer(Point.class, new JsonPointDeserializer());
+        module.addSerializer(Point.class, new JsonGeometrySerializer<>());
+        module.addDeserializer(Point.class, new JsonGeometryDeserializer<>());
+
+        module.addSerializer(Polygon.class, new JsonGeometrySerializer<>());
+        module.addDeserializer(Polygon.class, new JsonGeometryDeserializer<>());
+
         currentMapper.registerModule(module);
 
         // replace the mapper

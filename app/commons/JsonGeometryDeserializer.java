@@ -15,16 +15,17 @@ import java.io.IOException;
 /**
  * Convert object from WKT without SRID
  */
-public class JsonPointDeserializer extends JsonDeserializer<Point> {
+public class JsonGeometryDeserializer<T extends Geometry> extends JsonDeserializer<T> {
+
     @Override
-    public Point deserialize(JsonParser parser,
+    public T deserialize(JsonParser parser,
                              DeserializationContext ctxt) throws IOException, JsonProcessingException {
 
         String stringValue = parser.readValueAs(String.class);
 
         CoordinateReferenceSystem<?> referenceSystem = getSrid4326();
         Geometry<?> geometry = Wkt.fromWkt(stringValue, referenceSystem);
-        return (Point) geometry;
+        return (T) geometry;
     }
 
     /**
