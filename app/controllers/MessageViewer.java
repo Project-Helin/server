@@ -17,7 +17,6 @@ public class MessageViewer extends Controller {
     private static final Logger logger = LoggerFactory.getLogger(MessageViewer.class);
 
 
-    /*
     public WebSocket<String> register() {
         return new WebSocket<String>() {
             // Called when the Websocket Handshake is done.
@@ -34,7 +33,6 @@ public class MessageViewer extends Controller {
             }
         };
     }
-    */
 
     public Result sendSampleMessage() {
         logger.info("=> Send Sample Messages");
