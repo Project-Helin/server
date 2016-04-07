@@ -3,6 +3,7 @@ package commons;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.Project;
 import org.geolatte.geom.Point;
+import org.junit.Ignore;
 import org.junit.Test;
 import play.api.ApplicationLoader;
 import play.libs.Json;
@@ -15,6 +16,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class CustomApplicationLoaderTest {
 
     @Test
+    @Ignore // do this with zone
     public void shouldParseJsonCorrectly(){
         /**
          * Yeah - just trigger it by hand using dummy values
