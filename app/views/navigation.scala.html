@@ -1,6 +1,6 @@
 
 @activeLink(currentPath: Call) = @{
-    if(request.path.equals(currentPath.url())) {
+    if(request.path.contains(currentPath.url())) {
         "active"
     }
 }
