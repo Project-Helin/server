@@ -1,10 +1,20 @@
 (function () {
-    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', function ($scope, HelperService) {
+    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', '$http', function ($scope, HelperService, $http) {
 
         function initialize() {
             $scope.selectedZone = null;
             $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
             $scope.projectId = document.getElementById('projectId').value;
+
+
+            $http({
+                method: 'GET',
+                url: 'http://localhost:9000/projects/' + $scope.projectId
+            }).then(function successCallback(response) {
+                $scope.project = response.data;
+            }, function errorCallback(response) {
+                console.log("Failed to get response", e);
+            });
         }
 
         var defaultZoneTemplate = {
@@ -14,8 +24,8 @@
             type: 'OrderZone'
         };
 
-        $scope.projectName = "";
-        
+        $scope.project = {};
+
         $scope.zones = [
             {
                 id: 1,
