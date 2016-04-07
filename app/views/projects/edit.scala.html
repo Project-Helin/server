@@ -4,7 +4,7 @@
     <div ng-app="ProjectsApp" ng-controller="ProjectsController">
         <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
 
-        <script src="http://openlayers.org/en/v3.14.2/build/ol-debug.js"></script>
+        <script src='@routes.Assets.at("javascripts/common/ol-debug-3.14.2.js")'></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
         <script src='@routes.Assets.at("javascripts/ui-bootstrap-tpls-1.2.5.js")'></script>
         <script src='@routes.Assets.at("javascripts/common/common.module.js")'></script>
@@ -77,6 +77,7 @@
             </div>
 
             <div class="row" >
+                <a type="button" class="btn btn-default pull-right" href="@routes.ProjectsController.index()">Back</a>
                 <input type="button" class="btn btn-primary pull-right" value="Save" ng-click="save()" />
             </div>
         </div>
