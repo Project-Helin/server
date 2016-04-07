@@ -1,0 +1,47 @@
+@import views.html.bootstrapHelpers.text
+@import views.html.bootstrapHelpers.globalerrors
+@(form: Form[Product])
+
+@main("Project") {
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+
+
+                @helper.form(action = routes.ProductsController.create()) {
+
+                    <fieldset>
+                        @text(form("Name"),
+                            label = "Name",
+                            placeholder = "Product name"
+                        )
+
+                        @text(form("Price"),
+                            label = "Price",
+                            placeholder = ""
+                        )
+
+                        @text(form("wightGramm"),
+                            label = "Weight(g)",
+                            placeholder = "1000"
+                        )
+
+                        @globalerrors(form)
+
+                    </fieldset>
+
+
+                    <div class="form-actions">
+                        <input type="submit" id="login" class="btn btn-primary" value="Save">
+                        <a href="@routes.ProjectsController.index()" class="btn btn-default">Zurück</a>
+                    </div>
+                }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}@import views.html.bootstrapHelpers.password

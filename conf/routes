@@ -32,6 +32,15 @@ GET         /projects/:projectId/edit          controllers.ProjectsController.ed
 GET         /projects/:projectId/delete        controllers.ProjectsController.delete(projectId : java.util.UUID)
 POST        /projects/:projectId/update        controllers.ProjectsController.update(projectId : java.util.UUID)
 
+#Product
+GET         /products                     controllers.ProductsController.index()
+GET         /products/add                 controllers.ProductsController.add()
+POST        /products/create              controllers.ProductsController.create()
+
+GET         /products/:id/edit            controllers.ProductsController.edit(id : java.util.UUID)
+POST        /products/:id/update          controllers.ProductsController.update(id : java.util.UUID)
+GET         /products/:id/delete          controllers.ProductsController.delete(id : java.util.UUID)
+
 #Authentication
 GET         /login                                                   controllers.UsersController.login()
 GET         /logout                                                  controllers.UsersController.logout()
