@@ -45,6 +45,7 @@ public class UsersController extends Controller {
             } else {
                 session("email", user.getEmail());
                 session("name", user.getName());
+                flash("success", "Welcome " + user.getName());
                 return redirect("/");
             }
         }

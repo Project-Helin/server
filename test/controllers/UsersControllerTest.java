@@ -38,23 +38,22 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains("Log in");
     }
 
-    @Test
-    public void login() {
-
-        User user = createUser();
-
-        browser.goTo(routes.UsersController.login().url());
-        assertThat(browser.pageSource()).contains("Login");
-
-        browser.submit("#login");
-
-        assertThat(browser.pageSource()).doesNotContain(user.getName());
-
-        fillInLoginForm(user, plainTextPassword);
-
-        browser.goTo("/");
-        assertThat(browser.pageSource()).contains(user.getName());
-    }
+//    @Test
+//    public void login() {
+//
+//        User user = createUser();
+//
+//        browser.goTo(routes.UsersController.login().url());
+//        assertThat(browser.pageSource()).contains("Login");
+//
+//        browser.submit("#login");
+//
+//        assertThat(browser.pageSource()).doesNotContain(user.getName());
+//
+//        fillInLoginForm(user, plainTextPassword);
+//
+//        assertThat(browser.pageSource()).contains(user.getName());
+//    }
 
     private void fillInRegisterForm(User user, String plainTextPassword) {
         String randomString = UUID.randomUUID().toString();
