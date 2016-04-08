@@ -5,6 +5,7 @@ import commons.AbstractIntegrationTest;
 import dao.UserDao;
 import models.User;
 import org.junit.Test;
+import play.i18n.Messages;
 import play.test.Helpers;
 import play.test.TestBrowser;
 
@@ -33,11 +34,32 @@ public class UsersControllerTest extends AbstractIntegrationTest {
 
         browser.click(withText("Register"));
 
-        assertThat(browser.pageSource()).containsIgnoringCase("Register");
-
         fillInRegisterForm(user, plainTextPassword);
 
         assertThat(browser.pageSource()).contains("Log in");
+
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).contains(user.getName());
+    }
+
+
+    @Test
+    public void registerUserWithoutEmail() {
+        User userWithoutEmail = new User();
+        userWithoutEmail.setName("Anna Bolika");
+        userWithoutEmail.setEmail("");
+        userWithoutEmail.setPassword(plainTextPassword);
+
+        browser.goTo(routes.UsersController.add().url());
+
+        browser.submit("#register");
+
+        fillInRegisterForm(userWithoutEmail, plainTextPassword);
+
+        assertThat(browser.pageSource()).containsIgnoringCase(Messages.get("error.required"));
+        assertThat(browser.pageSource()).containsIgnoringCase("Register");
+        assertThat(browser.pageSource()).contains("Login");
     }
 
     @Test
@@ -70,10 +92,11 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
 
+
+
     private void fillInRegisterForm(User user, String plainTextPassword) {
-        String randomString = UUID.randomUUID().toString();
-        browser.fill(withName("name")).with(user.getName() + randomString);
-        browser.fill(withName("email")).with(user.getEmail() + randomString);
+        browser.fill(withName("name")).with(user.getName());
+        browser.fill(withName("email")).with(user.getEmail());
         browser.fill(withName("password")).with(plainTextPassword);
         browser.submit("#register");
     }
