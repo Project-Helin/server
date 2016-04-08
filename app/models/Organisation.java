@@ -1,6 +1,9 @@
 package models;
 
+import play.data.validation.Constraints;
+
 import javax.persistence.*;
+import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity
@@ -10,6 +13,7 @@ public class Organisation {
 	private UUID id;
 
     @Column(name = "name")
+    @Constraints.Required(message = "error.required")
     private String name;
 
     public UUID getId() {
