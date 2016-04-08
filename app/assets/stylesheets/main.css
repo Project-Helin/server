@@ -38,3 +38,12 @@
 .error-content {
     color: red;
 }
+
+.editable-click {
+    border-bottom: none!important;
+    color: black!important;
+}
+
+h1 {
+    font-size: 24px;
+}
