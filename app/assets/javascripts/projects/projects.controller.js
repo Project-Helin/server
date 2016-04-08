@@ -63,8 +63,7 @@
                 data: projectToSave
             }).then(function successCallback(response) {
                 console.log("Saved successfully");
-
-                alert("Saved successfully.")
+                toastr.success('Success', 'Saved successfully.');
             }, function errorCallback(response) {
                 console.log("Failed to save ...", response);
             });
