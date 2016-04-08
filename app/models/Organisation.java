@@ -13,7 +13,7 @@ public class Organisation {
 	private UUID id;
 
     @Column(name = "name")
-    @Constraints.Required(message = "error.required")
+    @Constraints.Required(message = "Name cannot be empty")
     private String name;
 
     public UUID getId() {

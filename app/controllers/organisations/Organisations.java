@@ -50,7 +50,6 @@ public class Organisations extends Controller {
             .form(Organisation.class)
             .bindFromRequest(request());
 
-        logger.info("Language " + Lang.defaultLang());
         if (form.hasErrors()) {
             logger.info("Has error, go back {}", form.errorsAsJson());
             return badRequest(add.render(form));
@@ -75,7 +74,12 @@ public class Organisations extends Controller {
             .form(Organisation.class)
             .fill(found);
 
-        return ok(edit.render(form));
+        if (form.hasErrors()) {
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(add.render(form));
+        } else {
+            return ok(edit.render(form));
+        }
     }
 
     public Result update(UUID id) {
@@ -84,10 +88,21 @@ public class Organisations extends Controller {
         if (found == null) {
             return forbidden("Organisation not found!");
         }
-        organisationsDao.persist(found);
-        flash("success", "Saved successfully");
 
-        return index();
+        Form<Organisation> form = formFactory
+                .form(Organisation.class)
+                .bindFromRequest(request());
+
+        if (form.hasErrors()) {
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(edit.render(form));
+        }else{
+
+            organisationsDao.persist(found);
+            flash("success", "Saved successfully");
+
+            return index();
+        }
     }
 
     public Result delete(UUID id) {
