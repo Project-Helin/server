@@ -1,10 +1,14 @@
 @import views.html.bootstrapHelpers._
 @(userForm: Form[User])
-    @main("Register") {
+    @main("") {
 
         <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3>Register</h3>
+                    </div>
+
                     <div class="box-body">
                     @helper.form(action = routes.UsersController.create(), 'class -> "form-horizontal") {
 
@@ -26,7 +30,7 @@
                         </fieldset>
 
                         <div class="form-actions">
-                            <input type="submit" id="register" class="btn btn-primary" value="Register">
+                            <input type="submit" id="register" class="btn btn-primary pull-right" value="Register">
                         </div>
                         }
                     </div>
