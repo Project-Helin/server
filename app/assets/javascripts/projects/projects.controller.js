@@ -20,8 +20,11 @@
             });
         }
 
+        function generateRandomZoneName() {
+            return "Zone" + Math.floor((Math.random() * 1000) + 1);
+        }
+
         var defaultZoneTemplate = {
-            id: HelperService.generateUUID(),
             polygon: null,
             height: 10,
             type: 'OrderZone'
@@ -35,6 +38,8 @@
 
         $scope.createZone = function () {
             var newZone = angular.copy(defaultZoneTemplate);
+            newZone.id = HelperService.generateUUID();
+            newZone.name = generateRandomZoneName();
             $scope.zones.splice(0, 0, newZone);
             $scope.selectZone(newZone);
         };
@@ -45,7 +50,7 @@
             });
         };
 
-        $scope.save = function(){
+        $scope.save = function () {
             console.log("Save project");
             console.log($scope.project);
 

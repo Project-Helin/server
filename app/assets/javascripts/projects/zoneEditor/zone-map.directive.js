@@ -235,8 +235,10 @@
                     var deletedZone = oldValue.filter(function (i) {
                         return newValue.indexOf(i) < 0;
                     })[0];
-                    var featureToDelete = getFeatureForZone(deletedZone);
-                    scope.vectorLayer.getSource().removeFeature(featureToDelete);
+                    if (deletedZone.polygon) {
+                        var featureToDelete = getFeatureForZone(deletedZone);
+                        scope.vectorLayer.getSource().removeFeature(featureToDelete);
+                    }
                 }
 
                 function getZone(id) {
