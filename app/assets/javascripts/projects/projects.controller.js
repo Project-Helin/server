@@ -1,23 +1,15 @@
 (function () {
-    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', '$http', function ($scope, HelperService, $http) {
+    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', '$http', 'ProjectsService', function ($scope, HelperService, $http, ProjectsService) {
 
         function initialize() {
             $scope.selectedZone = null;
             $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
             $scope.projectId = document.getElementById('projectId').value;
-
-
-            $http({
-                method: 'GET',
-                url: 'http://localhost:9000/projects/' + $scope.projectId
-            }).then(function successCallback(response) {
-                $scope.project = response.data;
-                $scope.zones = $scope.project.zones;
-
-                console.log("Got project", $scope.project);
-            }, function errorCallback(response) {
-                console.log("Failed to get response", e);
-            });
+            
+            ProjectsService.loadProject($scope.projectId).then(function (project) {
+                $scope.project = project;
+                $scope.zones = project.zones;
+            })
         }
 
         function generateRandomZoneName() {
