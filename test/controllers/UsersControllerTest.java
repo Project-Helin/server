@@ -5,12 +5,15 @@ import commons.AbstractIntegrationTest;
 import dao.UserDao;
 import models.User;
 import org.junit.Test;
+import play.test.Helpers;
+import play.test.TestBrowser;
 
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
+import static play.test.Helpers.testBrowser;
 
 public class UsersControllerTest extends AbstractIntegrationTest {
 
@@ -38,22 +41,22 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains("Log in");
     }
 
-//    @Test
-//    public void login() {
-//
-//        User user = createUser();
-//
-//        browser.goTo(routes.UsersController.login().url());
-//        assertThat(browser.pageSource()).contains("Login");
-//
-//        browser.submit("#login");
-//
-//        assertThat(browser.pageSource()).doesNotContain(user.getName());
-//
-//        fillInLoginForm(user, plainTextPassword);
-//
-//        assertThat(browser.pageSource()).contains(user.getName());
-//    }
+    @Test
+    public void login() {
+
+        User user = createUser();
+
+        browser.goTo(routes.UsersController.login().url());
+        assertThat(browser.pageSource()).contains("Login");
+
+        browser.submit("#login");
+
+        assertThat(browser.pageSource()).doesNotContain(user.getName());
+
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).contains(user.getName());
+    }
 
     private void fillInRegisterForm(User user, String plainTextPassword) {
         String randomString = UUID.randomUUID().toString();
@@ -64,8 +67,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
     }
 
     private void fillInLoginForm(User user, String plainTextPassword) {
-        String randomString = UUID.randomUUID().toString();
-        browser.fill(withName("email")).with(user.getEmail() + randomString);
+        browser.fill(withName("email")).with(user.getEmail());
         browser.fill(withName("password")).with(plainTextPassword);
         browser.submit("#login");
     }
@@ -83,5 +85,10 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         });
 
         return user;
+    }
+
+    @Override
+    protected TestBrowser provideBrowser(int port) {
+        return testBrowser(Helpers.FIREFOX);
     }
 }
