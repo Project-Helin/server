@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE-Skin.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/spacers.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
 
 
@@ -21,7 +22,7 @@
             <header class="main-header">
 
                     <!-- Logo -->
-                <a href="/index.html" class="logo">
+                <a href="/" class="logo">
                         <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini">H</span>
                         <!-- logo for regular state and mobile devices -->
@@ -38,52 +39,17 @@
                         <!-- Navbar Right Menu -->
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
+                            @if(session.get("email") != null) {
+                                @usermenu()
+                            } else {
+                                <li>
+                                    <a href="@routes.UsersController.add()">Register</a>
+                                </li>
+                                <li>
+                                    <a href="@routes.UsersController.login()">Login</a>
+                                </li>
+                            }
 
-                                <!-- User Account Menu -->
-                            <li class="dropdown user user-menu">
-                                    <!-- Menu Toggle Button -->
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                        <!-- The user image in the navbar-->
-                                    <span class="hidden-xs">Alexander Pierce</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                        <!-- The user image in the menu -->
-                                    <li class="user-header">
-                                        <p>
-                                            Alexander Pierce - Web Developer
-                                            <small>Member since Nov. 2012</small>
-                                        </p>
-                                    </li>
-                                        <!-- Menu Body -->
-                                    <li class="user-body">
-                                        <div class="row">
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Followers</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Sales</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Friends</a>
-                                            </div>
-                                        </div>
-                                            <!-- /.row -->
-                                    </li>
-                                        <!-- Menu Footer-->
-                                    <li class="user-footer">
-                                        <div class="pull-left">
-                                            <a href="#" class="btn btn-default btn-flat">Profile</a>
-                                        </div>
-                                        <div class="pull-right">
-                                            <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                                <!-- Control Sidebar Toggle Button -->
-                            <li>
-                                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                            </li>
                         </ul>
                     </div>
                 </nav>
@@ -111,6 +77,20 @@
                     </h1>
                 </section>
 
+                @if(flash.containsKey("success")) {
+                    <div class="well">
+                        <div id="success-message" class="text-success">
+                        @flash.get("success")
+                        </div>
+                    </div>
+                }
+                @if(flash.containsKey("error")) {
+                    <div class="well">
+                        <div id="error-message" class="text-danger">
+                        @flash.get("error")
+                        </div>
+                    </div>
+                }
                     <!-- Main content -->
                 <section class="content">
 

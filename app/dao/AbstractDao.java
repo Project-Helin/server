@@ -1,8 +1,6 @@
 package dao;
 
 import com.google.inject.Inject;
-import models.Organisation;
-import play.db.jpa.JPA;
 import play.db.jpa.JPAApi;
 
 import java.util.List;
@@ -12,7 +10,7 @@ public abstract class AbstractDao<T> {
     private Class<T> entityClass;
 
     @Inject
-    private JPAApi jpaApi;
+    protected JPAApi jpaApi;
 
     public AbstractDao(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -29,16 +27,20 @@ public abstract class AbstractDao<T> {
         return jpaApi.em().find(entityClass, id);
     }
 
-    public void persist(Organisation organisation){
+    public void persist(T organisation){
         jpaApi.em().persist(organisation);
     }
 
-    public void delete(Organisation found){
+    public void delete(T found){
         jpaApi.em().remove(found);
     }
 
-    public void remove(Organisation found){
+    public void remove(T found){
         delete(found);
+    }
+
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 }
 

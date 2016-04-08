@@ -1,0 +1,10 @@
+@(form: Form[_ <: Object])
+
+<div class="form-group">
+    <label class="col-sm-2"></label>
+    <div class="col-sm-10">
+        @for(error <- form.globalErrors) {
+            <span class="error-content"> @error.message</span>
+        }
+    </div>
+</div>

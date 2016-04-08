@@ -1,0 +1,38 @@
+@import views.formdata.Login
+@import views.html.bootstrapHelpers._
+@(loginForm: Form[Login])
+    @main("Login") {
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body">
+                    @helper.form(action = routes.UsersController.loginPost(), 'class -> "form-horizontal") {
+
+                        <fieldset>
+                            @text(loginForm("email"),
+                                label = "Email",
+                                placeholder = "Email Address"
+                            )
+
+                            @password(loginForm("password"),
+                                label = "Password",
+                                placeholder = ""
+                            )
+
+                            @globalerrors(loginForm)
+
+                        </fieldset>
+
+
+                        <div class="form-actions">
+                            <input type="submit" id="login" class="btn btn-primary" value="Log in">
+                            <small class="pull-right"><a href="#">Forgot Password</a></small>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }

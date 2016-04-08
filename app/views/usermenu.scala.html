@@ -1,0 +1,17 @@
+<li class="dropdown user user-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <span class="hidden-xs">@session.get("name")</span>
+    </a>
+    <ul class="dropdown-menu">
+        <li class="user-header">
+            <p>
+                @session.get("name")
+            </p>
+        </li>
+        <li class="user-footer">
+            <div class="pull-right">
+                <a href="@routes.UsersController.logout()" class="btn btn-default btn-flat">Logout</a>
+            </div>
+        </li>
+    </ul>
+</li>
