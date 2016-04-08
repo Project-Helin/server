@@ -1,11 +1,14 @@
 @import views.formdata.Login
 @import views.html.bootstrapHelpers._
 @(loginForm: Form[Login])
-    @main("Login") {
+    @main("") {
 
         <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3>Login</h3>
+                    </div>
                     <div class="box-body">
                     @helper.form(action = routes.UsersController.loginPost(), 'class -> "form-horizontal") {
 
@@ -26,8 +29,8 @@
 
 
                         <div class="form-actions">
-                            <input type="submit" id="login" class="btn btn-primary" value="Log in">
-                            <small class="pull-right"><a href="#">Forgot Password</a></small>
+                            <div class="col-xs-6"><small class="p-t"><a href="#">Forgot Password</a></small></div>
+                            <div class="col-xs-6"><input type="submit" id="login" class="btn btn-primary pull-right" value="Log in"></div>
                         </div>
                     }
                     </div>
