@@ -66,6 +66,7 @@
                 toastr.success('Success', 'Saved successfully.');
             }, function errorCallback(response) {
                 console.log("Failed to save ...", response);
+                toastr.error('Error', 'Could not save');
             });
 
         };
