@@ -29,7 +29,6 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-
         browser.goTo("/");
 
         browser.click(withText("Register"));
@@ -49,13 +48,26 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         browser.goTo(routes.UsersController.login().url());
         assertThat(browser.pageSource()).contains("Login");
 
-        browser.submit("#login");
-
-        assertThat(browser.pageSource()).doesNotContain(user.getName());
-
         fillInLoginForm(user, plainTextPassword);
 
         assertThat(browser.pageSource()).contains(user.getName());
+    }
+
+    @Test
+    public void loginWithWrongData() {
+
+        User user = createUser();
+
+        browser.goTo(routes.UsersController.login().url());
+
+        browser.submit("#login");
+        assertThat(browser.pageSource()).doesNotContain(user.getName());
+
+        user.setEmail("wrong.email@example.com");
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).doesNotContain(user.getName());
+        assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
 
     private void fillInRegisterForm(User user, String plainTextPassword) {
