@@ -85,8 +85,8 @@ public class OrganisationsTest extends AbstractIntegrationTest {
     }
 
 
-    @Override
-    protected TestBrowser provideBrowser(int port) {
-        return testBrowser(Helpers.FIREFOX);
-    }
+    //@Override
+    //protected TestBrowser provideBrowser(int port) {
+    //    return testBrowser(Helpers.FIREFOX);
+    //}
 }
