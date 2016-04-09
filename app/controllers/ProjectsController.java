@@ -45,7 +45,7 @@ public class ProjectsController extends Controller {
     }
 
     public Result create() {
-        UUID id = UUID.randomUUID();
+        UUID id = null;
         return ok(edit.render(id));
     }
 

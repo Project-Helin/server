@@ -8,7 +8,7 @@
                 .then(function (response) {
                     return response.data;
                 }).catch(function (error) {
-                    console.log("Failed while loading project", e);
+                    //Do nothing because it could be a new Project
                     return error;
                 });
         };

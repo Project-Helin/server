@@ -8,15 +8,17 @@
             $scope.project = {};
             $scope.zones = [];
 
-            ProjectsService.loadProject($scope.projectId).then(function (project) {
-                $scope.project = project;
-                $scope.zones = project.zones;
-                $timeout(function () {
-                    removeLeaveConfirmation();
-                }, 500);
-            });
+            if ($scope.projectId) {
+                ProjectsService.loadProject($scope.projectId).then(function (project) {
+                    $scope.project = project;
+                    $scope.zones = project.zones;
+                    $timeout(function () {
+                        removeLeaveConfirmation();
+                    }, 500);
+                });
+            }
         }
-        
+
         $scope.$watch('project', function (newVal, oldVal) {
             window.onbeforeunload = confirmOnPageExitIfUnsavedChanges;
         }, true);
@@ -26,7 +28,7 @@
             height: 10,
             type: 'OrderZone'
         };
-        
+
         $scope.selectZone = function (zone) {
             $scope.selectedZone = zone;
         };
@@ -46,6 +48,17 @@
         };
 
         $scope.save = function () {
+            if (!$scope.project.name) {
+                toastr.error('Error', 'Please ad a Project Title before saving.');
+                return;
+            }
+
+            if($scope.projectId) {
+                $scope.project.id = $scope.projectId;
+            } else {
+                $scope.project.id = HelperService.generateUUID();
+            }
+
             $scope.project.zones = $scope.zones;
 
             ProjectsService.saveProject($scope.project).then(function () {
