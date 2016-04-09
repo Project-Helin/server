@@ -1,20 +1,35 @@
 (function () {
-    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', '$http', 'ProjectsService', function ($scope, HelperService, $http, ProjectsService) {
+    angular.module('ProjectsApp').controller('ProjectsController', ['$scope', 'HelperService', '$http', 'ProjectsService', '$timeout', function ($scope, HelperService, $http, ProjectsService, $timeout) {
 
         function initialize() {
             $scope.selectedZone = null;
             $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
             $scope.projectId = document.getElementById('projectId').value;
-            
+
+
             ProjectsService.loadProject($scope.projectId).then(function (project) {
                 $scope.project = project;
                 $scope.zones = project.zones;
-            })
+                $timeout(function () {
+                    removeLeaveConfirmation();
+                }, 500);
+            });
+
+
         }
 
         function generateRandomZoneName() {
             return "Zone" + Math.floor((Math.random() * 1000) + 1);
         }
+
+        function removeLeaveConfirmation() {
+            window.onbeforeunload = null;
+        }
+
+        $scope.$watch('project', function (newVal, oldVal) {
+            console.log("ChangesDetected");
+            window.onbeforeunload = confirmOnPageExitIfUnsavedChanges;
+        }, true);
 
         var defaultZoneTemplate = {
             polygon: null,
@@ -43,25 +58,18 @@
         };
 
         $scope.save = function () {
-            console.log("Save project");
-            console.log($scope.project);
-
             $scope.project.zones = $scope.zones;
-            var projectToSave = $scope.project;
 
-            $http({
-                method: 'POST',
-                url: 'http://localhost:9000/projects/' + $scope.projectId + '/update',
-                data: projectToSave
-            }).then(function successCallback(response) {
-                console.log("Saved successfully");
+            ProjectsService.saveProject($scope.project).then(function () {
+                removeLeaveConfirmation();
                 toastr.success('Success', 'Saved successfully.');
-            }, function errorCallback(response) {
-                console.log("Failed to save ...", response);
-                toastr.error('Error', 'Could not save');
             });
 
         };
+
+        function confirmOnPageExitIfUnsavedChanges() {
+            return "There are unsaved changes";
+        }
 
         initialize();
 
