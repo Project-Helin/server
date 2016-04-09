@@ -1,4 +1,4 @@
-package commons;
+package commons.gis;
 
 import ch.helin.messages.commons.AssertUtils;
 import org.geolatte.geom.ByteBuffer;
@@ -51,4 +51,18 @@ public class GisHelper {
         WkbDecoder decoder = Wkb.newDecoder(Wkb.Dialect.POSTGIS_EWKB_1);
         return decoder.decode(buffer);
     }
+
+    /**
+     *
+     * @param wktString - a WellKnownBinary String
+     * @return GeoLatte.geometry - parsed to a simple WKT format
+     */
+
+    public static Geometry convertFromWKTToGeometry(String wktString) {
+        if (wktString == null) {
+            return null;
+        }
+        return Wkt.fromWkt(wktString);
+    }
+
 }

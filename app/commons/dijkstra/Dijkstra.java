@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 
 public class Dijkstra
 {
-    public static void computePaths(Vertex source)
+    public void computePaths(Vertex source)
     {
         source.minDistance = 0.;
         PriorityQueue<Vertex> vertexQueue = new PriorityQueue<>();
@@ -34,7 +34,7 @@ public class Dijkstra
         }
     }
 
-    public static List<Vertex> getShortestPathTo(Vertex target)
+    public List<Vertex> getShortestPathTo(Vertex target)
     {
         List<Vertex> path = new ArrayList<Vertex>();
         for (Vertex vertex = target; vertex != null; vertex = vertex.previous)

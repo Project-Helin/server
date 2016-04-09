@@ -1,12 +1,10 @@
 package commons;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import commons.GisHelper;
+import commons.gis.GisHelper;
 import org.geolatte.geom.Geometry;
-import org.geolatte.geom.Point;
 
 import java.io.IOException;
 

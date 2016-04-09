@@ -2,7 +2,6 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.GisHelper;
 import dao.OrganisationsDao;
 import dao.ProjectsDao;
 import models.Organisation;
