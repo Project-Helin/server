@@ -5,6 +5,7 @@ import commons.MessageConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.mvc.Controller;
+import play.mvc.LegacyWebSocket;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 import views.html.messageviewer;
@@ -17,9 +18,9 @@ public class MessageViewer extends Controller {
     private static final Logger logger = LoggerFactory.getLogger(MessageViewer.class);
 
 
-    /*
-    public WebSocket<String> register() {
-        return new WebSocket<String>() {
+
+    public LegacyWebSocket<String> register() {
+        return new LegacyWebSocket<String>() {
             // Called when the Websocket Handshake is done.
             public void onReady(WebSocket.In<String> in, WebSocket.Out<String> out) {
 
@@ -35,7 +36,6 @@ public class MessageViewer extends Controller {
         };
     }
 
-*/
 
     public Result sendSampleMessage() {
         logger.info("=> Send Sample Messages");
