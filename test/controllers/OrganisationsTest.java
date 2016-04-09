@@ -5,14 +5,11 @@ import commons.AbstractIntegrationTest;
 import dao.OrganisationsDao;
 import models.Organisation;
 import org.junit.Test;
-import play.test.Helpers;
-import play.test.TestBrowser;
 
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
-import static play.test.Helpers.testBrowser;
 
 public class OrganisationsTest extends AbstractIntegrationTest {
     @Inject

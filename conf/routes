@@ -56,6 +56,8 @@ GET         /registerDrone                     controllers.RegisterDroneControll
 
 #API
 
+POST        /api/drones/                       controllers.api.DronesController.create()
+
 #Project
 
 #TODO Get Project including Zones

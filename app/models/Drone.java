@@ -11,6 +11,8 @@ public class Drone {
     @Id
     private UUID id;
 
+    private String name;
+
     private UUID token;
 
     private Coordinate lastKnownPosition;
@@ -72,5 +74,29 @@ public class Drone {
 
     public void setToken(UUID token) {
         this.token = token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
