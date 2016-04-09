@@ -30,22 +30,22 @@ public class Organisations extends Controller {
 
     public Result index() {
         List<Organisation> all =
-            organisationsDao.findAll();
+                organisationsDao.findAll();
         return ok(index.render(all));
     }
 
     public Result add() {
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .fill(new Organisation());
+                .form(Organisation.class)
+                .fill(new Organisation());
 
         return ok(add.render(form));
     }
 
     public Result create() {
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .bindFromRequest(request());
+                .form(Organisation.class)
+                .bindFromRequest(request());
 
         if (form.hasErrors()) {
             logger.info("Has error, go back {}", form.errorsAsJson());
@@ -68,8 +68,8 @@ public class Organisations extends Controller {
         }
 
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .fill(found);
+                .form(Organisation.class)
+                .fill(found);
 
         if (form.hasErrors()) {
             logger.info("Has error, go back {}", form.errorsAsJson());
@@ -93,7 +93,7 @@ public class Organisations extends Controller {
         if (form.hasErrors()) {
             logger.info("Has error, go back {}", form.errorsAsJson());
             return badRequest(edit.render(form));
-        }else{
+        } else {
 
             organisationsDao.persist(found);
             flash("success", "Saved successfully");
