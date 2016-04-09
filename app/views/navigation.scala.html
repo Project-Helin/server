@@ -1,5 +1,5 @@
 
-@activeLink(currentPath: Call) = @{
+    @activeLink(currentPath: Call) = @{
     if(request.path.contains(currentPath.url())) {
         "active"
     }
@@ -10,8 +10,8 @@
     <li class="@activeLink(routes.Application.index())">
         <a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> <span>Home</span></a>
     </li>
-    <li class="@activeLink(controllers.organisations.routes.Organisations.index())">
-        <a href="@controllers.organisations.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> <span>Organisations</span></a>
+    <li class="@activeLink(controllers.routes.Organisations.index())">
+        <a href="@controllers.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> <span>Organisations</span></a>
     </li>
     <li class="@activeLink(controllers.routes.ProductsController.index())">
         <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>

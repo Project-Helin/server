@@ -6,15 +6,12 @@ import dao.UserDao;
 import models.User;
 import org.junit.Test;
 import play.i18n.Messages;
-import play.test.Helpers;
-import play.test.TestBrowser;
 
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
-import static play.test.Helpers.testBrowser;
 
 public class UsersControllerTest extends AbstractIntegrationTest {
 
@@ -122,8 +119,8 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         return user;
     }
 
-    @Override
-    protected TestBrowser provideBrowser(int port) {
-        return testBrowser(Helpers.FIREFOX);
-    }
+//    @Override
+//    protected TestBrowser provideBrowser(int port) {
+//        return testBrowser(Helpers.FIREFOX);
+//    }
 }

@@ -15,13 +15,13 @@ GET         /sendSampleMessage                 controllers.MessageViewer.sendSam
 GET         /zone                              controllers.ZoneCrudController.index()
 
 #Organisation
-GET         /organisations                     controllers.organisations.Organisations.index()
-GET         /organisations/add                 controllers.organisations.Organisations.add()
-POST        /organisations/create              controllers.organisations.Organisations.create()
+GET         /organisations                     controllers.Organisations.index()
+GET         /organisations/add                 controllers.Organisations.add()
+POST        /organisations/create              controllers.Organisations.create()
 
-GET         /organisations/:id/edit            controllers.organisations.Organisations.edit(id : java.util.UUID)
-POST        /organisations/:id/update          controllers.organisations.Organisations.update(id : java.util.UUID)
-GET         /organisations/:id/delete          controllers.organisations.Organisations.delete(id : java.util.UUID)
+GET         /organisations/:id/edit            controllers.Organisations.edit(id : java.util.UUID)
+POST        /organisations/:id/update          controllers.Organisations.update(id : java.util.UUID)
+GET         /organisations/:id/delete          controllers.Organisations.delete(id : java.util.UUID)
 
 #Project
 GET         /projects                          controllers.ProjectsController.index()

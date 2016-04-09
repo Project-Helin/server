@@ -1,16 +1,18 @@
-package controllers.organisations;
+package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.OrganisationsDao;
 import models.Organisation;
 import org.junit.Test;
+import play.test.Helpers;
+import play.test.TestBrowser;
 
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
-import static org.fluentlenium.core.filter.FilterConstructor.withText;
+import static play.test.Helpers.testBrowser;
 
 public class OrganisationsTest extends AbstractIntegrationTest {
     @Inject
@@ -28,15 +30,15 @@ public class OrganisationsTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldRemoveOrganisation() {
+    public void shouldRemoveOrganisation() throws InterruptedException {
         Organisation organisation = createNewOrganisation();
 
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).contains(organisation.getName());
-
         // remove that
-        browser.click(withText("Delete"));
-
+        browser.find("#delete-" + organisation.getId()).click();
+        //confirm delete
+        browser.find("#deleteconfirm-" + organisation.getId()).click();
         // verify
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());
@@ -54,10 +56,10 @@ public class OrganisationsTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldAddNewOrganisation() {
+    public void shouldAddNewOrganisation() throws InterruptedException {
         browser.goTo(routes.Organisations.add().url());
 
-        browser.fill(withName("Name")).with("HSR Tester");
+        browser.fill(withName("name")).with("HSR Tester");
         browser.submit("Save");
 
         // verify
@@ -71,14 +73,20 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         browser.goTo(routes.Organisations.index().url());
 
         // go to edit
-        browser.click(withText("Edit"));
+        browser.find("#edit-" + organisation.getId()).click();
 
         // save it
-        browser.fill(withName("Name")).with("HSR Tester");
+        browser.fill(withName("name")).with("HSR Tester");
         browser.submit("Save");
 
         // verify
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).doesNotContain("HSR Tester");
+    }
+
+
+    @Override
+    protected TestBrowser provideBrowser(int port) {
+        return testBrowser(Helpers.FIREFOX);
     }
 }

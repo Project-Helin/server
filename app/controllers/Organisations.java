@@ -1,4 +1,4 @@
-package controllers.organisations;
+package controllers;
 
 import com.google.inject.Inject;
 import dao.OrganisationsDao;
@@ -7,12 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
 import play.data.FormFactory;
-import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
-import play.i18n.Lang;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.login;
 import views.html.organisations.add;
 import views.html.organisations.edit;
 import views.html.organisations.index;

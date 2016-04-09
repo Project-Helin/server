@@ -39,23 +39,6 @@ public class ProjectsController extends Controller {
         return ok(index.render(all));
     }
 
-    private Organisation getOrganisation() {
-
-        /**
-         * For now -> HSR is always there
-         */
-        return organisationsDao
-                .findAll()
-                .stream()
-                .filter(new Predicate<Organisation>() {
-                    @Override
-                    public boolean test(Organisation organisation) {
-                        return organisation.getName().equals("HSR");
-                    }
-                })
-                .collect(Collectors.toList()).get(0);
-    }
-
     public Result add() {
         UUID newProjectId = UUID.randomUUID();
         return ok(edit.render(newProjectId));
@@ -63,16 +46,10 @@ public class ProjectsController extends Controller {
 
     public Result create() {
         UUID id = UUID.randomUUID();
-        /**
-         * This is an angular page - so not that much to do here.
-         */
         return ok(edit.render(id));
     }
 
     public Result edit(UUID id) {
-        /**
-         * This is an angular page - so not that much to do here.
-         */
         return ok(edit.render(id));
     }
 
@@ -119,6 +96,23 @@ public class ProjectsController extends Controller {
         projectsDao.persist(project);
 
         return ok();
+    }
+
+    private Organisation getOrganisation() {
+
+        /**
+         * For now -> HSR is always there
+         */
+        return organisationsDao
+                .findAll()
+                .stream()
+                .filter(new Predicate<Organisation>() {
+                    @Override
+                    public boolean test(Organisation organisation) {
+                        return organisation.getName().equals("HSR");
+                    }
+                })
+                .collect(Collectors.toList()).get(0);
     }
 
     /**
