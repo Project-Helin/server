@@ -27,16 +27,16 @@ public abstract class AbstractDao<T> {
         return jpaApi.em().find(entityClass, id);
     }
 
-    public void persist(T organisation){
-        jpaApi.em().persist(organisation);
+    public void persist(T entity){
+        jpaApi.em().persist(entity);
     }
 
-    public void delete(T found){
-        jpaApi.em().remove(found);
+    public void delete(T entity){
+        jpaApi.em().remove(entity);
     }
 
-    public void remove(T found){
-        delete(found);
+    public void remove(T entity){
+        delete(entity);
     }
 
     public Class<T> getEntityClass() {
