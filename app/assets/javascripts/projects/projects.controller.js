@@ -5,7 +5,8 @@
             $scope.selectedZone = null;
             $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
             $scope.projectId = document.getElementById('projectId').value;
-
+            $scope.project = {};
+            $scope.zones = [];
 
             ProjectsService.loadProject($scope.projectId).then(function (project) {
                 $scope.project = project;
@@ -14,20 +15,9 @@
                     removeLeaveConfirmation();
                 }, 500);
             });
-
-
         }
-
-        function generateRandomZoneName() {
-            return "Zone" + Math.floor((Math.random() * 1000) + 1);
-        }
-
-        function removeLeaveConfirmation() {
-            window.onbeforeunload = null;
-        }
-
+        
         $scope.$watch('project', function (newVal, oldVal) {
-            console.log("ChangesDetected");
             window.onbeforeunload = confirmOnPageExitIfUnsavedChanges;
         }, true);
 
@@ -36,9 +26,7 @@
             height: 10,
             type: 'OrderZone'
         };
-
-        $scope.project = {};
-        $scope.zones = [];
+        
         $scope.selectZone = function (zone) {
             $scope.selectedZone = zone;
         };
@@ -70,6 +58,15 @@
         function confirmOnPageExitIfUnsavedChanges() {
             return "There are unsaved changes";
         }
+
+        function generateRandomZoneName() {
+            return "Zone" + Math.floor((Math.random() * 1000) + 1);
+        }
+
+        function removeLeaveConfirmation() {
+            window.onbeforeunload = null;
+        }
+
 
         initialize();
 

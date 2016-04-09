@@ -7,9 +7,9 @@
             return $http.get(this.projectUrl + id)
                 .then(function (response) {
                     return response.data;
-                }).catch(function (e) {
+                }).catch(function (error) {
                     console.log("Failed while loading project", e);
-                    return {};
+                    return error;
                 });
         };
 
