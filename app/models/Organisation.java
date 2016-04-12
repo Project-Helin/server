@@ -1,16 +1,19 @@
 package models;
 
+import play.data.validation.Constraints;
+
 import javax.persistence.*;
+import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity
 public class Organisation {
 
     @Id
-//    @GeneratedValue(strategy=GenerationType.AUTO)
 	private UUID id;
 
     @Column(name = "name")
+    @Constraints.Required(message = "Name cannot be empty")
     private String name;
 
     public UUID getId() {

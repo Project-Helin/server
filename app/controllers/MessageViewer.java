@@ -3,23 +3,24 @@ package controllers;
 
 import commons.MessageConnection;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.mvc.Controller;
+import play.mvc.LegacyWebSocket;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 import views.html.messageviewer;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
 public class MessageViewer extends Controller {
 
-    private static final Logger logger = getLogger(MessageViewer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageViewer.class);
 
-    /*
-    public WebSocket<String> register() {
-        return new WebSocket<String>() {
+
+
+    public LegacyWebSocket<String> register() {
+        return new LegacyWebSocket<String>() {
             // Called when the Websocket Handshake is done.
             public void onReady(WebSocket.In<String> in, WebSocket.Out<String> out) {
 
@@ -29,13 +30,18 @@ public class MessageViewer extends Controller {
 
                 // When the socket is closed.
                 in.onClose(messageConnection::closeConnection);
-                logger.info("Got connection");
+//                System.out.println("Got connection");
+                logger.info("=> Got connection");
             }
         };
     }
-    */
+
 
     public Result sendSampleMessage() {
+        logger.info("=> Send Sample Messages");
+
+        //MySimpleMessage mySimpleMessage = new MySimpleMessage();
+
         MessageConnection messageConnection = new MessageConnection();
         messageConnection.sendMessage("Hello Buddy, time is " + System.currentTimeMillis());
         messageConnection.closeConnection();
@@ -43,6 +49,7 @@ public class MessageViewer extends Controller {
     }
 
     public Result index() {
+        logger.info("=> Show index");
         return ok(messageviewer.render());
     }
 }

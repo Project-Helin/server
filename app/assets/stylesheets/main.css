@@ -34,3 +34,25 @@
 .LoadingZone {
     background-color: rgba(243, 156, 18, 0.3);
 }
+
+.error-content {
+    color: red;
+}
+
+.editable-click {
+    border-bottom: none!important;
+    color: black!important;
+}
+
+.site-title {
+    font-size: 24px;
+}
+
+.box-header > h3{
+    font-size: 24px;
+    margin: 0;
+}
+
+.position-relative {
+    position: relative;
+}

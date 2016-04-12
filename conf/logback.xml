@@ -20,6 +20,7 @@
   <logger name="javax.management" level="INFO" />
   <logger name="org.apache.http.impl.conn" level="INFO" />
   <logger name="com.zaxxer.hikari" level="INFO" />
+  <logger name="com.zaxxer.hikari.HikariConfig" level="DEBUG" />
 
   <root level="DEBUG">
     <appender-ref ref="STDOUT" />

@@ -1,5 +1,6 @@
-@activeLink(currentPath: Call) = @{
-    if(request.path.equals(currentPath.url())) {
+
+    @activeLink(currentPath: Call) = @{
+    if(request.path.contains(currentPath.url())) {
         "active"
     }
 }
@@ -7,19 +8,21 @@
 <ul class="sidebar-menu">
 
     <li class="@activeLink(routes.Application.index())">
-        <a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> Home</a>
+        <a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> <span>Home</span></a>
     </li>
+    <li class="@activeLink(controllers.routes.Organisations.index())">
+        <a href="@controllers.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> <span>Organisations</span></a>
+    </li>
+    <li class="@activeLink(controllers.routes.ProductsController.index())">
+        <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>
+    </li>
+    <li class="@activeLink(controllers.routes.ProjectsController.index())">
+        <a href="@controllers.routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> <span>Projects</span></a>
+    </li>
+    @*<li class="@activeLink(routes.ZoneCrudController.index())">*@
+    @*<a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zones</a>*@
+    @*</li>*@
     <li class="@activeLink(routes.MessageViewer.index())">
-        <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> Message Viewer</a>
+        <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> <span>Debug</span></a>
     </li>
-    <li class="@activeLink(routes.ZoneCrudController.index())">
-        <a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zone</a>
-    </li>
-    <li class="@activeLink(routes.ProjectsController.index())">
-        <a href="@routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> Project</a>
-    </li>
-    <li class="@activeLink(controllers.organisations.routes.Organisations.index())">
-        <a href="@controllers.organisations.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> Organisation</a>
-    </li>
-
 </ul>

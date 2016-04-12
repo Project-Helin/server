@@ -40,10 +40,13 @@ libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
 libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
 
 /**
+  * Extension for Encryption
+  */
+libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
+/**
   * For testing
   */
 libraryDependencies += "org.easytesting" % "fest-assert" % "1.4"
-
 libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
 
 

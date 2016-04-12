@@ -1,8 +1,10 @@
-package controllers.organisations;
+package controllers;
 
 import com.google.inject.Inject;
 import dao.OrganisationsDao;
 import models.Organisation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.data.Form;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
@@ -24,30 +26,38 @@ public class Organisations extends Controller {
     @Inject
     private FormFactory formFactory;
 
+    private static final Logger logger = LoggerFactory.getLogger(Organisations.class);
+
     public Result index() {
         List<Organisation> all =
-            organisationsDao.findAll();
+                organisationsDao.findAll();
         return ok(index.render(all));
     }
 
     public Result add() {
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .fill(new Organisation());
+                .form(Organisation.class)
+                .fill(new Organisation());
 
         return ok(add.render(form));
     }
 
     public Result create() {
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .bindFromRequest(request());
+                .form(Organisation.class)
+                .bindFromRequest(request());
 
-        Organisation organisation = form.get();
-        organisation.setId(UUID.randomUUID());
-        organisationsDao.persist(organisation);
+        if (form.hasErrors()) {
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(add.render(form));
+        } else {
 
-        return index();
+            Organisation organisation = form.get();
+            organisation.setId(UUID.randomUUID());
+            organisationsDao.persist(organisation);
+
+            return index();
+        }
     }
 
     public Result edit(UUID id) {
@@ -58,10 +68,15 @@ public class Organisations extends Controller {
         }
 
         Form<Organisation> form = formFactory
-            .form(Organisation.class)
-            .fill(found);
+                .form(Organisation.class)
+                .fill(found);
 
-        return ok(edit.render(form));
+        if (form.hasErrors()) {
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(add.render(form));
+        } else {
+            return ok(edit.render(form));
+        }
     }
 
     public Result update(UUID id) {
@@ -70,9 +85,21 @@ public class Organisations extends Controller {
         if (found == null) {
             return forbidden("Organisation not found!");
         }
-        organisationsDao.persist(found);
 
-        return index();
+        Form<Organisation> form = formFactory
+                .form(Organisation.class)
+                .bindFromRequest(request());
+
+        if (form.hasErrors()) {
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(edit.render(form));
+        } else {
+
+            organisationsDao.persist(found);
+            flash("success", "Saved successfully");
+
+            return index();
+        }
     }
 
     public Result delete(UUID id) {
@@ -81,6 +108,8 @@ public class Organisations extends Controller {
         if (found == null) {
             return forbidden("Organisation not found!");
         }
+
+        flash("success", "Deleted successfully");
         organisationsDao.delete(found);
         return index();
     }

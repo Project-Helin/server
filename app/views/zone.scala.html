@@ -23,7 +23,7 @@
 
                 @for(zone <- zones) {
                     readOnlyFeatures.push(
-                        format.readFeature('@zone.wktStringHack', {
+                        format.readFeature('', {
                             dataProjection: 'EPSG:4326',
                             featureProjection: 'EPSG:3857'
                         })
@@ -53,7 +53,7 @@
         @for(zone <- zones) {
             <div class="gesture-item">
                 <p>@zone.getId</p>
-                <p>@zone.getGeom</p>
+                <p>@zone.getPolygon</p>
             </div>
         }
     </div>

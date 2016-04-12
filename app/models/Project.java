@@ -1,22 +1,25 @@
 package models;
 
-import org.geolatte.geom.Point;
-
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 public class Project {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	private UUID id;
+    private UUID id;
 
     @Column()
     private String name;
 
-    @Column()
-    private Point headquarterPosition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organisation_id")
+    private Organisation organisation;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true)
+    private Set<Zone> zones = new HashSet<>();
 
     public UUID getId() {
         return id;
@@ -34,11 +37,19 @@ public class Project {
         this.name = name;
     }
 
-    public Point getHeadquarterPosition() {
-        return headquarterPosition;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setHeadquarterPosition(Point headquarterPosition) {
-        this.headquarterPosition = headquarterPosition;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+    }
+
+    public void setZones(Set<Zone> zones) {
+        this.zones = zones;
+    }
+
+    public Set<Zone> getZones() {
+        return zones;
     }
 }

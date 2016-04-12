@@ -1,24 +1,38 @@
-@import controllers.organisations.routes
+@import controllers.routes
+@import views.html.bootstrapHelpers.text
+@import views.html.bootstrapHelpers.globalerrors
 @(organisationForm: Form[Organisation])
 
-    @main("Project") {
+@main("Project") {
 
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
 
-                    @helper.form(action = routes.Organisations.create()) {
-                        @helper.inputText(organisationForm("Name"))
+                @helper.form(action = routes.Organisations.create()) {
 
-                        <input type="submit" class="btn btn-primary" value="Speichern" />
-                        <a href="@routes.Organisations.index()" class="btn btn-default">Zurück</a>
+                    <fieldset>
+                        @text(organisationForm("name"),
+                            label = "Name",
+                            placeholder = "Product name"
+                        )
 
-                    }
+                        @globalerrors(organisationForm)
 
+                    </fieldset>
+
+
+                    <div class="form-actions">
+                        <input type="submit" class="btn btn-primary" value="Create" />
+                        <a href="@routes.Organisations.index()" class="btn btn-default">Back</a>
                     </div>
+
+                }
+
                 </div>
             </div>
         </div>
+    </div>
 
-    }
+}
