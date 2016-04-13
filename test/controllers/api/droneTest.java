@@ -1,16 +1,20 @@
 package controllers.api;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
+import models.Drone;
 import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WSClient;
+import play.libs.ws.WSResponse;
 
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 public class droneTest extends AbstractIntegrationTest {
     @Inject
@@ -20,23 +24,32 @@ public class droneTest extends AbstractIntegrationTest {
 
     @Test
     public void createDrone() throws ExecutionException, InterruptedException {
-        ObjectNode drone = Json.newObject();
-        ObjectNode repo = Json.newObject();
-        repo.put("name", "new drone");
-        repo.put("payload", "500");
-        repo.put("organisationCode", "AHSFNASNAHSDF");
-        drone.put("drone", repo);
 
-        System.out.println("----------------------------------------------");
-        System.out.println(drone);
+        Drone newDrone = new Drone();
+        newDrone.setName("new drone");
+        newDrone.setPayload(500);
 
-        CompletionStage<String> r = ws.url(baseUrl + routes.DronesController.create().url()).post(drone).thenApply(response -> response.asJson().toString()
+        JsonNode jsonDrone = Json.newObject()
+                .put("name", newDrone.getName())
+                .put("payload", String.valueOf(newDrone.getPayload()))
+                .put("organisationToken", "AHSFNASNAHSDF");
 
-        );
+        JsonNode wrapper = Json.newObject()
+                .set("drone", jsonDrone);
 
-        assertThat(r.toCompletableFuture().get(), true);
+        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
+                .setContentType("application/json")
+                .setHeader("Accept", "application/json")
+                .post(wrapper)
+                .thenApply(WSResponse::asJson);
 
+        Drone droneObject = Json.fromJson(r.toCompletableFuture().get(), Drone.class);
 
+        assertNotNull(droneObject.getId());
+        assertThat(droneObject.getName(), equalTo(newDrone.getName()));
+        assertThat(droneObject.getPayload(), equalTo(newDrone.getPayload()));
+        assertNotNull(droneObject.getOrganisation());
+        assertNotNull(droneObject.getToken());
     }
 
 }

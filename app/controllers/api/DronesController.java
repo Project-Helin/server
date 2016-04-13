@@ -20,6 +20,7 @@ public class DronesController extends Controller {
     @Inject
     OrganisationsDao organisationsDao;
 
+    @play.db.jpa.Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public play.mvc.Result create () {
         JsonNode json = request().body().asJson();
@@ -42,7 +43,7 @@ public class DronesController extends Controller {
 
             droneDao.persist(drone);
 
-            return ok(Json.toJson(new Object()));
+            return ok(Json.toJson(drone));
         }
     }
 

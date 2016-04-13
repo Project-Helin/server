@@ -56,7 +56,7 @@ GET         /registerDrone                     controllers.RegisterDroneControll
 
 #API
 
-POST        /api/drones/                       controllers.api.DronesController.create()
+POST        /api/drones                       controllers.api.DronesController.create()
 
 #Project
 
