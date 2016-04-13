@@ -49,6 +49,8 @@ libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
 libraryDependencies += "org.easytesting" % "fest-assert" % "1.4"
 libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
 
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-java" % "2.51.0"
+
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
