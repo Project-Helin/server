@@ -1,23 +1,17 @@
 package controllers;
 
-import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import dao.OrganisationsDao;
 import models.Organisation;
 import org.junit.Test;
-
-import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
 public class OrganisationsTest extends AbstractIntegrationTest {
-    @Inject
-    private OrganisationsDao organisationsDao;
 
     @Test
     public void shouldShowNewOrganisation() {
-        Organisation organisation = createNewOrganisation();
+        Organisation organisation = testHelper.createNewOrganisation();
 
         browser.goTo(routes.Organisations.index().url());
 
@@ -28,7 +22,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldRemoveOrganisation() throws InterruptedException {
-        Organisation organisation = createNewOrganisation();
+        Organisation organisation = testHelper.createNewOrganisation();
 
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).contains(organisation.getName());
@@ -41,16 +35,6 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());
     }
 
-    private Organisation createNewOrganisation() {
-        Organisation organisation = new Organisation();
-        organisation.setId(UUID.randomUUID());
-        organisation.setName("Super HSR " + System.currentTimeMillis());
-
-        jpaapi.withTransaction(() -> {
-            organisationsDao.persist(organisation);
-        });
-        return organisation;
-    }
 
     @Test
     public void shouldAddNewOrganisation() throws InterruptedException {
@@ -66,7 +50,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldUpdateOrganisation() {
-        Organisation organisation = createNewOrganisation();
+        Organisation organisation = testHelper.createNewOrganisation();
         browser.goTo(routes.Organisations.index().url());
 
         // go to edit

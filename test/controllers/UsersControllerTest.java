@@ -112,7 +112,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-        jpaapi.withTransaction(() -> {
+        jpaApi.withTransaction(() -> {
             userDao.persist(user);
         });
 
