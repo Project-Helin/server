@@ -45,6 +45,8 @@ libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
   */
 libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
 
+libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.2"
+
 /**
   * For testing
   */

@@ -41,6 +41,12 @@ GET         /products/:id/edit            controllers.ProductsController.edit(id
 POST        /products/:id/update          controllers.ProductsController.update(id : java.util.UUID)
 GET         /products/:id/delete          controllers.ProductsController.delete(id : java.util.UUID)
 
+#Drones
+GET         /drones                     controllers.DronesController.index()
+GET         /drones/:id/edit            controllers.DronesController.edit(id : java.util.UUID)
+POST        /drones/:id/update          controllers.DronesController.update(id : java.util.UUID)
+GET         /drones/:id/delete          controllers.DronesController.delete(id : java.util.UUID)
+
 #Authentication
 GET         /login                                                   controllers.UsersController.login()
 GET         /logout                                                  controllers.UsersController.logout()
@@ -54,7 +60,10 @@ GET         /assets/*file                      controllers.Assets.at(path="/publ
 GET         /registerDrone                     controllers.RegisterDroneController.index()
 
 
+
 #API
+
+##Drones
 
 POST        /api/drones                       controllers.api.DronesController.create()
 

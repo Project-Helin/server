@@ -1,0 +1,41 @@
+@import controllers.routes
+@import views.html.bootstrapHelpers.text
+@import views.html.bootstrapHelpers.globalerrors
+@(droneForm: Form[Drone])
+
+@main("Edit Drone") {
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+
+                @helper.form(action = routes.DronesController.update(droneForm.get().getId)) {
+
+                    <fieldset>
+                        @text(droneForm("name"),
+                            label = "Name",
+                            placeholder = "Drone name"
+                        )
+                        @text(droneForm("payload"),
+                            label = "payload in grams",
+                            placeholder = "payload in grams"
+                        )
+
+                        @globalerrors(droneForm)
+
+                    </fieldset>
+
+
+                    <div class="form-actions">
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                        <a href="@routes.DronesController.index()" class="btn btn-default">Back</a>
+                    </div>
+
+                }
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
