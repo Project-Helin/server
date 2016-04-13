@@ -73,7 +73,7 @@ public class DronesController extends Controller {
             droneDao.persist(found);
             flash("success", "Saved successfully");
 
-            return redirect(routes.DronesController.index().url());
+            return redirect(routes.DronesController.index());
         }
     }
 
@@ -86,6 +86,6 @@ public class DronesController extends Controller {
 
         flash("success", "Deleted successfully");
         droneDao.delete(found);
-        return index();
+        return redirect(routes.DronesController.index());
     }
 }
