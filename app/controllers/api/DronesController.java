@@ -2,6 +2,7 @@ package controllers.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import commons.DroneConnection;
 import dao.DroneDao;
 import dao.OrganisationsDao;
 import models.Drone;
@@ -43,8 +44,14 @@ public class DronesController extends Controller {
 
             droneDao.persist(drone);
 
+            createDroneConnection(drone);
+
             return ok(Json.toJson(drone));
         }
+    }
+
+    private void createDroneConnection(Drone drone) {
+        new DroneConnection(drone);
     }
 
     private Organisation getOrganisation(String organisationToken) {
