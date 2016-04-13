@@ -29,9 +29,9 @@ public class DronesController extends Controller {
         String organisationToken = json.findPath("organisationToken").textValue();
 
         if(name == null) {
-            return badRequest("Missing parameter name");
+            return badRequest("Missing_Parameter_Name");
         } else if (organisationToken == null) {
-            return badRequest("Missing parameter organisationToken");
+            return badRequest("Missing_Parameter_OrganisationToken");
         } else {
             Drone drone = new Drone();
             drone.setName(name);

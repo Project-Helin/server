@@ -52,4 +52,50 @@ public class droneTest extends AbstractIntegrationTest {
         assertNotNull(droneObject.getToken());
     }
 
+    @Test(expected = ExecutionException.class)
+    public void createDroneWithoutOrganisationToken() throws ExecutionException, InterruptedException {
+
+        Drone newDrone = new Drone();
+        newDrone.setName("new drone");
+        newDrone.setPayload(500);
+
+        JsonNode jsonDrone = Json.newObject()
+                .put("name", newDrone.getName())
+                .put("payload", String.valueOf(newDrone.getPayload()));
+
+        JsonNode wrapper = Json.newObject()
+                .set("drone", jsonDrone);
+
+
+        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
+                .setContentType("application/json")
+                .setHeader("Accept", "application/json")
+                .post(wrapper)
+                .thenApply(WSResponse::asJson);
+
+        Json.fromJson(r.toCompletableFuture().get(), Drone.class);
+    }
+
+    @Test(expected = ExecutionException.class)
+    public void createDroneWithoutName() throws ExecutionException, InterruptedException {
+
+        Drone newDrone = new Drone();
+        newDrone.setPayload(500);
+
+        JsonNode jsonDrone = Json.newObject()
+                .put("payload", String.valueOf(newDrone.getPayload()))
+                .put("organisationToken", "AHSFNASNAHSDF");
+
+        JsonNode wrapper = Json.newObject()
+                .set("drone", jsonDrone);
+
+        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
+                .setContentType("application/json")
+                .setHeader("Accept", "application/json")
+                .post(wrapper)
+                .thenApply(WSResponse::asJson);
+
+        Json.fromJson(r.toCompletableFuture().get(), Drone.class);
+    }
+
 }
