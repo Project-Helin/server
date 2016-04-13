@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fluentlenium.core.filter.FilterConstructor.withText;
+import static org.fluentlenium.core.filter.FilterConstructor.withId;
 
 public class ProjectsControllerTest extends AbstractIntegrationTest {
 
@@ -41,7 +41,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(project.getName());
 
         // remove that
-        browser.click(withText("Delete"));
+        browser.click(withId("delete-" + project.getId().toString()));
 
         // verify
         browser.goTo(routes.ProjectsController.index().url());
