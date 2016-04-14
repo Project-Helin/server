@@ -3,7 +3,7 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ModelHelper1 extends BeanUtilsBean{
+public class ModelHelper extends BeanUtilsBean{
 
     @Override
     public void copyProperty(Object dest, String name, Object value)
@@ -14,7 +14,7 @@ public class ModelHelper1 extends BeanUtilsBean{
 
     public static void updateAttributes (Object destination, Object source) {
         try {
-            new ModelHelper1().copyProperties(destination, source);
+            new ModelHelper().copyProperties(destination, source);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
