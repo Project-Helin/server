@@ -55,7 +55,14 @@ libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
 
 libraryDependencies += "org.seleniumhq.selenium" % "selenium-java" % "2.51.0"
 
+// libraryDependencies += "net.sourceforge.htmlunit" % "htmlunit" % "2.20" force()
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
+
+
+/**
+  *
+  */
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
