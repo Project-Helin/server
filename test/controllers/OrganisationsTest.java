@@ -29,7 +29,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
         //confirm delete
-        waitAndClick("#deleteconfirm-" + organisation.getId());
+        waitAndClick("deleteconfirm-" + organisation.getId());
 
         // verify
         browser.goTo(routes.Organisations.index().url());
