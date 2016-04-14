@@ -89,7 +89,7 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
      */
     protected void waitAndClick(String id) {
         WebDriverWait wait = new WebDriverWait(browser.getDriver(), 10);
-        WebElement element = wait.until( ExpectedConditions.elementToBeClickable(By.id(id)));
+        WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id(id)));
         element.click();
     }
 }
