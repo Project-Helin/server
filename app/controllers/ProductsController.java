@@ -118,6 +118,7 @@ public class ProductsController extends Controller {
             return forbidden("Organisation not found!");
         }
 
+        flash("success", "Deleted successfully");
         productsDao.delete(found);
         return index();
     }

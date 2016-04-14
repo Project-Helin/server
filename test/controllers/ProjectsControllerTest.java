@@ -6,12 +6,7 @@ import dao.OrganisationsDao;
 import dao.ProjectsDao;
 import models.Organisation;
 import models.Project;
-import org.fluentlenium.core.filter.Filter;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Optional;
 import java.util.UUID;
