@@ -54,7 +54,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
         project.setId(UUID.randomUUID());
         project.setName("First Demo");
 
-        jpaapi.withTransaction(() -> {
+        jpaApi.withTransaction(() -> {
             Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
             assertThat(first.isPresent()).isTrue();
 

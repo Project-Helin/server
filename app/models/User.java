@@ -3,9 +3,9 @@ package models;
 import models.utils.AuthenticationHelper;
 import play.data.validation.Constraints;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name="Users")
@@ -32,8 +32,9 @@ public class User {
     @Column
     private boolean validated = false;
 
-//    @ManyToMany
-//    private List<Organisation> organisations;
+
+    @ManyToMany(mappedBy="administrators")
+    private Set<Organisation> organisations;
 
     public UUID getId() {
         return id;
@@ -87,5 +88,32 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Organisation> getOrganisations() {
+        if (organisations == null) {
+            organisations = new HashSet<>();
+        }
+        return organisations;
+    }
+
+    public void setOrganisations(Set<Organisation> organisations) {
+        this.organisations = organisations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return id != null ? id.equals(user.id) : user.id == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
