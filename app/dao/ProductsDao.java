@@ -12,4 +12,11 @@ public class ProductsDao extends AbstractDao<Product> {
         super(Product.class);
     }
 
+    @Override
+    public List<Product> findAll() {
+        String sql = "select e from products e ";
+        return jpaApi.em()
+                .createQuery(sql, Product.class)
+                .getResultList();
+    }
 }
