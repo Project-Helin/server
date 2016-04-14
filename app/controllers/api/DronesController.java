@@ -7,23 +7,26 @@ import dao.DroneDao;
 import dao.OrganisationsDao;
 import models.Drone;
 import models.Organisation;
+import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
+import play.mvc.Result;
 
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DronesController extends Controller {
-    @Inject
-    DroneDao droneDao;
 
     @Inject
-    OrganisationsDao organisationsDao;
+    private DroneDao droneDao;
 
-    @play.db.jpa.Transactional
+    @Inject
+    private OrganisationsDao organisationsDao;
+
+    @Transactional
     @BodyParser.Of(BodyParser.Json.class)
-    public play.mvc.Result create () {
+    public Result create () {
         JsonNode json = request().body().asJson();
         String name = json.findPath("name").textValue();
         int payload = Integer.valueOf(json.findPath("payload").textValue());
