@@ -8,6 +8,7 @@ import org.junit.Test;
 import play.i18n.Messages;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fluentlenium.core.filter.FilterConstructor.withId;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
@@ -26,11 +27,13 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setPassword(plainTextPassword);
 
         browser.goTo("/");
-
-        browser.click(withText("Register"));
+        waitThreeSeconds();
+        browser.click("#register");
+        waitThreeSeconds();
 
         fillInRegisterForm(user, plainTextPassword);
 
+        waitThreeSeconds();
         assertThat(browser.pageSource()).contains("Log in");
 
         fillInLoginForm(user, plainTextPassword);
@@ -93,7 +96,11 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         browser.fill(withName("name")).with(user.getName());
         browser.fill(withName("email")).with(user.getEmail());
         browser.fill(withName("password")).with(plainTextPassword);
-        browser.submit("#register");
+        waitThreeSeconds();
+
+        browser.click("#register-user");
+        waitThreeSeconds();
+
     }
 
     private void fillInLoginForm(User user, String plainTextPassword) {
