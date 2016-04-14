@@ -53,6 +53,14 @@ GET         /logout                                                  controllers
 POST        /login                                                   controllers.UsersController.loginPost()
 GET         /register                                                controllers.UsersController.add()
 POST        /register                                                controllers.UsersController.create()
+
+#Organisations-Users
+GET         /organisations/:organisation_id/administrators      controllers.OrganisationsUsersController.index(organisation_id : java.util.UUID)
+GET         /products/add                 controllers.ProductsController.add()
+POST        /products/create              controllers.ProductsController.create()
+
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                      controllers.Assets.at(path="/public", file)
 

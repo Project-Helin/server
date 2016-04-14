@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.ModelHelper;
+import commons.ModelHelper1;
 import dao.DroneDao;
 import models.Drone;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class DronesController extends Controller {
             return badRequest(edit.render(form));
         } else {
 
-            ModelHelper.updateAttributes(found, form.get());
+            ModelHelper1.updateAttributes(found, form.get());
             droneDao.persist(found);
             flash("success", "Saved successfully");
 
