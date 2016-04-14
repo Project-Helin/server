@@ -3,8 +3,10 @@ package commons;
 import com.google.inject.Inject;
 import dao.DroneDao;
 import dao.OrganisationsDao;
+import dao.UserDao;
 import models.Drone;
 import models.Organisation;
+import models.User;
 import play.db.jpa.JPAApi;
 
 import java.util.UUID;
@@ -18,6 +20,9 @@ public class TestHelper {
     DroneDao droneDao;
 
     @Inject
+    UserDao userDao;
+
+    @Inject
     JPAApi jpaApi;
 
     public Organisation createNewOrganisation() {
@@ -28,6 +33,7 @@ public class TestHelper {
         jpaApi.withTransaction(() -> {
             organisationsDao.persist(organisation);
         });
+
         return organisation;
     }
 
@@ -47,6 +53,22 @@ public class TestHelper {
         });
 
         return drone;
+    }
+
+    public User createUser(String plainTextPassword) {
+        User user = new User();
+
+        user.setId(UUID.randomUUID());
+        user.setConfirmationToken(UUID.randomUUID().toString());
+        user.setName("Anna Bolika");
+        user.setEmail("anna.bolika@example.com");
+        user.setPassword(plainTextPassword);
+
+        jpaApi.withTransaction(() -> {
+            userDao.persist(user);
+        });
+
+        return user;
     }
 
 }
