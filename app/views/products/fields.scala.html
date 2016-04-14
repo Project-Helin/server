@@ -1,0 +1,24 @@
+@import views.html.bootstrapHelpers.text
+@import views.html.bootstrapHelpers.globalerrors
+@(form: Form[Product])
+
+<fieldset>
+    @text(form("Name"),
+        label = "Name",
+        placeholder = "Product name"
+    )
+
+    @text(form("Price"),
+        label = "Price",
+        placeholder = "e.g. 100"
+    )
+
+    @text(form("wightGramm"),
+        label = "Weight (g)",
+        placeholder = "e.g. 1000"
+    )
+
+    @globalerrors(form)
+</fieldset>
+
+
