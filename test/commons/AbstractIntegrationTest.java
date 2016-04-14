@@ -24,13 +24,16 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Inject
-    protected JPAApi jpaapi;
+    protected JPAApi jpaApi;
 
     @Inject
     private Database database;
 
+    @Inject
+    protected TestHelper testHelper;
+
     @Before
-    public void createDatabase() {
+    public void setupDatabaseAndHelper() {
         Injector playInjector = app.injector();
         /**
          * Stupid Play - why don't the provide the real injector - or even provide some
