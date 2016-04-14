@@ -11,7 +11,7 @@
                 <div class="box-body">
 
 
-                @helper.form(action = routes.Organisations.update(organisationForm.get().getId)) {
+                @helper.form(action = routes.OrganisationsController.update(organisationForm.get().getId)) {
 
                     <fieldset>
                         @text(organisationForm("name"),
@@ -26,7 +26,7 @@
 
                     <div class="form-actions">
                         <input type="submit" id="login" class="btn btn-primary" value="Save">
-                        <a href="@routes.Organisations.index()" class="btn btn-default">Back</a>
+                        <a href="@routes.OrganisationsController.index()" class="btn btn-default">Back</a>
                     </div>
 
                 }

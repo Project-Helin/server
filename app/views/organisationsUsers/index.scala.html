@@ -22,7 +22,7 @@
                                         @*<th>@organisation.getId</th>*@
                                     <th>@organisation.getName</th>
                                     <th>
-                                        <a href="@controllers.routes.Organisations.edit(organisation.getId)"
+                                        <a href="@controllers.routes.OrganisationsController.edit(organisation.getId)"
                                         class="btn btn-info btn-sm"
                                         role="button"
                                         id="edit-@organisation.getId()">Edit</a>
@@ -46,7 +46,7 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-                                                        <a href="@controllers.routes.Organisations.delete(organisation.getId)" id="deleteconfirm-@organisation.getId()" class="btn btn-danger btn-sm" role="button">Delete</a>
+                                                        <a href="@controllers.routes.OrganisationsController.delete(organisation.getId)" id="deleteconfirm-@organisation.getId()" class="btn btn-danger btn-sm" role="button">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,7 +59,7 @@
                                 <tr>
                                     <th></th>
                                     <th>
-                                        <a href="@controllers.routes.Organisations.add()" class="btn btn-primary">
+                                        <a href="@controllers.routes.OrganisationsController.add()" class="btn btn-primary">
                                             Add</a>
                                     </th>
                                 </tr>

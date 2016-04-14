@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Transactional
-public class Organisations extends Controller {
+public class OrganisationsController extends Controller {
 
     @Inject
     private OrganisationsDao organisationsDao;
@@ -26,7 +26,7 @@ public class Organisations extends Controller {
     @Inject
     private FormFactory formFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger(Organisations.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrganisationsController.class);
 
     public Result index() {
         List<Organisation> all =

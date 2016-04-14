@@ -3,17 +3,14 @@ package controllers;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.ProductsDao;
-import dao.ProjectsDao;
-import models.Organisation;
 import models.Product;
 import org.junit.Test;
-import play.db.jpa.Transactional;
 
 import java.util.List;
 
+import static controllers.routes.OrganisationsController;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
-import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
 public class ProductsControllerTest extends AbstractIntegrationTest {
 
@@ -50,7 +47,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
         waitFiveSeconds();
 
         // verify
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(product.getName());
     }
 
