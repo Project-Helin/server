@@ -34,7 +34,7 @@ public class DronesTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(drone.getName());
         // remove that
         browser.find("#delete-" + drone.getId()).click();
-        waitThreeSeconds();
+        waitFiveSeconds();
         //confirm delete
         browser.find("#deleteconfirm-" + drone.getId()).click();
         // verify
