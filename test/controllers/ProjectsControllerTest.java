@@ -6,7 +6,12 @@ import dao.OrganisationsDao;
 import dao.ProjectsDao;
 import models.Organisation;
 import models.Project;
+import org.fluentlenium.core.filter.Filter;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,13 +47,14 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
 
         // remove that
         browser.click(withId("delete-" + project.getId().toString()));
-        waitFiveSeconds();
-        browser.click(withId("deleteconfirm-" + project.getId().toString()));
+
+        waitAndClick("deleteconfirm-" + project.getId().toString());
 
         // verify
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(project.getName());
     }
+
 
     private Project createNewProject() {
 

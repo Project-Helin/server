@@ -28,9 +28,9 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(organisation.getName());
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
-        waitFiveSeconds();
         //confirm delete
-        browser.find("#deleteconfirm-" + organisation.getId()).click();
+        waitAndClick("#deleteconfirm-" + organisation.getId());
+
         // verify
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());

@@ -27,13 +27,10 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setPassword(plainTextPassword);
 
         browser.goTo("/");
-        waitThreeSeconds();
         browser.click("#register");
-        waitThreeSeconds();
 
         fillInRegisterForm(user, plainTextPassword);
 
-        waitThreeSeconds();
         assertThat(browser.pageSource()).contains("Log in");
 
         fillInLoginForm(user, plainTextPassword);
@@ -94,11 +91,8 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         browser.fill(withName("name")).with(user.getName());
         browser.fill(withName("email")).with(user.getEmail());
         browser.fill(withName("password")).with(plainTextPassword);
-        waitThreeSeconds();
 
         browser.click("#register-user");
-        waitThreeSeconds();
-
     }
 
     private void fillInLoginForm(User user, String plainTextPassword) {
