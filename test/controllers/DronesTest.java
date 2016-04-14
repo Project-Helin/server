@@ -38,6 +38,7 @@ public class DronesTest extends AbstractIntegrationTest {
 
         //confirm delete
         waitAndClick("deleteconfirm-" + drone.getId());
+        waitFiveSeconds();
 
         // verify
         browser.goTo(routes.DronesController.index().url());

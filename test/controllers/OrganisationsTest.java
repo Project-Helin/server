@@ -30,6 +30,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         browser.find("#delete-" + organisation.getId()).click();
         //confirm delete
         waitAndClick("deleteconfirm-" + organisation.getId());
+        waitFiveSeconds();
 
         // verify
         browser.goTo(routes.Organisations.index().url());
