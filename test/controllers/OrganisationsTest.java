@@ -28,6 +28,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(organisation.getName());
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
+        waitThreeSeconds();
         //confirm delete
         browser.find("#deleteconfirm-" + organisation.getId()).click();
         // verify

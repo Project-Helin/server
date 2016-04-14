@@ -3,19 +3,18 @@ package commons;
 import com.google.inject.Inject;
 import org.junit.After;
 import org.junit.Before;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.Database;
 import play.db.evolutions.Evolutions;
 import play.db.jpa.JPAApi;
 import play.inject.Injector;
-import play.test.Helpers;
 import play.test.TestBrowser;
 import play.test.WithBrowser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static play.test.Helpers.*;
 
@@ -70,6 +69,10 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
 
     @Override
     protected TestBrowser provideBrowser(int port) {
-        return testBrowser(FIREFOX);
+        return testBrowser(HTMLUNIT);
+    }
+
+    protected void waitThreeSeconds() {
+        browser.getDriver().manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 }
