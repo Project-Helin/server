@@ -51,7 +51,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
 
         browser.goTo(routes.UsersController.add().url());
 
-        browser.submit("#register");
+        browser.click("#register");
 
         fillInRegisterForm(userWithoutEmail, plainTextPassword);
 
@@ -89,8 +89,6 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(user.getName());
         assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
-
-
 
     private void fillInRegisterForm(User user, String plainTextPassword) {
         browser.fill(withName("name")).with(user.getName());

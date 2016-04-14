@@ -25,7 +25,7 @@
                                 <th>
                                     <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
 
-                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal@project.getId">Delete</button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal@project.getId" id="delete-@project.getId">Delete</button>
 
                                         <!-- Modal dialog for delete button -->
                                     <div class="modal fade" id="myModal@project.getId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -41,7 +41,8 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-                                                    <a href="@controllers.routes.ProjectsController.delete(project.getId)" class="btn btn-danger btn-sm" role="button" id="delete-@project.getId" >Delete</a>
+                                                    <a href="@controllers.routes.ProjectsController.delete(project.getId)" class="btn btn-danger btn-sm" role="button"
+                                                    id="deleteconfirm-@project.getId" >Delete</a>
                                                 </div>
                                             </div>
                                         </div>

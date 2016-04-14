@@ -42,6 +42,8 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
 
         // remove that
         browser.click(withId("delete-" + project.getId().toString()));
+        waitThreeSeconds();
+        browser.click(withId("deleteconfirm-" + project.getId().toString()));
 
         // verify
         browser.goTo(routes.ProjectsController.index().url());
