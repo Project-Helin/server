@@ -1,8 +1,10 @@
 package models;
 
 import org.geolatte.geom.Polygon;
+import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity(name = "products")
@@ -12,12 +14,15 @@ public class Product {
     private UUID id;
 
     @Column
+    @Constraints.Required
     private String name;
 
     @Column
+    @Constraints.Required
     private Double price;
 
     @Column(name = "weight_gramm")
+    @Constraints.Required
     private Integer wightGramm;
 
     @JoinColumn(name = "organisation_id")
