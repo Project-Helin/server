@@ -42,17 +42,27 @@ public class OrganisationUser extends AbstractIntegrationTest {
     }
 
     @Test
-    public void addOrganisationToUser() {
+    public void removeUserFromOrganisation() {
         jpaApi.withTransaction(() -> {
             User user = testHelper.createUser(plainTextPassword);
-            Organisation organisation = testHelper.createNewOrganisation();
 
-            user.getOrganisations().add(organisation);
-            jpaApi.em().merge(user);
+            Organisation organisation = testHelper.createNewOrganisation();
+            organisation.getAdministrators().add(user);
+
+            jpaApi.em().merge(organisation);
             jpaApi.em().flush();
 
-            User reloadedUser = userDao.findById(user.getId());
-            assertThat(reloadedUser.getOrganisations(), hasItem(organisation));
+            organisation.getAdministrators().remove(user);
+
+            assertThat(organisation.getAdministrators().size(), is(0));
+
+            jpaApi.em().merge(organisation);
+            jpaApi.em().flush();
+        });
+
+        jpaApi.withTransaction(() -> {
+            assertThat(organisationsDao.findAll().get(1).getAdministrators().size(), is(0));
+            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(0));
         });
     }
 
