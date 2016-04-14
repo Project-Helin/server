@@ -17,7 +17,7 @@ public abstract class AbstractDao<T> {
     }
 
     public List<T> findAll() {
-        String sql = "select e from " + entityClass.getSimpleName() + " e ";
+        String sql = "select e from " + entityClass.getSimpleName() + " e order by e.id";
         return jpaApi.em()
                 .createQuery(sql, entityClass)
                 .getResultList();
