@@ -75,4 +75,8 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
     protected void waitThreeSeconds() {
         browser.getDriver().manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
+
+    protected void waitFiveSeconds() {
+        browser.getDriver().manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
 }

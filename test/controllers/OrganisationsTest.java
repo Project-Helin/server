@@ -28,12 +28,13 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(organisation.getName());
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
-        waitThreeSeconds();
+        waitFiveSeconds();
         //confirm delete
         browser.find("#deleteconfirm-" + organisation.getId()).click();
         // verify
         browser.goTo(routes.Organisations.index().url());
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());
+
     }
 
 
