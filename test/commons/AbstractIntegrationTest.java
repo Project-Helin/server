@@ -69,7 +69,7 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
 
     @Override
     protected TestBrowser provideBrowser(int port) {
-        return testBrowser(HTMLUNIT);
+        return testBrowser(FIREFOX);
     }
 
     protected void waitThreeSeconds() {
