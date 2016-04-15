@@ -17,6 +17,8 @@ public class Organisation {
     @Constraints.Required(message = "Name cannot be empty")
     private String name;
 
+    private String token;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name="organisations_users",
@@ -68,4 +70,11 @@ public class Organisation {
         return id != null ? id.hashCode() : 0;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

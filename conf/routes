@@ -10,8 +10,6 @@ GET         /messageviewer                                          controllers.
 GET         /sendSampleMessage                                      controllers.MessageViewer.sendSampleMessage()
 GET         /messageviewer/register                                 controllers.MessageViewer.register()
 
-GET         /zone                                                   controllers.ZoneCrudController.index()
-
 #Organisation
 GET         /organisations                                          controllers.OrganisationsController.index()
 GET         /organisations/add                                      controllers.OrganisationsController.add()
@@ -25,10 +23,8 @@ GET         /organisations/:id/delete                               controllers.
 GET         /projects                                               controllers.ProjectsController.index()
 GET         /projects/create                                        controllers.ProjectsController.create()
 
-GET         /projects/:projectId                                    controllers.ProjectsController.show(projectId : java.util.UUID)
 GET         /projects/:projectId/edit                               controllers.ProjectsController.edit(projectId : java.util.UUID)
 GET         /projects/:projectId/delete                             controllers.ProjectsController.delete(projectId : java.util.UUID)
-POST        /projects/:projectId/update                             controllers.ProjectsController.update(projectId : java.util.UUID)
 
 #Product
 GET         /products                                               controllers.ProductsController.index()

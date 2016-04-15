@@ -63,7 +63,7 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
     protected play.Application provideApplication() {
         Map<String, String> param = new HashMap<>();
         param.put("driver", "org.postgresql.Driver");
-        param.put("url", "jdbc:postgresql://localhost:5432/test");
+        param.put("url", "jdbc:postgresql://localhost:5455/test");
         param.put("username", "test");
         param.put("password", "test");
 

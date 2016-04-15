@@ -2,6 +2,7 @@ package commons;
 
 import dao.UserDao;
 import models.Organisation;
+import models.User;
 import play.api.Play;
 import play.db.jpa.JPAApi;
 
@@ -19,13 +20,18 @@ public class TemplateHelper {
 
         jpaApi.withTransaction(() -> {
             UserDao userDao = Play.application(Play.current()).injector().instanceOf(UserDao.class);
-            Set<Organisation> loadedOrganisations = userDao.findById(UUID.fromString(userId)).getOrganisations();
-            organisations.addAll(loadedOrganisations);
+            User user = userDao.findById(UUID.fromString(userId));
+            if (user != null) {
+                Set<Organisation> loadedOrganisations = user.getOrganisations();
+                organisations.addAll(loadedOrganisations);
+            }
         });
 
-        return organisations;
-
-
+        if (!organisations.isEmpty()) {
+            return organisations;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 

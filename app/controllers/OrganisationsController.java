@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.SessionHelper;
 import commons.SessionKey;
 import dao.OrganisationsDao;
 import dao.UserDao;
@@ -29,6 +30,10 @@ public class OrganisationsController extends Controller {
 
     @Inject
     private UserDao userDao;
+
+    @Inject
+    private SessionHelper sessionHelper;
+
 
     @Inject
     private FormFactory formFactory;
@@ -66,7 +71,7 @@ public class OrganisationsController extends Controller {
             organisation.getAdministrators().add(user);
             organisationsDao.persist(organisation);
 
-            session().put(SessionKey.ORGANISATION_ID.name(), String.valueOf(organisation.getId()));
+            sessionHelper.setOrganisation(organisation, session());
             flash("success", "added Organisation");
 
             return redirect(routes.OrganisationsController.index());

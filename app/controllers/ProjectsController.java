@@ -1,23 +1,19 @@
 package controllers;
 
 import com.google.inject.Inject;
-import dao.OrganisationsDao;
+import commons.SessionHelper;
 import dao.ProjectsDao;
-import models.Organisation;
 import models.Project;
-import models.Zone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.projects.edit;
 import views.html.projects.index;
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.UUID;
 
 @Transactional
 public class ProjectsController extends Controller {
@@ -28,10 +24,10 @@ public class ProjectsController extends Controller {
     private ProjectsDao projectsDao;
 
     @Inject
-    private OrganisationsDao organisationsDao;
+    private SessionHelper sessionHelper;
 
     public Result index() {
-        UUID organisationId = getOrganisation().getId();
+        UUID organisationId = sessionHelper.getOrganisation(session()).getId();
 
         logger.info("Organisation id {}", organisationId);
         List<Project> all = projectsDao.findByOrganisation(organisationId);
@@ -65,20 +61,4 @@ public class ProjectsController extends Controller {
         return redirect(routes.ProjectsController.index());
     }
 
-    private Organisation getOrganisation() {
-
-        /**
-         * For now -> HSR is always there
-         */
-        return organisationsDao
-            .findAll()
-            .stream()
-            .filter(new Predicate<Organisation>() {
-                @Override
-                public boolean test(Organisation organisation) {
-                    return organisation.getName().equals("HSR");
-                }
-            })
-            .collect(Collectors.toList()).get(0);
-    }
 }
