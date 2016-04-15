@@ -13,7 +13,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
     public void shouldShowNewOrganisation() {
         Organisation organisation = testHelper.createNewOrganisation();
 
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
 
         // verify
         assertThat(browser.pageSource()).containsIgnoringCase(organisation.getId().toString());
@@ -24,7 +24,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
     public void shouldRemoveOrganisation() throws InterruptedException {
         Organisation organisation = testHelper.createNewOrganisation();
 
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).contains(organisation.getName());
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
@@ -32,27 +32,27 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         //confirm delete
         browser.find("#deleteconfirm-" + organisation.getId()).click();
         // verify
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());
     }
 
 
     @Test
     public void shouldAddNewOrganisation() throws InterruptedException {
-        browser.goTo(routes.Organisations.add().url());
+        browser.goTo(OrganisationsController.add().url());
 
         browser.fill(withName("name")).with("HSR Tester");
         browser.submit("Save");
 
         // verify
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).doesNotContain("HSR Tester");
     }
 
     @Test
     public void shouldUpdateOrganisation() {
         Organisation organisation = testHelper.createNewOrganisation();
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
 
         // go to edit
         browser.find("#edit-" + organisation.getId()).click();
@@ -62,7 +62,7 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         browser.submit("Save");
 
         // verify
-        browser.goTo(routes.Organisations.index().url());
+        browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).doesNotContain("HSR Tester");
     }
 

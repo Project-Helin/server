@@ -1,8 +1,11 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.SessionKey;
 import dao.OrganisationsDao;
+import dao.UserDao;
 import models.Organisation;
+import models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -10,6 +13,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.organisations.add;
 import views.html.organisations.edit;
 import views.html.organisations.index;
@@ -18,15 +22,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Transactional
-public class Organisations extends Controller {
+public class OrganisationsController extends Controller {
 
     @Inject
     private OrganisationsDao organisationsDao;
 
     @Inject
+    private UserDao userDao;
+
+    @Inject
     private FormFactory formFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger(Organisations.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrganisationsController.class);
 
     public Result index() {
         List<Organisation> all =
@@ -42,6 +49,7 @@ public class Organisations extends Controller {
         return ok(add.render(form));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result create() {
         Form<Organisation> form = formFactory
                 .form(Organisation.class)
@@ -51,12 +59,17 @@ public class Organisations extends Controller {
             logger.info("Has error, go back {}", form.errorsAsJson());
             return badRequest(add.render(form));
         } else {
+            User user = userDao.findById(UUID.fromString(session().get(SessionKey.USER_ID.name())));
 
             Organisation organisation = form.get();
             organisation.setId(UUID.randomUUID());
+            organisation.getAdministrators().add(user);
             organisationsDao.persist(organisation);
 
-            return index();
+            session().put(SessionKey.ORGANISATION_ID.name(), String.valueOf(organisation.getId()));
+            flash("success", "added Organisation");
+
+            return redirect(routes.OrganisationsController.index());
         }
     }
 
