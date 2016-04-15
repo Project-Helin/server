@@ -14,7 +14,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class DronesController extends Controller {
 
@@ -58,12 +57,6 @@ public class DronesController extends Controller {
     }
 
     private Organisation getOrganisation(String organisationToken) {
-
-        //TODO load organisation from token, now its always HSR
-        return organisationsDao
-                .findAll()
-                .stream()
-                .filter( e -> e.getName().equals("HSR"))
-                .collect(Collectors.toList()).get(0);
+        return organisationsDao.findByOrganisationToken(organisationToken);
     }
 }

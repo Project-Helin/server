@@ -1,0 +1,26 @@
+@import java.util
+@(organisations: util.List[Organisation] = commons.TemplateHelper.getOrganisations(session.get(commons.SessionKey.USER_ID.name)))
+<li class="dropdown user user-menu">
+    <a href="#" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        @session.get(commons.SessionKey.ORGANISATION_NAME.name)
+    <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    @for(organisation <- organisations) {
+
+        <li>
+            <div>
+                <div class="col-xs-1">
+                @if(organisation.getId.toString.equals(session.get(commons.SessionKey.ORGANISATION_ID.name))) {
+                    <i class="glyphicon glyphicon-ok"></i>
+                }
+                </div>
+                <div class="col-xs-10">
+                    <a href="@routes.OrganisationsUsersController.setCurrentOrganisation(organisation.getId)">@organisation.getName</a>
+                </div>
+
+            </div>
+        </li>
+    }
+    </ul>
+</li>

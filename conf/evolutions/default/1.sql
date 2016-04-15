@@ -4,11 +4,9 @@
 
 CREATE TABLE Organisation (
   ID   UUID         NOT NULL PRIMARY KEY,
-  NAME VARCHAR(255) NOT NULL
+  NAME VARCHAR(255) NOT NULL,
+  TOKEN VARCHAR(255)
 );
-
--- For now remove this later
-INSERT INTO organisation VALUES (uuid_generate_v4(), 'HSR');
 
 # --- !Downs
 

@@ -1,8 +1,12 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.SessionHelper;
+import commons.SessionKey;
 import dao.OrganisationsDao;
+import dao.UserDao;
 import models.Organisation;
+import models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -10,6 +14,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.organisations.add;
 import views.html.organisations.edit;
 import views.html.organisations.index;
@@ -22,6 +27,13 @@ public class OrganisationsController extends Controller {
 
     @Inject
     private OrganisationsDao organisationsDao;
+
+    @Inject
+    private UserDao userDao;
+
+    @Inject
+    private SessionHelper sessionHelper;
+
 
     @Inject
     private FormFactory formFactory;
@@ -42,6 +54,7 @@ public class OrganisationsController extends Controller {
         return ok(add.render(form));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result create() {
         Form<Organisation> form = formFactory
                 .form(Organisation.class)
@@ -51,12 +64,17 @@ public class OrganisationsController extends Controller {
             logger.info("Has error, go back {}", form.errorsAsJson());
             return badRequest(add.render(form));
         } else {
+            User user = userDao.findById(UUID.fromString(session().get(SessionKey.USER_ID.name())));
 
             Organisation organisation = form.get();
             organisation.setId(UUID.randomUUID());
+            organisation.getAdministrators().add(user);
             organisationsDao.persist(organisation);
 
-            return index();
+            sessionHelper.setOrganisation(organisation, session());
+            flash("success", "added Organisation");
+
+            return redirect(routes.OrganisationsController.index());
         }
     }
 

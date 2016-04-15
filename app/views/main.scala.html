@@ -37,19 +37,35 @@
                     </a>
                         <!-- Navbar Right Menu -->
                     <div class="navbar-custom-menu">
+
                         <ul class="nav navbar-nav">
-                            @if(session.get("email") != null) {
-                                @usermenu()
-                            } else {
-                                <li>
-                                    <a href="@routes.UsersController.add()" id="register">Register</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.UsersController.login()">Login</a>
-                                </li>
-                            }
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @usermenu()
+                        } else {
+                            <li>
+                                <a href="@routes.UsersController.add()" id="register">Register</a>
+                            </li>
+                            <li>
+                                <a href="@routes.UsersController.login()">Login</a>
+                            </li>
+                        }
 
                         </ul>
+                        <ul class="nav navbar-nav">
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @if(session.get(commons.SessionKey.ORGANISATION_ID.name) == null) {
+                                <li>
+                                    <a href="@routes.OrganisationsController.add()" id="register-organisation">
+                                        Register your Organisation</a>
+                                </li>
+                            } else {
+                                @organisationChooser()
+                            }
+                        }
+
+
+                        </ul>
+
                     </div>
                 </nav>
             </header>

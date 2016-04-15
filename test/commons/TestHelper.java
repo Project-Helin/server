@@ -5,10 +5,7 @@ import dao.*;
 import models.*;
 import play.db.jpa.JPAApi;
 
-import java.util.Optional;
 import java.util.UUID;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 public class TestHelper {
 
@@ -99,10 +96,11 @@ public class TestHelper {
         project.setName("First Demo");
 
         jpaApi.withTransaction(() -> {
-            Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
-            assertThat(first.isPresent()).isTrue();
+            Organisation organisation = new Organisation();
+            organisation.setName("organisation 1");
+            organisation.setId(UUID.randomUUID());
 
-            project.setOrganisation(first.get());
+            project.setOrganisation(organisation);
             projectsDao.persist(project);
         });
 

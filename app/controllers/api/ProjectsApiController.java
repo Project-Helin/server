@@ -1,9 +1,8 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import dao.OrganisationsDao;
+import commons.SessionHelper;
 import dao.ProjectsDao;
-import models.Organisation;
 import models.Project;
 import models.Zone;
 import play.db.jpa.Transactional;
@@ -12,7 +11,6 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ProjectsApiController extends Controller {
@@ -21,7 +19,7 @@ public class ProjectsApiController extends Controller {
     private ProjectsDao projectsDao;
 
     @Inject
-    private OrganisationsDao organisationsDao;
+    private SessionHelper sessionHelper;
 
     @Transactional
     public Result show(UUID projectID) {
@@ -53,7 +51,7 @@ public class ProjectsApiController extends Controller {
             // create new project
             project = new Project();
             project.setId(UUID.randomUUID());
-            project.setOrganisation(getOrganisation());
+            project.setOrganisation(sessionHelper.getOrganisation(session()));
         }
 
         ProjectDto fromRequest =
@@ -64,23 +62,6 @@ public class ProjectsApiController extends Controller {
         projectsDao.persist(project);
 
         return ok();
-    }
-
-    private Organisation getOrganisation() {
-
-        /**
-         * For now -> HSR is always there
-         */
-        return organisationsDao
-            .findAll()
-            .stream()
-            .filter(new Predicate<Organisation>() {
-                @Override
-                public boolean test(Organisation organisation) {
-                    return organisation.getName().equals("HSR");
-                }
-            })
-            .collect(Collectors.toList()).get(0);
     }
 
     /**
