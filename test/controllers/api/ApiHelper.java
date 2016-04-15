@@ -3,13 +3,17 @@ package controllers.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import org.openqa.selenium.Cookie;
 import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSResponse;
 import play.mvc.Call;
+import play.test.TestBrowser;
 
+import java.util.Set;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class ApiHelper {
 
@@ -35,6 +39,14 @@ public class ApiHelper {
         }
     }
 
+    public void doPost(Call urlRouteLink, Object bodyWhichIsSentAsJson, TestBrowser testBrowser) {
+        try {
+            doPostCareFree(urlRouteLink, bodyWhichIsSentAsJson, testBrowser);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public <T> T doPost(Call urlRouteLink, JsonNode data, Class<T> expectedReturnType) {
         try {
             return doPostCareFree(urlRouteLink, data, expectedReturnType);
@@ -43,7 +55,11 @@ public class ApiHelper {
         }
     }
 
-    private <T> T doPostCareFree(Call urlRouteLink, JsonNode jsonData, Class<T> expectedReturnType) throws ExecutionException, InterruptedException {
+
+    private <T> T doPostCareFree(Call urlRouteLink,
+                                 JsonNode jsonData,
+                                 Class<T> expectedReturnType) throws ExecutionException, InterruptedException {
+
         CompletionStage<JsonNode> response = ws.url(BASE_URL + urlRouteLink.url())
                 .setContentType("application/json")
                 .setHeader("Accept", "application/json")
@@ -62,6 +78,26 @@ public class ApiHelper {
                 .post(Json.toJson(bodyWhichIsSentAsJson))
                 .thenApply(this::throwExceptionIfFaultyResponse)
                 .toCompletableFuture().get();
+    }
+
+    private void doPostCareFree(Call urlRouteLink,
+                                Object bodyWhichIsSentAsJson,
+                                TestBrowser testBrowser) throws InterruptedException, ExecutionException {
+
+        /**
+         * Use the same cookie as in the browser
+         */
+        Set<Cookie> allCookies = testBrowser.getCookies();
+        String cookieAsString = allCookies
+            .stream()
+            .map(Cookie::toString)
+            .collect(Collectors.joining("&"));
+
+        ws.url(BASE_URL + urlRouteLink.url())
+            .setHeader("Cookie", cookieAsString)
+            .post(Json.toJson(bodyWhichIsSentAsJson))
+            .thenApply(this::throwExceptionIfFaultyResponse)
+            .toCompletableFuture().get();
     }
 
     private <T> T doCareFree(Call urlRouteLink,

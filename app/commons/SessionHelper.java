@@ -1,5 +1,6 @@
 package commons;
 
+import ch.helin.messages.commons.AssertUtils;
 import com.google.inject.Inject;
 import dao.OrganisationsDao;
 import dao.UserDao;
@@ -12,10 +13,10 @@ import java.util.UUID;
 public class SessionHelper {
 
     @Inject
-    UserDao userDao;
+    private UserDao userDao;
 
     @Inject
-    OrganisationsDao organisationsDao;
+    private OrganisationsDao organisationsDao;
 
     public User getUser(Http.Session session) {
         String userId = session.get(SessionKey.USER_ID.name());
@@ -31,6 +32,7 @@ public class SessionHelper {
 
     public Organisation getOrganisation(Http.Session session) {
         String organisationId = session.get(SessionKey.ORGANISATION_ID.name());
+        AssertUtils.throwExceptionIfNull(organisationId, "No organisations id found in session");
 
         return organisationsDao.findById(UUID.fromString(organisationId));
     }

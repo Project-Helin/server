@@ -96,11 +96,19 @@ public class TestHelper {
         return product;
     }
 
-    public Project createNewProject(User user) {
+    public Project createNewProject(User user, Zone... zones) {
 
         Project project = new Project();
         project.setId(UUID.randomUUID());
         project.setName("First Demo");
+        /**
+         * we need to set the Project to the zone
+         */
+        for (Zone each : zones) {
+            each.setProject(project);
+            project.getZones().add(each);
+        }
+
 
         jpaApi.withTransaction(() -> {
             Organisation organisation = user.getOrganisations().stream().findFirst().get();
@@ -109,5 +117,16 @@ public class TestHelper {
         });
 
         return project;
+    }
+
+
+    public Zone createUnsavedZone(String name, ZoneType type) {
+        Zone zone = new Zone();
+        zone.setId(UUID.randomUUID());
+        zone.setName(name);
+        zone.setType(type);
+        zone.setHeight(100);
+
+        return zone;
     }
 }
