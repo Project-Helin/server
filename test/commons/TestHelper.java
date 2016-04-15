@@ -86,7 +86,7 @@ public class TestHelper {
         product.setId(UUID.randomUUID());
         product.setName("This is a product");
         product.setPrice(10d);
-        product.setWightGramm(100);
+        product.setWeightGramm(100);
 
         product.setOrganisation(
             createNewOrganisation()

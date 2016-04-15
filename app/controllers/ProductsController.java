@@ -2,9 +2,8 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.ModelHelper;
-import dao.OrganisationsDao;
+import commons.SessionHelper;
 import dao.ProductsDao;
-import models.Organisation;
 import models.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,19 +13,17 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.products.add;
-import views.html.products.index;
 import views.html.products.edit;
+import views.html.products.index;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Transactional
 public class ProductsController extends Controller {
 
     @Inject
-    private OrganisationsDao organisationsDao;
+    private SessionHelper sessionHelper;
 
     @Inject
     private ProductsDao productsDao;
@@ -63,7 +60,7 @@ public class ProductsController extends Controller {
 
             Product product = form.get();
             product.setId(UUID.randomUUID());
-            product.setOrganisation(getOrganisation());
+            product.setOrganisation(sessionHelper.getOrganisation(session()));
             productsDao.persist(product);
 
             flash("success", "Saved successfully");
@@ -121,22 +118,5 @@ public class ProductsController extends Controller {
         flash("success", "Deleted successfully");
         productsDao.delete(found);
         return index();
-    }
-
-    private Organisation getOrganisation() {
-        /**
-         * TODO
-         * For now -> HSR is always there
-         */
-        return organisationsDao
-                .findAll()
-                .stream()
-                .filter(new Predicate<Organisation>() {
-                    @Override
-                    public boolean test(Organisation organisation) {
-                        return organisation.getName().equals("HSR");
-                    }
-                })
-                .collect(Collectors.toList()).get(0);
     }
 }

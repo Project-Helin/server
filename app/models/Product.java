@@ -1,10 +1,8 @@
 package models;
 
-import org.geolatte.geom.Polygon;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import java.util.UUID;
 
 @Entity(name = "products")
@@ -23,7 +21,7 @@ public class Product {
 
     @Column(name = "weight_gramm")
     @Constraints.Required
-    private Integer wightGramm;
+    private Integer weightGramm;
 
     @JoinColumn(name = "organisation_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,12 +51,12 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getWightGramm() {
-        return wightGramm;
+    public Integer getWeightGramm() {
+        return weightGramm;
     }
 
-    public void setWightGramm(Integer wightGramm) {
-        this.wightGramm = wightGramm;
+    public void setWeightGramm(Integer weightGramm) {
+        this.weightGramm = weightGramm;
     }
 
     public Organisation getOrganisation() {

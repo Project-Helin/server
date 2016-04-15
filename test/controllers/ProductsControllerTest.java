@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.ProductsDao;
 import models.Product;
+import models.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,6 +19,14 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
     @Inject
     private ProductsDao productsDao;
 
+    @Before
+    public void login() {
+        String password = "bla";
+        User user = testHelper.createUserWithOrganisation(password);
+        browser.goTo("/login");
+        fillInLoginForm(user, password);
+    }
+
     @Test
     public void shouldShowNewProduct() {
         Product newProduct = testHelper.createProduct();
@@ -27,7 +37,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(newProduct.getId().toString());
         assertThat(browser.pageSource()).contains(newProduct.getName());
         assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getPrice()));
-        assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getWightGramm()));
+        assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getWeightGramm()));
     }
 
     @Test
@@ -57,7 +67,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
 
         browser.fill(withId("Name")).with("Kaboom");
         browser.fill(withId("Price")).with("100");
-        browser.fill(withId("wightGramm")).with("300");
+        browser.fill(withId("weightGramm")).with("300");
         browser.click("#save");
 
         // verify
@@ -67,7 +77,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
         assertThat(all).hasSize(1);
         assertThat(all.get(0).getName()).isEqualTo("Kaboom");
         assertThat(all.get(0).getPrice()).isEqualTo(100);
-        assertThat(all.get(0).getWightGramm()).isEqualTo(300);
+        assertThat(all.get(0).getWeightGramm()).isEqualTo(300);
     }
 
 
