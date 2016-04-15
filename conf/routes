@@ -3,78 +3,78 @@
 # ~~~~
 
 # Home page
-GET         /                                  controllers.Application.index()
-POST        /person                            controllers.Application.addPerson()
-GET         /persons                           controllers.Application.getPersons
+GET         /                                                     controllers.Application.index()
+POST        /person                                               controllers.Application.addPerson()
+GET         /persons                                              controllers.Application.getPersons
 
 # Message Viewer
-GET         /messageviewer                     controllers.MessageViewer.index()
-GET         /sendSampleMessage                 controllers.MessageViewer.sendSampleMessage()
-GET           /messageviewer/register         controllers.MessageViewer.register()
+GET         /messageviewer                                        controllers.MessageViewer.index()
+GET         /sendSampleMessage                                    controllers.MessageViewer.sendSampleMessage()
+GET         /messageviewer/register                               controllers.MessageViewer.register()
 
-GET         /zone                              controllers.ZoneCrudController.index()
+GET         /zone                                                 controllers.ZoneCrudController.index()
 
 #Organisation
-GET         /organisations                     controllers.OrganisationsController.index()
-GET         /organisations/add                 controllers.OrganisationsController.add()
-POST        /organisations/create              controllers.OrganisationsController.create()
+GET         /organisations                                        controllers.OrganisationsController.index()
+GET         /organisations/add                                    controllers.OrganisationsController.add()
+POST        /organisations/create                                 controllers.OrganisationsController.create()
 
-GET         /organisations/:id/edit            controllers.OrganisationsController.edit(id : java.util.UUID)
-POST        /organisations/:id/update          controllers.OrganisationsController.update(id : java.util.UUID)
-GET         /organisations/:id/delete          controllers.OrganisationsController.delete(id : java.util.UUID)
+GET         /organisations/:id/edit                               controllers.OrganisationsController.edit(id : java.util.UUID)
+POST        /organisations/:id/update                             controllers.OrganisationsController.update(id : java.util.UUID)
+GET         /organisations/:id/delete                             controllers.OrganisationsController.delete(id : java.util.UUID)
 
 #Project
-GET         /projects                          controllers.ProjectsController.index()
-GET         /projects/create                   controllers.ProjectsController.create()
+GET         /projects                                             controllers.ProjectsController.index()
+GET         /projects/create                                      controllers.ProjectsController.create()
 
-GET         /projects/:projectId/edit          controllers.ProjectsController.edit(projectId : java.util.UUID)
-GET         /projects/:projectId/delete        controllers.ProjectsController.delete(projectId : java.util.UUID)
+GET         /projects/:projectId/edit                             controllers.ProjectsController.edit(projectId : java.util.UUID)
+GET         /projects/:projectId/delete                           controllers.ProjectsController.delete(projectId : java.util.UUID)
 
 #Product
-GET         /products                     controllers.ProductsController.index()
-GET         /products/add                 controllers.ProductsController.add()
-POST        /products/create              controllers.ProductsController.create()
+GET         /products                                             controllers.ProductsController.index()
+GET         /products/add                                         controllers.ProductsController.add()
+POST        /products/create                                      controllers.ProductsController.create()
 
-GET         /products/:id/edit            controllers.ProductsController.edit(id : java.util.UUID)
-POST        /products/:id/update          controllers.ProductsController.update(id : java.util.UUID)
-GET         /products/:id/delete          controllers.ProductsController.delete(id : java.util.UUID)
+GET         /products/:id/edit                                    controllers.ProductsController.edit(id : java.util.UUID)
+POST        /products/:id/update                                  controllers.ProductsController.update(id : java.util.UUID)
+GET         /products/:id/delete                                  controllers.ProductsController.delete(id : java.util.UUID)
 
 #Drones
-GET         /drones                     controllers.DronesController.index()
-GET         /drones/:id/edit            controllers.DronesController.edit(id : java.util.UUID)
-POST        /drones/:id/update          controllers.DronesController.update(id : java.util.UUID)
-GET         /drones/:id/delete          controllers.DronesController.delete(id : java.util.UUID)
+GET         /drones                                               controllers.DronesController.index()
+GET         /drones/:id/edit                                      controllers.DronesController.edit(id : java.util.UUID)
+POST        /drones/:id/update                                    controllers.DronesController.update(id : java.util.UUID)
+GET         /drones/:id/delete                                    controllers.DronesController.delete(id : java.util.UUID)
 
 #Authentication
-GET         /login                                                   controllers.UsersController.login()
-GET         /logout                                                  controllers.UsersController.logout()
-POST        /login                                                   controllers.UsersController.loginPost()
-GET         /register                                                controllers.UsersController.add()
-POST        /register                                                controllers.UsersController.create()
+GET         /login                                                controllers.UsersController.login()
+GET         /logout                                               controllers.UsersController.logout()
+POST        /login                                                controllers.UsersController.loginPost()
+GET         /register                                             controllers.UsersController.add()
+POST        /register                                             controllers.UsersController.create()
 
 #Organisations-Users
-GET         /organisations/:organisation_id/administrators      controllers.OrganisationsUsersController.index(organisation_id : java.util.UUID)
-GET         /products/add                 controllers.ProductsController.add()
-POST        /products/create              controllers.ProductsController.create()
+GET         /organisations/:organisation_id/administrators        controllers.OrganisationsUsersController.index(organisation_id : java.util.UUID)
+GET         /products/add                                         controllers.ProductsController.add()
+POST        /products/create                                      controllers.ProductsController.create()
 
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                      controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                         controllers.Assets.at(path="/public", file)
 
 # Register Drone
-GET         /registerDrone                     controllers.RegisterDroneController.index()
+GET         /registerDrone                                        controllers.RegisterDroneController.index()
 
 
 
 #API
 
 ##Drones
-POST        /api/drones                       controllers.api.DronesController.create()
+POST        /api/drones                                           controllers.api.DronesController.create()
 
 ##Project
-GET         /api/projects/:projectId               controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
-POST        /api/projects/:projectId/update        controllers.api.ProjectsApiController.update(projectId : java.util.UUID)
+GET         /api/projects/:projectId                              controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
+POST        /api/projects/:projectId/update                       controllers.api.ProjectsApiController.update(projectId : java.util.UUID)
 
 #TODO Get Project including Zones
 
