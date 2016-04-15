@@ -1,6 +1,7 @@
 package commons;
 
 import com.google.inject.Inject;
+import models.User;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.fluentlenium.core.filter.FilterConstructor.withName;
 import static play.test.Helpers.*;
 
 public abstract class AbstractIntegrationTest extends WithBrowser {
@@ -91,5 +93,19 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
         WebDriverWait wait = new WebDriverWait(browser.getDriver(), 60);
         WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id(id)));
         element.click();
+    }
+
+    protected void fillInRegisterForm(User user, String plainTextPassword) {
+        browser.fill(withName("name")).with(user.getName());
+        browser.fill(withName("email")).with(user.getEmail());
+        browser.fill(withName("password")).with(plainTextPassword);
+
+        browser.click("#register-user");
+    }
+
+    protected void fillInLoginForm(User user, String plainTextPassword) {
+        browser.fill(withName("email")).with(user.getEmail());
+        browser.fill(withName("password")).with(plainTextPassword);
+        browser.submit("#login");
     }
 }
