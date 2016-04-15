@@ -1,7 +1,5 @@
 package dao;
 
-import controllers.ProjectDto;
-import models.Organisation;
 import models.Product;
 
 import java.util.List;
