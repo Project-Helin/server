@@ -57,7 +57,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
     @Test
     public void login() {
 
-        User user = testHelper.createUser(plainTextPassword);
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
         browser.goTo(routes.UsersController.login().url());
         assertThat(browser.pageSource()).contains("Login");
@@ -70,7 +70,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
     @Test
     public void loginWithWrongData() {
 
-        User user = testHelper.createUser(plainTextPassword);
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
         browser.goTo(routes.UsersController.login().url());
 

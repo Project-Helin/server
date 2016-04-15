@@ -23,7 +23,7 @@ public class OrganisationUser extends AbstractIntegrationTest {
     @Test
     public void addUserToOrganisation() {
         jpaApi.withTransaction(() -> {
-            User user = testHelper.createUser(plainTextPassword);
+            User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
             Organisation organisation = testHelper.createNewOrganisation();
             organisation.getAdministrators().add(user);
@@ -44,7 +44,7 @@ public class OrganisationUser extends AbstractIntegrationTest {
     @Test
     public void removeUserFromOrganisation() {
         jpaApi.withTransaction(() -> {
-            User user = testHelper.createUser(plainTextPassword);
+            User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
             Organisation organisation = testHelper.createNewOrganisation();
             organisation.getAdministrators().add(user);

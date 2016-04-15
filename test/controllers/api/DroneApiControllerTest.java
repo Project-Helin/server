@@ -30,7 +30,7 @@ public class DroneApiControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void createDrone() throws ExecutionException, InterruptedException {
-        User user = testHelper.createUser("bla");
+        User user = testHelper.createUserWithOrganisation("bla");
 
         Organisation organisation = user.getOrganisations().stream().findFirst().get();
 

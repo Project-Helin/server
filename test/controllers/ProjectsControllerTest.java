@@ -25,7 +25,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     @Before
     public void login() {
         String password = "bla";
-        user = testHelper.createUser(password);
+        user = testHelper.createUserWithOrganisation(password);
         browser.goTo("/login");
         fillInLoginForm(user, password);
     }

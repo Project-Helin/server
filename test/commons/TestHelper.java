@@ -58,7 +58,7 @@ public class TestHelper {
         return drone;
     }
 
-    public User createUser(String plainTextPassword) {
+    public User createUserWithOrganisation(String plainTextPassword) {
         User user = new User();
 
         user.setId(UUID.randomUUID());
