@@ -2,14 +2,9 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import dao.OrganisationsDao;
-import dao.ProjectsDao;
-import models.Organisation;
+import commons.TestHelper;
 import models.Project;
 import org.junit.Test;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
@@ -17,15 +12,11 @@ import static org.fluentlenium.core.filter.FilterConstructor.withId;
 public class ProjectsControllerTest extends AbstractIntegrationTest {
 
     @Inject
-    private ProjectsDao projectsDao;
-
-    @Inject
-    private OrganisationsDao organisationsDao;
-
+    private TestHelper testHelper;
 
     @Test
     public void shouldShowNewProject() {
-        Project project = createNewProject();
+        Project project = testHelper.createNewProject();
 
         browser.goTo(routes.ProjectsController.index().url());
 
@@ -35,7 +26,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldRemoveOrganisation() {
-        Project project = createNewProject();
+        Project project = testHelper.createNewProject();
 
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).contains(project.getName());
@@ -51,21 +42,4 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(project.getName());
     }
 
-
-    private Project createNewProject() {
-
-        Project project = new Project();
-        project.setId(UUID.randomUUID());
-        project.setName("First Demo");
-
-        jpaApi.withTransaction(() -> {
-            Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
-            assertThat(first.isPresent()).isTrue();
-
-            project.setOrganisation(first.get());
-            projectsDao.persist(project);
-        });
-
-        return project;
-    }
 }

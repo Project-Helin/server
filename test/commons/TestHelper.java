@@ -1,18 +1,14 @@
 package commons;
 
 import com.google.inject.Inject;
-import dao.DroneDao;
-import dao.OrganisationsDao;
-import dao.ProductsDao;
-import dao.UserDao;
-import models.Drone;
-import models.Organisation;
-import models.Product;
-import models.User;
+import dao.*;
+import models.*;
 import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TestHelper {
 
@@ -30,6 +26,9 @@ public class TestHelper {
 
     @Inject
     private ProductsDao productsDao;
+
+    @Inject
+    private ProjectsDao projectsDao;
 
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
@@ -91,5 +90,22 @@ public class TestHelper {
 
         jpaApi.withTransaction(() -> productsDao.persist(product));
         return product;
+    }
+
+    public Project createNewProject() {
+
+        Project project = new Project();
+        project.setId(UUID.randomUUID());
+        project.setName("First Demo");
+
+        jpaApi.withTransaction(() -> {
+            Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
+            assertThat(first.isPresent()).isTrue();
+
+            project.setOrganisation(first.get());
+            projectsDao.persist(project);
+        });
+
+        return project;
     }
 }
