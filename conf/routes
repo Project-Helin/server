@@ -12,8 +12,6 @@ GET         /messageviewer                                        controllers.Me
 GET         /sendSampleMessage                                    controllers.MessageViewer.sendSampleMessage()
 GET         /messageviewer/register                               controllers.MessageViewer.register()
 
-GET         /zone                                                 controllers.ZoneCrudController.index()
-
 #Organisation
 GET         /organisations                                        controllers.OrganisationsController.index()
 GET         /organisations/add                                    controllers.OrganisationsController.add()
