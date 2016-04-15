@@ -27,10 +27,8 @@ GET         /organisations/:id/delete          controllers.OrganisationsControll
 GET         /projects                          controllers.ProjectsController.index()
 GET         /projects/create                   controllers.ProjectsController.create()
 
-GET         /projects/:projectId               controllers.ProjectsController.show(projectId : java.util.UUID)
 GET         /projects/:projectId/edit          controllers.ProjectsController.edit(projectId : java.util.UUID)
 GET         /projects/:projectId/delete        controllers.ProjectsController.delete(projectId : java.util.UUID)
-POST        /projects/:projectId/update        controllers.ProjectsController.update(projectId : java.util.UUID)
 
 #Product
 GET         /products                     controllers.ProductsController.index()
@@ -72,10 +70,11 @@ GET         /registerDrone                     controllers.RegisterDroneControll
 #API
 
 ##Drones
-
 POST        /api/drones                       controllers.api.DronesController.create()
 
-#Project
+##Project
+GET         /api/projects/:projectId               controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
+POST        /api/projects/:projectId/update        controllers.api.ProjectsApiController.update(projectId : java.util.UUID)
 
 #TODO Get Project including Zones
 
