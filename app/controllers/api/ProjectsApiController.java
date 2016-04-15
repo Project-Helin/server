@@ -25,7 +25,7 @@ public class ProjectsApiController extends Controller {
     public Result show(UUID projectID) {
         Project found = projectsDao.findById(projectID);
         if (found == null) {
-            return forbidden("Organisation not found!");
+            return forbidden("Project not found for id " + projectID.toString());
         }
 
         List<ZoneDto> zones = new ArrayList<>();
@@ -43,7 +43,7 @@ public class ProjectsApiController extends Controller {
     }
 
     @Transactional
-    public Result update(UUID projectId) {
+    public Result updateOrInsert(UUID projectId) {
         Project project = projectsDao.findById(projectId);
 
         boolean isNewProject = project == null;

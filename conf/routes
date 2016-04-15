@@ -71,7 +71,7 @@ POST        /api/drones                                             controllers.
 
 ##Project
 GET         /api/projects/:projectId                              controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
-POST        /api/projects/:projectId/update                       controllers.api.ProjectsApiController.update(projectId : java.util.UUID)
+POST        /api/projects/:projectId/update                       controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
 
 #TODO Get Project including Zones
 
