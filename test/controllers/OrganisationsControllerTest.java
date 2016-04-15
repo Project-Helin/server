@@ -4,10 +4,11 @@ import commons.AbstractIntegrationTest;
 import models.Organisation;
 import org.junit.Test;
 
+import static controllers.routes.OrganisationsController;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
-public class OrganisationsTest extends AbstractIntegrationTest {
+public class OrganisationsControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldShowNewOrganisation() {
@@ -28,12 +29,14 @@ public class OrganisationsTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).contains(organisation.getName());
         // remove that
         browser.find("#delete-" + organisation.getId()).click();
-        waitThreeSeconds();
         //confirm delete
-        browser.find("#deleteconfirm-" + organisation.getId()).click();
+        waitAndClick("deleteconfirm-" + organisation.getId());
+        waitFiveSeconds();
+
         // verify
         browser.goTo(OrganisationsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(organisation.getName());
+
     }
 
 

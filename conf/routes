@@ -73,7 +73,9 @@ GET         /registerDrone                                          controllers.
 
 POST        /api/drones                                             controllers.api.DronesController.create()
 
-#Project
+##Project
+GET         /api/projects/:projectId                              controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
+POST        /api/projects/:projectId/update                       controllers.api.ProjectsApiController.update(projectId : java.util.UUID)
 
 #TODO Get Project including Zones
 

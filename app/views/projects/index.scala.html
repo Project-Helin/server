@@ -1,4 +1,5 @@
 @import java.util
+@import views.html.helpers.deleteButton
 @(projects: util.List[Project])
 
 @main("Projects") {
@@ -12,7 +13,6 @@
                             <tr>
                                 @*<th>ID</th>*@
                                 <th>Name</th>
-                                @*<th>Head quarter</th>*@
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -20,43 +20,24 @@
                             @for(project <- projects) {
                                 <tr>
                                     @*<th>@organisation.getId</th>*@
-                                <th>@project.getName</th>
-                                @*<th>@project.getHeadquarterPosition</th>*@
-                                <th>
-                                    <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
+                                    <th>@project.getName</th>
+                                    <th>
+                                        <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
 
-                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal@project.getId" id="delete-@project.getId">Delete</button>
-
-                                        <!-- Modal dialog for delete button -->
-                                    <div class="modal fade" id="myModal@project.getId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title" id="myModalLabel">Delete zone</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Do you want to this Project?</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-
-                                                    <a href="@controllers.routes.ProjectsController.delete(project.getId)" class="btn btn-danger btn-sm" role="button"
-                                                    id="deleteconfirm-@project.getId" >Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </th>
+                                        @deleteButton(
+                                            controllers.routes.ProjectsController.delete(project.getId),
+                                            project.getId,
+                                            "Delete Project",
+                                            "Do you want to delete this project?"
+                                        )
+                                    </th>
                                 </tr>
                             }
 
                             <tr>
                                 <th></th>
                                 <th>
-                                    <a href="@controllers.routes.ProjectsController.create()" class="btn btn-primary">
-                                        Add</a>
+                                    <a href="@controllers.routes.ProjectsController.create()" class="btn btn-primary" id="add">Add</a>
                                 </th>
                             </tr>
                         </tbody>
@@ -64,8 +45,6 @@
 
                 </div> <!-- /.box-body -->
             </div>
-
-
         </div>
     </div>
 }

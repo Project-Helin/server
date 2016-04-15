@@ -1,10 +1,13 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.ModelHelper;
 import dao.OrganisationsDao;
 import dao.ProductsDao;
 import models.Organisation;
 import models.Product;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.data.Form;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
@@ -31,9 +34,10 @@ public class ProductsController extends Controller {
     @Inject
     private FormFactory formFactory;
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductsController.class);
+
     public Result index() {
-        List<Product> all =
-            productsDao.findAll();
+        List<Product> all = productsDao.findAll();
         return ok(index.render(all));
     }
 
@@ -50,14 +54,22 @@ public class ProductsController extends Controller {
             .form(Product.class)
             .bindFromRequest(request());
 
-        Product product = form.get();
-        product.setId(UUID.randomUUID());
-        product.setOrganisation(getOrganisation());
-        productsDao.persist(product);
+        if (form.hasErrors()) {
 
-        return index();
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(add.render(form));
+
+        } else {
+
+            Product product = form.get();
+            product.setId(UUID.randomUUID());
+            product.setOrganisation(getOrganisation());
+            productsDao.persist(product);
+
+            flash("success", "Saved successfully");
+            return redirect(routes.ProductsController.index());
+        }
     }
-
 
     public Result edit(UUID id) {
         Product found = productsDao.findById(id);
@@ -79,9 +91,24 @@ public class ProductsController extends Controller {
         if (found == null) {
             return forbidden("Organisation not found!");
         }
-        productsDao.persist(found);
 
-        return index();
+
+        Form<Product> form = formFactory
+            .form(Product.class)
+            .bindFromRequest(request());
+
+        if (form.hasErrors()) {
+
+            logger.info("Has error, go back {}", form.errorsAsJson());
+            return badRequest(edit.render(form));
+
+        } else {
+
+            ModelHelper.updateAttributes(found, form.get());
+            productsDao.persist(found);
+            return redirect(routes.ProductsController.index());
+
+        }
     }
 
     public Result delete(UUID id) {
@@ -90,6 +117,8 @@ public class ProductsController extends Controller {
         if (found == null) {
             return forbidden("Organisation not found!");
         }
+
+        flash("success", "Deleted successfully");
         productsDao.delete(found);
         return index();
     }

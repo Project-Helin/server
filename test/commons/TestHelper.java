@@ -1,29 +1,34 @@
 package commons;
 
 import com.google.inject.Inject;
-import dao.DroneDao;
-import dao.OrganisationsDao;
-import dao.UserDao;
-import models.Drone;
-import models.Organisation;
-import models.User;
+import dao.*;
+import models.*;
 import play.db.jpa.JPAApi;
 
+import java.util.Optional;
 import java.util.UUID;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TestHelper {
 
     @Inject
-    OrganisationsDao organisationsDao;
+    private OrganisationsDao organisationsDao;
 
     @Inject
-    DroneDao droneDao;
+    private DroneDao droneDao;
 
     @Inject
-    UserDao userDao;
+    private UserDao userDao;
 
     @Inject
-    JPAApi jpaApi;
+    private JPAApi jpaApi;
+
+    @Inject
+    private ProductsDao productsDao;
+
+    @Inject
+    private ProjectsDao projectsDao;
 
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
@@ -71,4 +76,36 @@ public class TestHelper {
         return user;
     }
 
+
+    public Product createProduct() {
+        Product product = new Product();
+        product.setId(UUID.randomUUID());
+        product.setName("This is a product");
+        product.setPrice(10d);
+        product.setWightGramm(100);
+
+        product.setOrganisation(
+            createNewOrganisation()
+        );
+
+        jpaApi.withTransaction(() -> productsDao.persist(product));
+        return product;
+    }
+
+    public Project createNewProject() {
+
+        Project project = new Project();
+        project.setId(UUID.randomUUID());
+        project.setName("First Demo");
+
+        jpaApi.withTransaction(() -> {
+            Optional<Organisation> first = organisationsDao.findAll().stream().findFirst();
+            assertThat(first.isPresent()).isTrue();
+
+            project.setOrganisation(first.get());
+            projectsDao.persist(project);
+        });
+
+        return project;
+    }
 }

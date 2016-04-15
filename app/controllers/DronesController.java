@@ -16,6 +16,7 @@ import views.html.drones.edit;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
+import views.html.drones.index;
 
 @Transactional
 public class DronesController extends Controller {
@@ -31,7 +32,7 @@ public class DronesController extends Controller {
     public Result index() {
         List<Drone> all =
                 droneDao.findAll();
-        return ok(views.html.drones.index.render(all));
+        return ok(index.render(all));
     }
 
     public Result edit(UUID id) {

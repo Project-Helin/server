@@ -3,6 +3,10 @@ package commons;
 import com.google.inject.Inject;
 import org.junit.After;
 import org.junit.Before;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.Database;
@@ -74,5 +78,18 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
 
     protected void waitThreeSeconds() {
         browser.getDriver().manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+    }
+
+    protected void waitFiveSeconds() {
+        browser.getDriver().manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Wait for the element with given id be visible and click
+     */
+    protected void waitAndClick(String id) {
+        WebDriverWait wait = new WebDriverWait(browser.getDriver(), 60);
+        WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id(id)));
+        element.click();
     }
 }
