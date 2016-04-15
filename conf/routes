@@ -11,13 +11,11 @@ GET         /sendSampleMessage                                      controllers.
 GET         /messageviewer/register                                 controllers.MessageViewer.register()
 
 #Organisation
-GET         /organisations                                          controllers.OrganisationsController.index()
 GET         /organisations/add                                      controllers.OrganisationsController.add()
 POST        /organisations/create                                   controllers.OrganisationsController.create()
 
-GET         /organisations/:id/edit                                 controllers.OrganisationsController.edit(id : java.util.UUID)
+GET         /organisations/edit                                 controllers.OrganisationsController.edit()
 POST        /organisations/:id/update                               controllers.OrganisationsController.update(id : java.util.UUID)
-GET         /organisations/:id/delete                               controllers.OrganisationsController.delete(id : java.util.UUID)
 
 #Project
 GET         /projects                                               controllers.ProjectsController.index()
