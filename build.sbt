@@ -9,13 +9,14 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
   * We need this, so that SBT can also resolve dependencies from mvn local repository
   */
 resolvers += (
-  "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
-)
+  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
+  )
 
 libraryDependencies ++= Seq(
   javaJpa,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
-  evolutions
+  evolutions,
+  javaWs
 )
 
 /**
@@ -43,13 +44,30 @@ libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
   * Extension for Encryption
   */
 libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
+
+libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.2"
+
 /**
   * For testing
   */
 libraryDependencies += "org.easytesting" % "fest-assert" % "1.4"
 libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
 
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-java" % "2.51.0"
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
+
+/**
+  * This is some magic way to let SBT print a summary of
+  * tests with their exceptions.
+  * The passed arguments are ( as defined from com.novocode.junit.JUnitRunner )
+  * -v => verbose
+  * -q => quite
+  * -a => log assert
+  * Don't ask me why -v and -q are enabled, I got these proposal from the
+  * #playframework irc chat.
+  *
+  */
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")

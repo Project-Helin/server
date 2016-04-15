@@ -1,9 +1,9 @@
-@import controllers.organisations.routes
+@import controllers.routes
 @import views.html.bootstrapHelpers.text
 @import views.html.bootstrapHelpers.globalerrors
 @(organisationForm: Form[Organisation])
 
-@main("Project") {
+@main("Organisation Settings " + organisationForm.get().getName) {
 
     <div class="row">
         <div class="col-xs-12">
@@ -11,7 +11,7 @@
                 <div class="box-body">
 
 
-                @helper.form(action = routes.Organisations.update(organisationForm.get().getId)) {
+                @helper.form(action = routes.OrganisationsController.update(organisationForm.get().getId)) {
 
                     <fieldset>
                         @text(organisationForm("name"),
@@ -25,8 +25,7 @@
 
 
                     <div class="form-actions">
-                        <input type="submit" id="login" class="btn btn-primary" value="Save">
-                        <a href="@routes.Organisations.index()" class="btn btn-default">Back</a>
+                        <input type="submit" id="save" class="btn btn-primary" value="Save">
                     </div>
 
                 }

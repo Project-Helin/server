@@ -11,6 +11,13 @@ public class UserDao extends AbstractDao<User> {
         super(User.class);
     }
 
+    public List<User> findAll() {
+        String sql = "select e from Users e ";
+        return jpaApi.em()
+                .createQuery(sql, User.class)
+                .getResultList();
+    }
+
     public User authenticateAndGetUser(String email, String password) {
         User user = findByEmail(email);
         if (user != null && AuthenticationHelper.checkPassword(password, user.getPassword())) {

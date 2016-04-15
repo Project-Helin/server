@@ -1,8 +1,5 @@
 package models;
 
-import commons.GisHelper;
-import org.geolatte.geom.Point;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;

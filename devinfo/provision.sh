@@ -40,12 +40,15 @@ sudo -u postgres createdb $DB_USER
 sudo -u postgres createuser $DB_USER -s       # -s for superuser
 # change password
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_USER';"
+sudo -u postgres psql -d $DB_USER -c "CREATE EXTENSION postgis;"
+sudo -u postgres psql -d $DB_USER -c "CREATE EXTENSION \"uuid-ossp\";"
 
 # Create test user
 sudo -u postgres createdb $DB_USER_TEST
 sudo -u postgres createuser $DB_USER_TEST -s       # -s for superuser
 sudo -u postgres psql -c "alter user $DB_USER_TEST with password '$DB_USER_TEST';"
-
+sudo -u postgres psql -d $DB_USER_TEST -c "CREATE EXTENSION postgis;"
+sudo -u postgres psql -d $DB_USER_TEST -c "CREATE EXTENSION \"uuid-ossp\";"
 
 # We need to alter vagrant configuration, so that we can connect from
 # outside of the virtual machine to the db

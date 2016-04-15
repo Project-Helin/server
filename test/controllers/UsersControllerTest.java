@@ -5,12 +5,9 @@ import commons.AbstractIntegrationTest;
 import dao.UserDao;
 import models.User;
 import org.junit.Test;
-
-import java.util.UUID;
+import play.i18n.Messages;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fluentlenium.core.filter.FilterConstructor.withName;
-import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 public class UsersControllerTest extends AbstractIntegrationTest {
 
@@ -26,62 +23,65 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-
         browser.goTo("/");
-
-        browser.click(withText("Register"));
-
-        assertThat(browser.pageSource()).containsIgnoringCase("Register");
+        browser.click("#register");
 
         fillInRegisterForm(user, plainTextPassword);
 
         assertThat(browser.pageSource()).contains("Log in");
+
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).contains(user.getName());
     }
 
-//    @Test
-//    public void login() {
-//
-//        User user = createUser();
-//
-//        browser.goTo(routes.UsersController.login().url());
-//        assertThat(browser.pageSource()).contains("Login");
-//
-//        browser.submit("#login");
-//
-//        assertThat(browser.pageSource()).doesNotContain(user.getName());
-//
-//        fillInLoginForm(user, plainTextPassword);
-//
-//        assertThat(browser.pageSource()).contains(user.getName());
-//    }
 
-    private void fillInRegisterForm(User user, String plainTextPassword) {
-        String randomString = UUID.randomUUID().toString();
-        browser.fill(withName("name")).with(user.getName() + randomString);
-        browser.fill(withName("email")).with(user.getEmail() + randomString);
-        browser.fill(withName("password")).with(plainTextPassword);
-        browser.submit("#register");
+    @Test
+    public void registerUserWithoutEmail() {
+        User userWithoutEmail = new User();
+        userWithoutEmail.setName("Anna Bolika");
+        userWithoutEmail.setEmail("");
+        userWithoutEmail.setPassword(plainTextPassword);
+
+        browser.goTo(routes.UsersController.add().url());
+
+        browser.click("#register");
+
+        fillInRegisterForm(userWithoutEmail, plainTextPassword);
+
+        assertThat(browser.pageSource()).containsIgnoringCase(Messages.get("error.required"));
+        assertThat(browser.pageSource()).containsIgnoringCase("Register");
+        assertThat(browser.pageSource()).contains("Login");
     }
 
-    private void fillInLoginForm(User user, String plainTextPassword) {
-        String randomString = UUID.randomUUID().toString();
-        browser.fill(withName("email")).with(user.getEmail() + randomString);
-        browser.fill(withName("password")).with(plainTextPassword);
+    @Test
+    public void login() {
+
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
+
+        browser.goTo(routes.UsersController.login().url());
+        assertThat(browser.pageSource()).contains("Login");
+
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).contains(user.getName());
+    }
+
+    @Test
+    public void loginWithWrongData() {
+
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
+
+        browser.goTo(routes.UsersController.login().url());
+
         browser.submit("#login");
+        assertThat(browser.pageSource()).doesNotContain(user.getName());
+
+        user.setEmail("wrong.email@example.com");
+        fillInLoginForm(user, plainTextPassword);
+
+        assertThat(browser.pageSource()).doesNotContain(user.getName());
+        assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
-    private User createUser() {
-        User user = new User();
 
-        user.setId(UUID.randomUUID());
-        user.setConfirmationToken(UUID.randomUUID().toString());
-        user.setName("Anna Bolika");
-        user.setEmail("anna.bolika@example.com");
-        user.setPassword(plainTextPassword);
-
-        jpaapi.withTransaction(() -> {
-            userDao.persist(user);
-        });
-
-        return user;
-    }
 }

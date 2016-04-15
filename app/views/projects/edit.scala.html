@@ -15,26 +15,28 @@
             <script src='@routes.Assets.at("javascripts/common/common.module.js")'></script>
             <script src='@routes.Assets.at("javascripts/common/helper.service.js")'></script>
             <script src='@routes.Assets.at("javascripts/projects/projects.module.js")'></script>
+            <script src='@routes.Assets.at("javascripts/projects/projects.service.js")'></script>
             <script src='@routes.Assets.at("javascripts/projects/projects.controller.js")'></script>
             <script src='@routes.Assets.at("javascripts/projects/zoneEditor/zone-map.directive.js")'></script>
             <script src='@routes.Assets.at("javascripts/projects/zoneEditor/zone-map.controller.js")'></script>
 
 
-            <div class="row">
+            <div class="row m-r-0 m-l-0 m-b">
                 <div class="col-xs-6">
-                    <h1 class="m-b"><a href="#" editable-text="project.name">{{project.name || "Click here to change Project Name"}}</a></h1>
+                    <div class="site-title"><a href="#" editable-text="project.name">{{project.name || "Click here to change Project Name"}}</a></div>
                 </div>
                 <div class="col-xs-6">
                     <div class="row pull-right">
-                        <input type="button" class="btn btn-primary" value="Save" ng-click="save()" />
-                        <a type="button" class="btn btn-default" href="@routes.ProjectsController.index()">
-                        Back</a>
+                        <div class="btn btn-success" ng-click="save()">Save</div>
                     </div>
                 </div>
             </div>
 
 
             <div class="box">
+                <div class="box-header">
+
+                </div>
 
                 <div class="box-body">
 

@@ -1,8 +1,8 @@
 package commons;
 
+import commons.gis.GisHelper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
-import org.geolatte.geom.Position;
 import org.geolatte.geom.codec.Wkt;
 import org.junit.Test;
 import org.slf4j.Logger;

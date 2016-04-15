@@ -2,6 +2,7 @@ package commons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
         module.addDeserializer(Polygon.class, new JsonGeometryDeserializer<>());
 
         currentMapper.registerModule(module);
+
+        BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
 
         // replace the mapper
         Json.setObjectMapper(currentMapper);

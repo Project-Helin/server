@@ -1,13 +1,13 @@
 package commons;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import commons.gis.GisHelper;
 import models.Project;
 import org.geolatte.geom.Point;
 import org.junit.Ignore;
 import org.junit.Test;
 import play.api.ApplicationLoader;
 import play.libs.Json;
-import play.test.Helpers;
 
 import java.util.UUID;
 

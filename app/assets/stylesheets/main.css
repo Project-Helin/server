@@ -44,6 +44,15 @@
     color: black!important;
 }
 
-h1 {
+.site-title {
     font-size: 24px;
+}
+
+.box-header > h3{
+    font-size: 24px;
+    margin: 0;
+}
+
+.position-relative {
+    position: relative;
 }

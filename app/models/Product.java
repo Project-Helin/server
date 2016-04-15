@@ -1,6 +1,6 @@
 package models;
 
-import org.geolatte.geom.Polygon;
+import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -12,13 +12,16 @@ public class Product {
     private UUID id;
 
     @Column
+    @Constraints.Required
     private String name;
 
     @Column
+    @Constraints.Required
     private Double price;
 
     @Column(name = "weight_gramm")
-    private Integer wightGramm;
+    @Constraints.Required
+    private Integer weightGramm;
 
     @JoinColumn(name = "organisation_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,12 +51,12 @@ public class Product {
         this.price = price;
     }
 
-    public Integer getWightGramm() {
-        return wightGramm;
+    public Integer getWeightGramm() {
+        return weightGramm;
     }
 
-    public void setWightGramm(Integer wightGramm) {
-        this.wightGramm = wightGramm;
+    public void setWeightGramm(Integer weightGramm) {
+        this.weightGramm = weightGramm;
     }
 
     public Organisation getOrganisation() {

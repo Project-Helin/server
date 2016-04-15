@@ -1,7 +1,9 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.SessionHelper;
 import dao.UserDao;
+import models.Organisation;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -21,6 +23,9 @@ public class UsersController extends Controller {
 
     @Inject
     private UserDao userDao;
+
+    @Inject
+    private SessionHelper sessionHelper;
 
 
     public Result login() {
@@ -43,8 +48,13 @@ public class UsersController extends Controller {
                 form.reject("Wrong user or password");
                 return badRequest(login.render(form));
             } else {
-                session("email", user.getEmail());
-                session("name", user.getName());
+                sessionHelper.setUser(user, session());
+
+                if (user.getOrganisations().size() > 0) {
+                    Organisation firstOrganisation = user.getOrganisations().iterator().next();
+                    sessionHelper.setOrganisation(firstOrganisation, session());
+                }
+
                 flash("success", "Welcome " + user.getName());
                 return redirect("/");
             }

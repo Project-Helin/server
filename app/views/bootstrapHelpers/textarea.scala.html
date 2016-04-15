@@ -1,3 +1,4 @@
+@import play.i18n._
 @(field: Field, rows: String = "3", label: String = "CHANGEME", placeholder: String = "", help: String = "")
 
   <div class="form-group @if(field.hasErrors) {has-error}">
@@ -9,7 +10,7 @@
                 name="@field.name" 
                 placeholder="@placeholder" 
                 >@field.value.getOrElse("")</textarea>
-      <span class="help-block">@help</span>
-      <span class="help-block">@{field.error.map { error => error.message }}</span>
+        <span class="help-block">@help</span>
+        <span class="help-block">@{field.error.map { error => Messages.get(error.message)}}</span>
     </div>
   </div>
