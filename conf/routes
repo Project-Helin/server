@@ -67,11 +67,11 @@ GET         /registerDrone                                          controllers.
 
 ##Drones
 
-POST        /api/drones                                             controllers.api.DronesController.create()
+POST        /api/drones                                             controllers.api.DronesApiController.create()
 
 ##Project
-GET         /api/projects/:projectId                              controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
-POST        /api/projects/:projectId/update                       controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
+GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
+POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
 
 #TODO Get Project including Zones
 

@@ -35,22 +35,43 @@ public class ApiHelper {
         }
     }
 
+    public <T> T doPost(Call urlRouteLink, JsonNode data, Class<T> expectedReturnType) {
+        try {
+            return doPostCareFree(urlRouteLink, data, expectedReturnType);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> T doPostCareFree(Call urlRouteLink, JsonNode jsonData, Class<T> expectedReturnType) throws ExecutionException, InterruptedException {
+        CompletionStage<JsonNode> response = ws.url(BASE_URL + urlRouteLink.url())
+                .setContentType("application/json")
+                .setHeader("Accept", "application/json")
+                .post(jsonData)
+                .thenApply(this::throwExceptionIfFaultyResponse)
+                .thenApply(WSResponse::asJson);
+
+        JsonNode rawResponse = response.toCompletableFuture().get();
+        return Json.fromJson(rawResponse, expectedReturnType);
+
+    }
+
     private void doPostCareFree(Call urlRouteLink,
                                 Object bodyWhichIsSentAsJson) throws InterruptedException, ExecutionException {
         ws.url(BASE_URL + urlRouteLink.url())
-            .post(Json.toJson(bodyWhichIsSentAsJson))
-            .thenApply(this::throwExceptionIfFaultyResponse)
-            .toCompletableFuture().get();
+                .post(Json.toJson(bodyWhichIsSentAsJson))
+                .thenApply(this::throwExceptionIfFaultyResponse)
+                .toCompletableFuture().get();
     }
 
     private <T> T doCareFree(Call urlRouteLink,
                              Class<T> expectedReturnType) throws InterruptedException, ExecutionException {
 
         CompletionStage<JsonNode> response = ws
-            .url(BASE_URL + urlRouteLink.url())
-            .get()
-            .thenApply(this::throwExceptionIfFaultyResponse)
-            .thenApply(WSResponse::asJson);
+                .url(BASE_URL + urlRouteLink.url())
+                .get()
+                .thenApply(this::throwExceptionIfFaultyResponse)
+                .thenApply(WSResponse::asJson);
 
         JsonNode rawResponse = response.toCompletableFuture().get();
         return Json.fromJson(rawResponse, expectedReturnType);
@@ -66,6 +87,10 @@ public class ApiHelper {
      */
     private WSResponse throwExceptionIfFaultyResponse(WSResponse o) {
         if (o.getStatus() == 404) {
+            throw new RuntimeException("Response with error: " + o.getStatusText());
+        } else if (o.getStatus() == 500){
+            throw new RuntimeException("Response with error: " + o.getStatusText());
+        } else if (o.getStatus() == 403){
             throw new RuntimeException("Response with error: " + o.getStatusText());
         }
         return o;

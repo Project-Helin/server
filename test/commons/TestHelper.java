@@ -30,6 +30,7 @@ public class TestHelper {
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
         organisation.setId(UUID.randomUUID());
+        organisation.setToken(UUID.randomUUID().toString().substring(0,5));
         organisation.setName("Super HSR " + System.currentTimeMillis());
 
         jpaApi.withTransaction(() -> {

@@ -2,10 +2,8 @@ package controllers.api;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.TestHelper;
 import dao.ProjectsDao;
 import models.Project;
-import models.ZoneType;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,9 +16,6 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest{
 
     @Inject
     private ApiHelper apiHelper;
-
-    @Inject
-    private TestHelper testHelper;
 
     @Inject
     private ProjectsDao projectsDao;

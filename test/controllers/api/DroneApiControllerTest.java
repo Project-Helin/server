@@ -1,9 +1,12 @@
 package controllers.api;
 
+import ch.helin.messages.dto.message.DroneDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import models.Drone;
+import models.Organisation;
+import models.User;
 import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WSClient;
@@ -16,14 +19,20 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class droneTest extends AbstractIntegrationTest {
+public class DroneApiControllerTest extends AbstractIntegrationTest {
     @Inject
     WSClient ws;
+
+    @Inject
+    private ApiHelper apiHelper;
 
     String baseUrl = "http://localhost:19001";
 
     @Test
     public void createDrone() throws ExecutionException, InterruptedException {
+        User user = testHelper.createUser("bla");
+
+        Organisation organisation = user.getOrganisations().stream().findFirst().get();
 
         Drone newDrone = new Drone();
         newDrone.setName("new drone");
@@ -32,24 +41,18 @@ public class droneTest extends AbstractIntegrationTest {
         JsonNode jsonDrone = Json.newObject()
                 .put("name", newDrone.getName())
                 .put("payload", String.valueOf(newDrone.getPayload()))
-                .put("organisationToken", "AHSFNASNAHSDF");
+                .put("organisationToken", organisation.getToken());
 
         JsonNode wrapper = Json.newObject()
                 .set("drone", jsonDrone);
 
-        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
-                .setContentType("application/json")
-                .setHeader("Accept", "application/json")
-                .post(wrapper)
-                .thenApply(WSResponse::asJson);
+        DroneDto returnedDrone = apiHelper.doPost(routes.DronesApiController.create(), wrapper, DroneDto.class);
 
-        Drone droneObject = Json.fromJson(r.toCompletableFuture().get(), Drone.class);
-
-        assertNotNull(droneObject.getId());
-        assertThat(droneObject.getName(), equalTo(newDrone.getName()));
-        assertThat(droneObject.getPayload(), equalTo(newDrone.getPayload()));
-        assertNotNull(droneObject.getOrganisation());
-        assertNotNull(droneObject.getToken());
+        assertNotNull(returnedDrone.getId());
+        assertThat(returnedDrone.getName(), equalTo(newDrone.getName()));
+        assertThat(returnedDrone.getPayload(), equalTo(newDrone.getPayload()));
+        assertNotNull(returnedDrone.getOrganisationToken());
+        assertNotNull(returnedDrone.getToken());
     }
 
     @Test(expected = ExecutionException.class)
@@ -67,7 +70,7 @@ public class droneTest extends AbstractIntegrationTest {
                 .set("drone", jsonDrone);
 
 
-        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
+        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesApiController.create().url())
                 .setContentType("application/json")
                 .setHeader("Accept", "application/json")
                 .post(wrapper)
@@ -89,7 +92,7 @@ public class droneTest extends AbstractIntegrationTest {
         JsonNode wrapper = Json.newObject()
                 .set("drone", jsonDrone);
 
-        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesController.create().url())
+        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesApiController.create().url())
                 .setContentType("application/json")
                 .setHeader("Accept", "application/json")
                 .post(wrapper)

@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.DroneConnection;
 import dao.DroneDao;
 import dao.OrganisationsDao;
+import mappers.DroneMapper;
 import models.Drone;
 import models.Organisation;
 import play.db.jpa.Transactional;
@@ -15,13 +16,16 @@ import play.mvc.Result;
 
 import java.util.UUID;
 
-public class DronesController extends Controller {
+public class DronesApiController extends Controller {
 
     @Inject
     private DroneDao droneDao;
 
     @Inject
     private OrganisationsDao organisationsDao;
+
+    @Inject
+    private DroneMapper droneMapper;
 
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
@@ -39,7 +43,11 @@ public class DronesController extends Controller {
             Drone drone = new Drone();
             drone.setName(name);
             drone.setPayload(payload);
-            drone.setOrganisation(getOrganisation(organisationToken));
+            Organisation organisation = getOrganisation(organisationToken);
+            if (organisation == null) {
+                return badRequest("Wrong_Organisation_Token");
+            }
+            drone.setOrganisation(organisation);
 
             drone.setId(UUID.randomUUID());
             drone.setToken(UUID.randomUUID());
@@ -48,7 +56,7 @@ public class DronesController extends Controller {
 
             createDroneConnection(drone);
 
-            return ok(Json.toJson(drone));
+            return ok(Json.toJson(droneMapper.getDroneDto(drone)));
         }
     }
 
