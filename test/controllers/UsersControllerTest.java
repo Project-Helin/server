@@ -8,9 +8,6 @@ import org.junit.Test;
 import play.i18n.Messages;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fluentlenium.core.filter.FilterConstructor.withId;
-import static org.fluentlenium.core.filter.FilterConstructor.withName;
-import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 public class UsersControllerTest extends AbstractIntegrationTest {
 
@@ -87,22 +84,4 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
 
-    private void fillInRegisterForm(User user, String plainTextPassword) {
-        browser.fill(withName("name")).with(user.getName());
-        browser.fill(withName("email")).with(user.getEmail());
-        browser.fill(withName("password")).with(plainTextPassword);
-
-        browser.click("#register-user");
-    }
-
-    private void fillInLoginForm(User user, String plainTextPassword) {
-        browser.fill(withName("email")).with(user.getEmail());
-        browser.fill(withName("password")).with(plainTextPassword);
-        browser.submit("#login");
-    }
-
-//    @Override
-//    protected TestBrowser provideBrowser(int port) {
-//        return testBrowser(Helpers.FIREFOX);
-//    }
 }

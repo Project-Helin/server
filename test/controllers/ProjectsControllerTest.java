@@ -5,6 +5,8 @@ import commons.AbstractIntegrationTest;
 import commons.TestHelper;
 import dao.ProjectsDao;
 import models.Project;
+import models.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -18,9 +20,19 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     @Inject
     private TestHelper testHelper;
 
+    User user;
+
+    @Before
+    public void login() {
+        String password = "bla";
+        user = testHelper.createUser(password);
+        browser.goTo("/login");
+        fillInLoginForm(user, password);
+    }
+
     @Test
     public void shouldShowNewProject() {
-        Project project = testHelper.createNewProject();
+        Project project = testHelper.createNewProject(user);
 
         browser.goTo(routes.ProjectsController.index().url());
 
@@ -29,8 +41,8 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldRemoveOrganisation() {
-        Project project = testHelper.createNewProject();
+    public void shouldRemoveProject() {
+        Project project = testHelper.createNewProject(user);
 
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).contains(project.getName());
@@ -46,7 +58,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(project.getName());
 
         // verify in db
-        jpaApi.withTransaction(() ->{
+        jpaApi.withTransaction(() -> {
             assertThat(projectsDao.findById(project.getId())).isNull();
         });
     }

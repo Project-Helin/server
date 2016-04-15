@@ -67,7 +67,13 @@ public class TestHelper {
         user.setPassword(plainTextPassword);
 
         jpaApi.withTransaction(() -> {
+            Organisation organisation = createNewOrganisation();
             userDao.persist(user);
+            organisation.getAdministrators().add(user);
+            jpaApi.em().merge(organisation);
+            jpaApi.em().flush();
+            jpaApi.em().refresh(user);
+            user.getOrganisations().size();
         });
 
         return user;
@@ -89,17 +95,14 @@ public class TestHelper {
         return product;
     }
 
-    public Project createNewProject() {
+    public Project createNewProject(User user) {
 
         Project project = new Project();
         project.setId(UUID.randomUUID());
         project.setName("First Demo");
 
         jpaApi.withTransaction(() -> {
-            Organisation organisation = new Organisation();
-            organisation.setName("organisation 1");
-            organisation.setId(UUID.randomUUID());
-
+            Organisation organisation = user.getOrganisations().stream().findFirst().get();
             project.setOrganisation(organisation);
             projectsDao.persist(project);
         });
