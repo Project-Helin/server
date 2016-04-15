@@ -6,21 +6,27 @@
     <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-    @for(organisation <- organisations) {
+        @for(organisation <- organisations) {
+
+            <li>
+                <div>
+                    <div class="col-xs-1">
+                    @if(organisation.getId.toString.equals(session.get(commons.SessionKey.ORGANISATION_ID.name))) {
+                        <i class="glyphicon glyphicon-ok"></i>
+                    }
+                    </div>
+                    <div class="col-xs-10">
+                        <a href="@routes.OrganisationsUsersController.setCurrentOrganisation(organisation.getId)">@organisation.getName</a>
+                    </div>
+
+                </div>
+            </li>
+        }
 
         <li>
-            <div>
-                <div class="col-xs-1">
-                @if(organisation.getId.toString.equals(session.get(commons.SessionKey.ORGANISATION_ID.name))) {
-                    <i class="glyphicon glyphicon-ok"></i>
-                }
-                </div>
-                <div class="col-xs-10">
-                    <a href="@routes.OrganisationsUsersController.setCurrentOrganisation(organisation.getId)">@organisation.getName</a>
-                </div>
-
-            </div>
+            <a href="@routes.OrganisationsController.add()" id="register-organisation">
+                Add new Organisation</a>
         </li>
-    }
+
     </ul>
 </li>

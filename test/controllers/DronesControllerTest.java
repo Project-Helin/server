@@ -4,18 +4,35 @@ import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.DroneDao;
 import models.Drone;
+import models.Organisation;
+import models.User;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
-public class DronesTest extends AbstractIntegrationTest {
+public class DronesControllerTest extends AbstractIntegrationTest {
     @Inject
     private DroneDao droneDao;
 
+    private User user;
+    private Organisation organisation;
+
+
+    @Before
+    public void login() {
+        String password = "bla";
+        user = testHelper.createUserWithOrganisation(password);
+        organisation = user.getOrganisations().stream().findFirst().get();
+        browser.goTo("/login");
+        fillInLoginForm(user, password);
+    }
+
     @Test
     public void shouldShowNewDrone() {
-        Drone drone = testHelper.createNewDrone();
+        organisation = user.getOrganisations().stream().findFirst().get();
+        Drone drone = testHelper.createNewDrone(organisation);
 
         browser.goTo(routes.DronesController.index().url());
 
@@ -28,12 +45,11 @@ public class DronesTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldRemoveDrone() throws InterruptedException {
-        Drone drone = testHelper.createNewDrone();
+        Drone drone = testHelper.createNewDrone(organisation);
 
         browser.goTo(routes.DronesController.index().url());
         assertThat(browser.pageSource()).contains(drone.getName());
         // remove that
-        // browser.find(name).click();
         waitAndClick("delete-" + drone.getId());
 
         //confirm delete
@@ -46,16 +62,14 @@ public class DronesTest extends AbstractIntegrationTest {
     }
 
 
-
     @Test
     public void shouldUpdateDrone() {
-        Drone drone = testHelper.createNewDrone();
+        Drone drone = testHelper.createNewDrone(organisation);
 
         browser.goTo(routes.DronesController.index().url());
 
         // go to edit
         browser.find("#edit-" + drone.getId()).click();
-
 
         // save it
         String newDroneName = "Super new Drone";
@@ -74,10 +88,4 @@ public class DronesTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(String.valueOf(drone.getPayload()));
         assertThat(browser.pageSource()).contains(String.valueOf(newPayload));
     }
-
-
-    //@Override
-    //protected TestBrowser provideBrowser(int port) {
-    //    return testBrowser(Helpers.FIREFOX);
-    //}
 }

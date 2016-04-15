@@ -3,7 +3,7 @@
 @import views.html.bootstrapHelpers.globalerrors
 @(organisationForm: Form[Organisation])
 
-@main("Project") {
+@main("Organisation Settings " + organisationForm.get().getName) {
 
     <div class="row">
         <div class="col-xs-12">
@@ -26,7 +26,6 @@
 
                     <div class="form-actions">
                         <input type="submit" id="login" class="btn btn-primary" value="Save">
-                        <a href="@routes.OrganisationsController.index()" class="btn btn-default">Back</a>
                     </div>
 
                 }

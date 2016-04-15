@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.ModelHelper;
+import commons.SessionHelper;
 import dao.DroneDao;
 import models.Drone;
 import org.slf4j.Logger;
@@ -27,12 +28,16 @@ public class DronesController extends Controller {
     @Inject
     private FormFactory formFactory;
 
+    @Inject
+    private SessionHelper sessionHelper;
+
     private static final Logger logger = LoggerFactory.getLogger(DronesController.class);
 
     public Result index() {
         List<Drone> all =
                 droneDao.findAll();
-        return ok(index.render(all));
+        String organisationToken = sessionHelper.getOrganisation(session()).getToken();
+        return ok(index.render(all, organisationToken));
     }
 
     public Result edit(UUID id) {

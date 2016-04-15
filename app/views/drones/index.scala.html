@@ -1,10 +1,13 @@
 @import java.util
-@(drones: util.List[Drone])
+@(drones: util.List[Drone], organisationToken: String)
 
 @main("Drones") {
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
+                <div class="box-header">
+                    <h4>Use this Organisation-Token to add a new drone: <b>@organisationToken</b></h4>
+                </div>
                     <!-- /.box-header -->
                 <div class="box-body">
                     <table class="table table-bordered table-hover dataTable">

@@ -40,14 +40,12 @@ public class TestHelper {
         return organisation;
     }
 
-    public Drone createNewDrone() {
+    public Drone createNewDrone(Organisation organisation) {
         Drone drone = new Drone();
         drone.setId(UUID.randomUUID());
         drone.setName("Super HSR Drone" + System.currentTimeMillis());
         drone.setPayload(400);
         drone.setToken(UUID.randomUUID());
-
-        Organisation organisation = this.createNewOrganisation();
 
         drone.setOrganisation(organisation);
 
