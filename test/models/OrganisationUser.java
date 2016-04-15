@@ -36,8 +36,8 @@ public class OrganisationUser extends AbstractIntegrationTest {
         });
 
         jpaApi.withTransaction(() -> {
-            assertThat(organisationsDao.findAll().get(1).getAdministrators().size(), is(1));
-            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(1));
+            assertThat(organisationsDao.findAll().get(0).getAdministrators().size(), is(1));
+            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(2));
         });
     }
 
@@ -54,15 +54,13 @@ public class OrganisationUser extends AbstractIntegrationTest {
 
             organisation.getAdministrators().remove(user);
 
-            assertThat(organisation.getAdministrators().size(), is(0));
-
             jpaApi.em().merge(organisation);
             jpaApi.em().flush();
         });
 
         jpaApi.withTransaction(() -> {
-            assertThat(organisationsDao.findAll().get(1).getAdministrators().size(), is(0));
-            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(0));
+            assertThat(organisationsDao.findAll().get(0).getAdministrators().size(), is(1));
+            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(1));
         });
     }
 
