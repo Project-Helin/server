@@ -56,6 +56,22 @@ public class TestHelper {
         return drone;
     }
 
+    public User createUser(String plainTextPassword) {
+        User user = new User();
+
+        user.setId(UUID.randomUUID());
+        user.setConfirmationToken(UUID.randomUUID().toString());
+        user.setName("Anna Bolika");
+        user.setEmail("anna.bolika@example.com");
+        user.setPassword(plainTextPassword);
+
+        jpaApi.withTransaction(() -> {
+            userDao.persist(user);
+        });
+
+        return user;
+    }
+
     public User createUserWithOrganisation(String plainTextPassword) {
         User user = new User();
 

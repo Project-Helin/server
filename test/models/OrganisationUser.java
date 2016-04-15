@@ -4,7 +4,10 @@ import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.OrganisationsDao;
 import dao.UserDao;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +47,7 @@ public class OrganisationUser extends AbstractIntegrationTest {
     @Test
     public void removeUserFromOrganisation() {
         jpaApi.withTransaction(() -> {
-            User user = testHelper.createUserWithOrganisation(plainTextPassword);
+            User user = testHelper.createUser(plainTextPassword);
 
             Organisation organisation = testHelper.createNewOrganisation();
             organisation.getAdministrators().add(user);
@@ -59,8 +62,13 @@ public class OrganisationUser extends AbstractIntegrationTest {
         });
 
         jpaApi.withTransaction(() -> {
-            assertThat(organisationsDao.findAll().get(0).getAdministrators().size(), is(1));
-            assertThat(userDao.findAll().get(0).getOrganisations().size(), is(1));
+            List<Organisation> all = organisationsDao.findAll();
+            assertThat(all.size(), CoreMatchers.is(1));
+            assertThat(all.get(0).getAdministrators().size(), is(0));
+
+            List<User> users = userDao.findAll();
+            assertThat(users.size(), CoreMatchers.is(1));
+            assertThat(users.get(0).getOrganisations().size(), is(0));
         });
     }
 

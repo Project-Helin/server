@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static controllers.routes.OrganisationsController;
+import static controllers.routes.ProjectsController;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
 
@@ -57,7 +58,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
         waitFiveSeconds();
 
         // verify
-        browser.goTo(OrganisationsController.index().url());
+        browser.goTo(ProjectsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(product.getName());
     }
 

@@ -14,7 +14,7 @@ GET         /messageviewer/register                                 controllers.
 GET         /organisations/add                                      controllers.OrganisationsController.add()
 POST        /organisations/create                                   controllers.OrganisationsController.create()
 
-GET         /organisations/edit                                 controllers.OrganisationsController.edit()
+GET         /organisations/edit                                     controllers.OrganisationsController.edit()
 POST        /organisations/:id/update                               controllers.OrganisationsController.update(id : java.util.UUID)
 
 #Project

@@ -1,9 +1,16 @@
 package controllers;
 
+import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
+import dao.OrganisationsDao;
 import models.Organisation;
 import models.User;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
@@ -11,14 +18,12 @@ import static org.fluentlenium.core.filter.FilterConstructor.withName;
 public class OrganisationsControllerTest extends AbstractIntegrationTest {
 
 
-    private User user;
-    private Organisation organisation;
-
+    @Inject
+    private OrganisationsDao organisationsDao;
 
     private void login() {
         String password = "bla";
-        user = testHelper.createUserWithOrganisation(password);
-        organisation = user.getOrganisations().stream().findFirst().get();
+        User user = testHelper.createUserWithOrganisation(password);
         browser.goTo("/login");
         fillInLoginForm(user, password);
     }
@@ -29,11 +34,15 @@ public class OrganisationsControllerTest extends AbstractIntegrationTest {
         browser.goTo(routes.OrganisationsController.add().url());
 
         browser.fill(withName("name")).with("HSR Tester");
-        browser.submit("Save");
+        browser.click("#save");
 
         // verify
-        browser.goTo(routes.OrganisationsController.index().url());
-        assertThat(browser.pageSource()).doesNotContain("HSR Tester");
+        jpaApi.withTransaction(() -> {
+            List<Organisation> found = organisationsDao.findAll();
+            List<String> names = found.stream().map(Organisation::getName).collect(Collectors.toList());
+
+            assertThat(names).contains("HSR Tester");
+        });
     }
 
     @Test
@@ -43,10 +52,14 @@ public class OrganisationsControllerTest extends AbstractIntegrationTest {
 
         // save it
         browser.fill(withName("name")).with("HSR Test Organisation");
-        browser.submit("Save");
+        browser.click("#save");
 
         // verify
-        browser.goTo(routes.OrganisationsController.index().url());
-        assertThat(browser.pageSource()).doesNotContain("HSR Tester");
+        jpaApi.withTransaction(() -> {
+            List<Organisation> found = organisationsDao.findAll();
+            List<String> names = found.stream().map(Organisation::getName).collect(Collectors.toList());
+
+            assertThat(names).contains("HSR Test Organisation");
+        });
     }
 }

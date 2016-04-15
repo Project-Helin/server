@@ -1,12 +1,14 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.ModelHelper;
 import commons.SessionHelper;
 import commons.SessionKey;
 import dao.OrganisationsDao;
 import dao.UserDao;
 import models.Organisation;
 import models.User;
+import org.hibernate.internal.util.beans.BeanInfoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -108,6 +110,7 @@ public class OrganisationsController extends Controller {
             return badRequest(edit.render(form));
         } else {
 
+            ModelHelper.updateAttributes(found, form.get());
             organisationsDao.persist(found);
             flash("success", "Saved successfully");
 
