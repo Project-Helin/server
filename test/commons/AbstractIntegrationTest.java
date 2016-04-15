@@ -39,11 +39,11 @@ public abstract class AbstractIntegrationTest extends WithBrowser {
     public void setupDatabaseAndHelper() {
         Injector playInjector = app.injector();
         /**
-         * Stupid Play - why don't the provide the real injector - or even provide some
+         * Stupid Play - why don't they provide the real injector - or even provide some
          * useful methods.
          *
-         * So the problem is, that the play injector doesn't provide the injectMember() method.
-         * So we need to get the 'real' Guice injector to do that.
+         * So the problem is, that the play injector doesn't provide the injectMember() method
+         * from the original Guice Injector. So we need to get the 'real' Guice injector to do that.
          */
         com.google.inject.Injector guiceInjector =
             playInjector.instanceOf(com.google.inject.Injector.class);
