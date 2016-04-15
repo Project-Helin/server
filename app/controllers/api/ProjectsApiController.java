@@ -1,8 +1,6 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import controllers.ProjectDto;
-import controllers.ZoneDto;
 import dao.OrganisationsDao;
 import dao.ProjectsDao;
 import models.Organisation;

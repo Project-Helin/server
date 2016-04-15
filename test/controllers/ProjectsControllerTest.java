@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.TestHelper;
+import dao.ProjectsDao;
 import models.Project;
 import org.junit.Test;
 
@@ -10,6 +11,9 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
 
 public class ProjectsControllerTest extends AbstractIntegrationTest {
+
+    @Inject
+    private ProjectsDao projectsDao;
 
     @Inject
     private TestHelper testHelper;
@@ -40,6 +44,11 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
         // verify
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).doesNotContain(project.getName());
+
+        // verify in db
+        jpaApi.withTransaction(() ->{
+            assertThat(projectsDao.findById(project.getId())).isNull();
+        });
     }
 
 }
