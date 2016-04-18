@@ -6,10 +6,7 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class Zone {
-
-    @Id
-    private UUID id;
+public class Zone extends BaseEntity{
 
     @Column
     private String name;
@@ -27,14 +24,6 @@ public class Zone {
     @JoinColumn(name = "project_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public Polygon getPolygon() {
         return polygon;
@@ -74,21 +63,5 @@ public class Zone {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Zone zone = (Zone) o;
-
-        return id != null ? id.equals(zone.id) : zone.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }

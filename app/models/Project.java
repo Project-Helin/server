@@ -6,10 +6,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class Project {
-
-    @Id
-    private UUID id;
+public class Project extends BaseEntity{
 
     @Column()
     private String name;
@@ -20,14 +17,6 @@ public class Project {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true)
     private Set<Zone> zones = new HashSet<>();
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

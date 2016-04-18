@@ -1,12 +1,13 @@
 package dao;
 
 import com.google.inject.Inject;
+import models.BaseEntity;
 import play.db.jpa.JPAApi;
 
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractDao<T> {
+public abstract class AbstractDao<T extends BaseEntity> {
     private Class<T> entityClass;
 
     @Inject

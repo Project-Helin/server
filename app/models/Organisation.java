@@ -8,10 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class Organisation {
-
-    @Id
-	private UUID id;
+public class Organisation extends BaseEntity {
 
     @Column(name = "name")
     @Constraints.Required(message = "Name cannot be empty")
@@ -26,14 +23,6 @@ public class Organisation {
             inverseJoinColumns=@JoinColumn(name="user_id", referencedColumnName="id"))
 
     private Set<User> administrators;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -52,22 +41,6 @@ public class Organisation {
 
     public void setAdministrators(Set<User> administrators) {
         this.administrators = administrators;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Organisation)) return false;
-
-        Organisation that = (Organisation) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 
     public String getToken() {

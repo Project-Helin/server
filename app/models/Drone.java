@@ -5,17 +5,13 @@ import com.vividsolutions.jts.geom.Coordinate;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity(name="drones")
-public class Drone {
-
-    @Id
-    private UUID id;
+@Entity(name = "drones")
+public class Drone extends BaseEntity {
 
     private String name;
-
     private UUID token;
 
-    @Column(name="last_known_position")
+    @Column(name = "last_known_position")
     private Coordinate lastKnownPosition;
 
     private int payload;
@@ -27,14 +23,6 @@ public class Drone {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public Coordinate getLastKnownPosition() {
 

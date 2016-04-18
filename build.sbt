@@ -15,6 +15,7 @@ resolvers += (
 libraryDependencies ++= Seq(
   javaJpa,
   "org.hibernate" % "hibernate-entitymanager" % "5.1.0.Final",
+  "org.hibernate" % "hibernate-java8" % "5.1.0.Final",
   evolutions,
   javaWs
 )

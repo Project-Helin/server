@@ -9,10 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity(name="Users")
-public class User {
-
-    @Id
-	private UUID id;
+public class User extends BaseEntity {
 
     @Constraints.Required
     @Column
@@ -35,14 +32,6 @@ public class User {
 
     @ManyToMany(mappedBy="administrators")
     private Set<Organisation> organisations;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -101,19 +90,4 @@ public class User {
         this.organisations = organisations;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        return id != null ? id.equals(user.id) : user.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
 }
