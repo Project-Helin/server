@@ -7,11 +7,7 @@ import models.User;
 import org.junit.Test;
 import play.i18n.Messages;
 
-import java.util.UUID;
-
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fluentlenium.core.filter.FilterConstructor.withName;
-import static org.fluentlenium.core.filter.FilterConstructor.withText;
 
 public class UsersControllerTest extends AbstractIntegrationTest {
 
@@ -28,8 +24,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         user.setPassword(plainTextPassword);
 
         browser.goTo("/");
-
-        browser.click(withText("Register"));
+        browser.click("#register");
 
         fillInRegisterForm(user, plainTextPassword);
 
@@ -50,7 +45,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
 
         browser.goTo(routes.UsersController.add().url());
 
-        browser.submit("#register");
+        browser.click("#register");
 
         fillInRegisterForm(userWithoutEmail, plainTextPassword);
 
@@ -62,7 +57,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
     @Test
     public void login() {
 
-        User user = createUser();
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
         browser.goTo(routes.UsersController.login().url());
         assertThat(browser.pageSource()).contains("Login");
@@ -75,7 +70,7 @@ public class UsersControllerTest extends AbstractIntegrationTest {
     @Test
     public void loginWithWrongData() {
 
-        User user = createUser();
+        User user = testHelper.createUserWithOrganisation(plainTextPassword);
 
         browser.goTo(routes.UsersController.login().url());
 
@@ -89,38 +84,4 @@ public class UsersControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).containsIgnoringCase("wrong user or password");
     }
 
-
-
-    private void fillInRegisterForm(User user, String plainTextPassword) {
-        browser.fill(withName("name")).with(user.getName());
-        browser.fill(withName("email")).with(user.getEmail());
-        browser.fill(withName("password")).with(plainTextPassword);
-        browser.submit("#register");
-    }
-
-    private void fillInLoginForm(User user, String plainTextPassword) {
-        browser.fill(withName("email")).with(user.getEmail());
-        browser.fill(withName("password")).with(plainTextPassword);
-        browser.submit("#login");
-    }
-    private User createUser() {
-        User user = new User();
-
-        user.setId(UUID.randomUUID());
-        user.setConfirmationToken(UUID.randomUUID().toString());
-        user.setName("Anna Bolika");
-        user.setEmail("anna.bolika@example.com");
-        user.setPassword(plainTextPassword);
-
-        jpaapi.withTransaction(() -> {
-            userDao.persist(user);
-        });
-
-        return user;
-    }
-
-//    @Override
-//    protected TestBrowser provideBrowser(int port) {
-//        return testBrowser(Helpers.FIREFOX);
-//    }
 }

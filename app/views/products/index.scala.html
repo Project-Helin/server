@@ -1,4 +1,5 @@
 @import java.util
+@import views.html.helpers.deleteButton
 @(products: util.List[Product])
 
 @main("Products") {
@@ -22,33 +23,17 @@
                                 <tr>
                                 <th>@product.getName</th>
                                 <th>@product.getPrice</th>
-                                <th>@product.getWightGramm</th>
+                                <th>@product.getWeightGramm</th>
                                 <th>
                                     <a href="@controllers.routes.ProductsController.edit(product.getId)"
-                                    class="btn btn-info btn-sm"
-                                    role="button">Edit</a>
+                                    id="edit-@product.getId" class="btn btn-info btn-sm" role="button">Edit</a>
 
-                                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal@product.getId">Delete</button>
-
-                                        <!-- Modal dialog for delete button -->
-                                    <div class="modal fade" id="myModal@product.getId" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title" id="myModalLabel">Delete zone</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Do you want to this product?</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-
-                                                    <a href="@controllers.routes.ProductsController.delete(product.getId)" class="btn btn-danger btn-sm" role="button">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @deleteButton(
+                                        controllers.routes.ProductsController.delete(product.getId),
+                                        product.getId,
+                                        "Delete Product",
+                                        "Do you want to delete this product?"
+                                    )
 
                                 </th>
                                 </tr>

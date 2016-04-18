@@ -6,7 +6,8 @@
     <head>
         <title>@title</title>
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE-Skin.css")">
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/spacers.css")">
@@ -36,19 +37,35 @@
                     </a>
                         <!-- Navbar Right Menu -->
                     <div class="navbar-custom-menu">
+
                         <ul class="nav navbar-nav">
-                            @if(session.get("email") != null) {
-                                @usermenu()
-                            } else {
-                                <li>
-                                    <a href="@routes.UsersController.add()">Register</a>
-                                </li>
-                                <li>
-                                    <a href="@routes.UsersController.login()">Login</a>
-                                </li>
-                            }
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @usermenu()
+                        } else {
+                            <li>
+                                <a href="@routes.UsersController.add()" id="register">Register</a>
+                            </li>
+                            <li>
+                                <a href="@routes.UsersController.login()">Login</a>
+                            </li>
+                        }
 
                         </ul>
+                        <ul class="nav navbar-nav">
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @if(session.get(commons.SessionKey.ORGANISATION_ID.name) == null) {
+                                <li>
+                                    <a href="@routes.OrganisationsController.add()" id="register-organisation">
+                                        Register your Organisation</a>
+                                </li>
+                            } else {
+                                @organisationChooser()
+                            }
+                        }
+
+
+                        </ul>
+
                     </div>
                 </nav>
             </header>
@@ -108,7 +125,8 @@
         </div>
     </body>
 
-    <script src="@routes.Assets.at("javascripts/jquery-1.11.3.min.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js" integrity="sha256-7LkWEzqTdpEfELxcZZlS6wAx5Ff13zZ83lYO2/ujj7g=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="@routes.Assets.at("javascripts/AdminLTE.js")" type="text/javascript"></script>
 </html>

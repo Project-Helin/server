@@ -1,4 +1,3 @@
-
     @activeLink(currentPath: Call) = @{
     if(request.path.contains(currentPath.url())) {
         "active"
@@ -10,14 +9,24 @@
     <li class="@activeLink(routes.Application.index())">
         <a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> <span>Home</span></a>
     </li>
-    <li class="@activeLink(controllers.routes.Organisations.index())">
-        <a href="@controllers.routes.Organisations.index()" ><i class="glyphicon glyphicon-asterisk"></i> <span>Organisations</span></a>
-    </li>
+
+    @if(session.get(commons.SessionKey.ORGANISATION_ID.name) != null) {
+        <li class="@activeLink(controllers.routes.OrganisationsController.edit())">
+            <a href="@controllers.routes.OrganisationsController.edit()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Organisation Settings</span></a>
+        </li>
+
+        <li class="@activeLink(controllers.routes.OrganisationsUsersController.index())">
+            <a href="@controllers.routes.OrganisationsUsersController.index()" ><i class="glyphicon glyphicon-user"></i> <span>Administrators</span></a>
+        </li>
+    }
     <li class="@activeLink(controllers.routes.ProductsController.index())">
         <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>
     </li>
     <li class="@activeLink(controllers.routes.ProjectsController.index())">
         <a href="@controllers.routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> <span>Projects</span></a>
+    </li>
+    <li class="@activeLink(controllers.routes.DronesController.index())">
+        <a href="@controllers.routes.DronesController.index()"><i class="glyphicon glyphicon-plane"></i> <span>Drones</span></a>
     </li>
     @*<li class="@activeLink(routes.ZoneCrudController.index())">*@
     @*<a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zones</a>*@

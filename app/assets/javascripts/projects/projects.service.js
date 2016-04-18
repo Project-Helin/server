@@ -1,7 +1,7 @@
 (function () {
     angular.module('ProjectsApp').service('ProjectsService', ['$http', function ($http) {
 
-        this.projectUrl = "/projects/";
+        this.projectUrl = "/api/projects/";
 
         this.loadProject = function (id) {
             return $http.get(this.projectUrl + id)
