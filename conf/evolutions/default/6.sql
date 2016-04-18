@@ -11,8 +11,8 @@ CREATE TABLE drones (
   last_known_position GEOGRAPHY(POINT, 4326),
   payload             INTEGER,
   token               UUID                                NOT NULL,
-  organisation_id     UUID REFERENCES organisation (id)   NOT NULL,
-  project_id          UUID REFERENCES project (id)
+  organisation_id     UUID REFERENCES organisations (id)   NOT NULL,
+  project_id          UUID REFERENCES projects (id)
 );
 
 # --- !Downs

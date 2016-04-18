@@ -8,17 +8,19 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractDao<T extends BaseEntity> {
+    private String tableName;
     private Class<T> entityClass;
 
     @Inject
     protected JPAApi jpaApi;
 
-    public AbstractDao(Class<T> entityClass) {
+    public AbstractDao(Class<T> entityClass, String tableName) {
         this.entityClass = entityClass;
+        this.tableName = tableName;
     }
 
     public List<T> findAll() {
-        String sql = "select e from " + entityClass.getSimpleName() + " e order by e.id";
+        String sql = "select e from " + tableName + " e order by e.id";
         return jpaApi.em()
                 .createQuery(sql, entityClass)
                 .getResultList();

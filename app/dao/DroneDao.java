@@ -7,14 +7,7 @@ import java.util.List;
 public class DroneDao extends AbstractDao<Drone> {
 
     public DroneDao() {
-        super(Drone.class);
+        super(Drone.class, "drones");
     }
 
-    @Override
-    public List<Drone> findAll() {
-        String sql = "select e from drones e ";
-        return jpaApi.em()
-                .createQuery(sql, Drone.class)
-                .getResultList();
-    }
 }

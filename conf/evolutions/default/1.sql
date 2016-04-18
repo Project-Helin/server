@@ -2,7 +2,7 @@
 
 # --- !Ups
 
-CREATE TABLE Organisation (
+CREATE TABLE organisations (
   ID         UUID         NOT NULL PRIMARY KEY,
   CREATED_AT TIMESTAMP    NOT NULL DEFAULT CURRENT_DATE,
   UPDATED_AT TIMESTAMP    NOT NULL DEFAULT CURRENT_DATE,
@@ -13,4 +13,4 @@ CREATE TABLE Organisation (
 
 # --- !Downs
 
-DROP TABLE Organisation;
+DROP TABLE organisations;

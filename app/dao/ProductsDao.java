@@ -7,14 +7,7 @@ import java.util.List;
 public class ProductsDao extends AbstractDao<Product> {
 
     public ProductsDao() {
-        super(Product.class);
+        super(Product.class, "products");
     }
 
-    @Override
-    public List<Product> findAll() {
-        String sql = "select e from products e ";
-        return jpaApi.em()
-                .createQuery(sql, Product.class)
-                .getResultList();
-    }
 }

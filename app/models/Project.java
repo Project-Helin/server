@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-public class Project extends BaseEntity{
+@Entity(name = "projects")
+public class Project extends BaseEntity {
 
     @Column()
     private String name;

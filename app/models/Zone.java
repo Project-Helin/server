@@ -5,7 +5,7 @@ import org.geolatte.geom.Polygon;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "zones")
 public class Zone extends BaseEntity{
 
     @Column

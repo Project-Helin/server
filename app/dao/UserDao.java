@@ -8,14 +8,7 @@ import java.util.List;
 public class UserDao extends AbstractDao<User> {
 
     public UserDao() {
-        super(User.class);
-    }
-
-    public List<User> findAll() {
-        String sql = "select e from Users e ";
-        return jpaApi.em()
-                .createQuery(sql, User.class)
-                .getResultList();
+        super(User.class, "users");
     }
 
     public User authenticateAndGetUser(String email, String password) {
@@ -28,7 +21,7 @@ public class UserDao extends AbstractDao<User> {
     }
 
     public User findByEmail (String email) {
-        String sql = "select e from Users e where e.email=:email";
+        String sql = "select e from users e where e.email=:email";
         List<User> resultList = jpaApi.em()
                 .createQuery(sql, getEntityClass())
                 .setParameter("email", email)

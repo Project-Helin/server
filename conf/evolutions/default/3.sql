@@ -1,7 +1,7 @@
 # CREATE ZONE TABLE
 
 # --- !Ups
-CREATE TABLE zone
+CREATE TABLE zones
 (
   id         UUID          NOT NULL PRIMARY KEY,
   CREATED_AT TIMESTAMP     NOT NULL DEFAULT CURRENT_DATE,
@@ -12,10 +12,10 @@ CREATE TABLE zone
   height     INTEGER       NOT NULL,
   TYPE       VARCHAR(200)  NOT NULL,
   name       VARCHAR(2000) NOT NULL,
-  project_id UUID          NOT NULL REFERENCES project (id)
+  project_id UUID          NOT NULL REFERENCES projects (id)
 );
 
 
 # --- !Downs
 
-DROP TABLE zone;
+DROP TABLE zones;

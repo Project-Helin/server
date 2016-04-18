@@ -7,11 +7,11 @@ import java.util.List;
 public class OrganisationsDao extends AbstractDao<Organisation> {
 
     public OrganisationsDao() {
-        super(Organisation.class);
+        super(Organisation.class, "organisations");
     }
 
     public Organisation findByOrganisationToken(String organisationToken) {
-        String sql = "select o from Organisation o where o.token = :organisationToken";
+        String sql = "select o from organisations o where o.token = :organisationToken";
 
         List<Organisation> resultList = jpaApi.em()
                 .createQuery(sql, Organisation.class)

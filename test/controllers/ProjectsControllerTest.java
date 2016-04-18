@@ -20,7 +20,7 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     @Inject
     private TestHelper testHelper;
 
-    User user;
+    private User user;
 
     @Before
     public void login() {

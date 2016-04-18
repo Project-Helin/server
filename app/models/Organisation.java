@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "organisations")
 public class Organisation extends BaseEntity {
 
     @Column(name = "name")

@@ -7,7 +7,7 @@ CREATE TABLE organisations_users (
   CREATED_AT      TIMESTAMP                           NOT NULL DEFAULT CURRENT_DATE,
   UPDATED_AT      TIMESTAMP                           NOT NULL DEFAULT CURRENT_DATE,
 
-  organisation_id UUID REFERENCES organisation (id)   NOT NULL,
+  organisation_id UUID REFERENCES organisations (id)   NOT NULL,
   user_id         UUID REFERENCES users (id)          NOT NULL
 );
 

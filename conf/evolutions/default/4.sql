@@ -2,7 +2,7 @@
 
 # --- !Ups
 
-CREATE TABLE USERS
+CREATE TABLE users
 (
   id                 UUID         NOT NULL PRIMARY KEY,
   CREATED_AT         TIMESTAMP    NOT NULL DEFAULT CURRENT_DATE,
@@ -17,4 +17,4 @@ CREATE TABLE USERS
 
 # --- !Downs
 
-DROP TABLE USERS;
+DROP TABLE users;

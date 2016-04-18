@@ -11,7 +11,7 @@ CREATE TABLE products
   name            VARCHAR(255) NOT NULL,
   price           DECIMAL,
   weight_gramm    INTEGER      NOT NULL,
-  organisation_id UUID REFERENCES organisation (id)
+  organisation_id UUID REFERENCES organisations (id)
 );
 
 # --- !Downs
