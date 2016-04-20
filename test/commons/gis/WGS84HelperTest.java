@@ -1,5 +1,10 @@
 package commons.gis;
 
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.codec.Wkt;
+
+import org.geolatte.geom.jts.JTS;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +14,7 @@ import static org.junit.Assert.*;
  */
 public class WGS84HelperTest {
 
-    private int EARTH_RADIUS = 6371;
+    private int EARTH_RADIUS = 6378;
 
     @Test
     public void testGetDistanceFromLatInKM() {
@@ -127,4 +132,14 @@ public class WGS84HelperTest {
     public void expectSingaporeToLosAngelesInverseFailure() throws WGS84CoordinateException {
             double distanceSingaporeToLosAngeles = WGS84Helper.getDistanceFromLonInM(103, 1, -118, 34);
     }
+
+    @Test
+    public void meterCalculationFromDegreeInBern(){
+       // WGS84Helper.calculateDegreeFromMeter(5);
+
+
+
+
+    }
+
 }

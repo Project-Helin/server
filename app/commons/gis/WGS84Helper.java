@@ -2,7 +2,7 @@ package commons.gis;
 
 public class WGS84Helper {
 
-    private final static int EARTH_RADIUS = 6371; //6371km ist der Radius gem. Google
+    private final static int EARTH_RADIUS = 6378; // 6378137m ist der Radius gem. WGS84 Standart
 
     //assert that coordinates are in boundary of the world!
     private static void assertLatCoordinate(double lat) throws WGS84CoordinateException {
@@ -82,4 +82,7 @@ public class WGS84Helper {
         return deg * (Math.PI / 180);
     }
 
+    public static void calculateDegreeFromMeter(double meter) {
+
+    }
 }
