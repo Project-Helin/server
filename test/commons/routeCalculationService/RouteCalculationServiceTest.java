@@ -6,20 +6,12 @@ import ch.helin.messages.dto.way.Route;
 import ch.helin.messages.dto.way.Waypoint;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
-import models.Organisation;
 import models.Zone;
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
-import play.db.jpa.JPA;
-import play.db.jpa.JPAApi;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
@@ -42,7 +34,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
 
         Zone zone = new Zone();
-        org.geolatte.geom.Geometry geometry = GisHelper.convertFromWKBToGeometry("0103000020E6100000010000000F000000FFB" +
+        org.geolatte.geom.Geometry geometry = GisHelper.convertFromWkbToGeometry("0103000020E6100000010000000F000000FFB" +
                 "E7D4109A2214002A052D59E9C474031D6A58B22A2214091F301CF999C4740DBD8E020E4A121401D871466909C47403720F1E" +
                 "8D2A1214051F0BB048D9C4740305A7EEBC4A12140B1324EBD8B9C474033FF231A9DA1214091AF6CC7939C474076EC7CBC82A" +
                 "12140510DF2439A9C4740ABA84A3574A1214039F1A836A29C4740E98D44AA7AA12140979DDE81A69C47409C77BF0B80A12140" +

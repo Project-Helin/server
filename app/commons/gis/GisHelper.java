@@ -43,7 +43,7 @@ public class GisHelper {
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */
 
-    public static Geometry convertFromWKBToGeometry(String wkbString) {
+    public static Geometry convertFromWkbToGeometry(String wkbString) {
         if (wkbString == null) {
             return null;
         }
@@ -58,7 +58,7 @@ public class GisHelper {
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */
 
-    public static Geometry convertFromWKTToGeometry(String wktString) {
+    public static Geometry convertFromWktToGeometry(String wktString) {
         if (wktString == null) {
             return null;
         }
