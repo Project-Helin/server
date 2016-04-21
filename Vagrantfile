@@ -14,7 +14,7 @@ Vagrant.configure(VAGRANT_API) do |config|
   config.vm.provider "virtualbox" do |v|
      v.name = "project-helin"
      v.memory = 3024
-     v.cpus = 4
+     v.cpus = 8
   end
 	 
   # RabbitMQ Default port

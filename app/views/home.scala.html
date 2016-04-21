@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Project Helin Home</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/AdminLTE-Skin.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/spacers.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/jssor.slider.css")">
+    </head>
+
+    <body class="skin-blue sidebar-collapse">
+        <div class="wrapper">
+
+                <!-- Main Header -->
+            <header class="main-header">
+
+                    <!-- Logo -->
+                <a href="/" class="logo">
+                        <!-- mini logo for sidebar mini 50x50 pixels -->
+                    <span class="logo-mini"><b>H</b></span>
+                        <!-- logo for regular state and mobile devices -->
+                    <span class="logo-lg">PROJECT <b>HELIN</b></span>
+                </a>
+
+                    <!-- Header Navbar -->
+                <nav class="navbar navbar-static-top" role="navigation">
+
+                    <div class="navbar-custom-menu">
+
+                        <ul class="nav navbar-nav">
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            <li>
+                                <a href="@routes.Application.dashboard()" id="register">Your Dashboard</a>
+                            </li>
+                        } else {
+                            <li>
+                                <a href="@routes.UsersController.create()" id="register">Get Started</a>
+                            </li>
+                        }
+
+                        </ul>
+
+                        <ul class="nav navbar-nav">
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @usermenu()
+                        } else {
+                            <li>
+                                <a href="@routes.UsersController.add()" id="register">Register</a>
+                            </li>
+                            <li>
+                                <a href="@routes.UsersController.login()">Login</a>
+                            </li>
+                        }
+
+                        </ul>
+
+                        <ul class="nav navbar-nav">
+                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                            @if(session.get(commons.SessionKey.ORGANISATION_ID.name) == null) {
+                                <li>
+                                    <a href="@routes.OrganisationsController.add()" id="register-organisation">
+                                        Register your Organisation</a>
+                                </li>
+                            } else {
+                                @organisationChooser()
+                            }
+                        }
+
+                        </ul>
+
+                    </div>
+                </nav>
+            </header>
+
+            <div class="content-wrapper">
+                    <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <h1>
+
+                    </h1>
+                </section>
+
+                @if(flash.containsKey("success")) {
+                    <div class="well">
+                        <div id="success-message" class="text-success">
+                        @flash.get("success")
+                        </div>
+                    </div>
+                }
+                @if(flash.containsKey("error")) {
+                    <div class="well">
+                        <div id="error-message" class="text-danger">
+                        @flash.get("error")
+                        </div>
+                    </div>
+                }
+                <div class="slider-wrapper">
+
+                    <div id="jssor_1" class="jssor">
+                            <!-- Loading Screen -->
+                        <div data-u="loading" style="position : absolute ; top : 0px ; left : 0px ;">
+                            <div class="loader-helper"></div>
+                            <div class="loader"></div>
+                        </div>
+                        <div data-u="slides" class="slides">
+                            <div data-p="112.50" style="display : none ;">
+                                <img data-u="image" src="@routes.Assets.at("images/copter-flying.jpg")" />
+                            </div>
+                            <div data-p="112.50" style="display : none ;">
+                                <img data-u="image" src="@routes.Assets.at("images/copter.jpg")" />
+                            </div>
+                        </div>
+                            <!-- Arrow Navigator -->
+                        <span data-u="arrowleft" class="jssora12l" style="" data-autocenter="2"></span>
+                        <span data-u="arrowright" class="jssora12r" style="" data-autocenter="2"></span>
+                    </div>
+                </div>
+                    <!-- Main content -->
+                <section class="content">
+                    <div class="row text-center">
+                        <h3>What is Project Helin</h3>
+                        Project Helin allows you to provide drone deliveries or services without having an own infrastructure for managing your drone fleet.
+                        You are able to define flight-zones for your drones which will only use them to calculate a route to your customers position.
+                    </div>
+                    <div class="row special-row">
+                        <div class="col-xs-4 text-center">
+                            <h4>Attach Smartphone to drone</h4>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <h4>Attach Smartphone to drone</h4>
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <h4>Attach Smartphone to drone</h4>
+                        </div>
+                    </div>
+
+                </section>
+                    <!-- /.content -->
+            </div>
+                <!-- /.content-wrapper -->
+
+                <!-- Main Footer -->
+            <footer class="main-footer">
+                    <!-- Default to the left -->
+                <strong>Copyright &copy; 2016 <a href="#">Project Helin</a>.</strong> All rights reserved.
+            </footer>
+
+        </div>
+    </body>
+
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js" integrity="sha256-7LkWEzqTdpEfELxcZZlS6wAx5Ff13zZ83lYO2/ujj7g=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="@routes.Assets.at("javascripts/AdminLTE.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/jssor.slider.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/jssor.init.js")" type="text/javascript"></script>
+</html>
+

@@ -56,3 +56,12 @@
 .position-relative {
     position: relative;
 }
+
+.slider-wrapper {
+    margin-top: -20px;
+}
+
+.special-row {
+    background-color: #3c8dbc;
+    color: white;
+}

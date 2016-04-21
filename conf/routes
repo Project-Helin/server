@@ -4,6 +4,8 @@
 
 # Home page
 GET         /                                                       controllers.Application.index()
+GET         /home                                                   controllers.Application.home()
+GET         /dashboard                                              controllers.Application.dashboard()
 
 # Message Viewer
 GET         /messageviewer                                          controllers.MessageViewer.index()
