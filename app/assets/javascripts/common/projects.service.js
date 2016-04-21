@@ -1,5 +1,5 @@
 (function () {
-    angular.module('ProjectsApp').service('ProjectsService', ['$http', function ($http) {
+    angular.module('common').service('ProjectsService', ['$http', function ($http) {
 
         this.projectUrl = "/api/projects/";
 

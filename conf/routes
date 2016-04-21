@@ -46,6 +46,10 @@ POST        /login                                                  controllers.
 GET         /register                                               controllers.UsersController.add()
 POST        /register                                               controllers.UsersController.create()
 
+#RouteDebugger
+GET         /route-debugger                                          controllers.Application.routeDebugger()
+
+
 #Organisations-Users
 GET         /administrators                                         controllers.OrganisationsUsersController.index()
 GET         /administrators/add                                     controllers.OrganisationsUsersController.add()
