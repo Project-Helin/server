@@ -19,6 +19,9 @@
     <script src='@routes.Assets.at("javascripts/routeDebugger/routeDebugger.service.js")'></script>
 
     <div ng-app="RouteDebugger" ng-controller="RouteDebuggerCtrl">
+        <route-map zone="project.zones"></route-map>
+
+        <select class="form-control" ng-model="selectedProject" ng-options="option.name for option in projects track by option.id"></select>
     </div>
 
 

@@ -3,9 +3,7 @@
         return {
             restrict: 'E',
             scope: {
-                zones: '=',
-                selectedZone: '=',
-                center: '='
+                zones: '='
             },
             replace: true,
             template: '<div id="map" class="map"></div>',

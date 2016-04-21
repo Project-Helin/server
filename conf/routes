@@ -72,6 +72,7 @@ GET         /registerDrone                                          controllers.
 POST        /api/drones                                             controllers.api.DronesApiController.create()
 
 ##Project
+GET         /api/projects/                                          controllers.api.ProjectsApiController.index()
 GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
 POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
 

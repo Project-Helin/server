@@ -3,6 +3,8 @@ package controllers.api;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import dao.ProjectsDao;
+import mappers.ProjectMapper;
+import models.Organisation;
 import models.Project;
 import models.Zone;
 import play.db.jpa.Transactional;
@@ -21,6 +23,19 @@ public class ProjectsApiController extends Controller {
     @Inject
     private SessionHelper sessionHelper;
 
+    @Inject
+    private ProjectMapper projectMapper;
+
+    @Transactional
+    public Result index() {
+        Organisation organisation = sessionHelper.getOrganisation(session());
+
+        List<Project> projects = projectsDao.findByOrganisation(organisation.getId());
+
+        List<ProjectDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
+        return ok(Json.toJson(projectDtos));
+    }
+
     @Transactional
     public Result show(UUID projectID) {
         Project found = projectsDao.findById(projectID);
@@ -28,18 +43,7 @@ public class ProjectsApiController extends Controller {
             return forbidden("Project not found for id " + projectID.toString());
         }
 
-        List<ZoneDto> zones = new ArrayList<>();
-        for (Zone zone : found.getZones()) {
-            zones.add(new ZoneDto(zone.getId(), zone.getPolygon(), zone.getHeight(), zone.getType(), zone.getName()));
-        }
-
-        ProjectDto projectDto = new ProjectDto(
-            found.getId(),
-            found.getName(),
-            zones
-        );
-
-        return ok(Json.toJson(projectDto));
+        return ok(Json.toJson(projectMapper.getProjectDto(found)));
     }
 
     @Transactional

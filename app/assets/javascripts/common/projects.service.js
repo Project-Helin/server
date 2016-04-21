@@ -3,6 +3,15 @@
 
         this.projectUrl = "/api/projects/";
 
+        this.loadProjects = function () {
+            return $http.get(this.projectUrl)
+                .then(function (response) {
+                    return response.data;
+                }).catch(function (error) {
+                    return error;
+                });
+        };
+        
         this.loadProject = function (id) {
             return $http.get(this.projectUrl + id)
                 .then(function (response) {

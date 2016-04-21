@@ -3,6 +3,7 @@ package controllers;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.index;
+import views.html.routeDebugger;
 
 public class Application extends Controller {
 
@@ -11,6 +12,6 @@ public class Application extends Controller {
     }
 
     public Result routeDebugger() {
-        return ok(routeDebbuger.render());
+        return ok(routeDebugger.render());
     }
 }
