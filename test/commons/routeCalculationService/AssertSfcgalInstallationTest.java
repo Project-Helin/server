@@ -9,7 +9,11 @@ import javax.persistence.Query;
 
 import static org.junit.Assert.assertEquals;
 
-public class AsserSfcgalInstallationTest extends AbstractIntegrationTest {
+/**
+ * SFCGAL is a library used by PostGis. It is not part of PostGis and must therefore
+ * be installed separately. This tests verifies - that SFCGAL ist correctly installed.
+ */
+public class AssertSfcgalInstallationTest extends AbstractIntegrationTest {
 
     @Inject
     private JPAApi jpaApi;
@@ -35,8 +39,6 @@ public class AsserSfcgalInstallationTest extends AbstractIntegrationTest {
         String polygonAsBinary = "ST_GeomFromText('" + testPolygon + "', 4326)";
         String sql = "select ST_asText(ST_ApproximateMedialAxis(" + polygonAsBinary + "));";
 
-        //String calculatedMedialAxis = "";
-
         String calculatedMedialAxis = jpaApi.withTransaction((em) -> {
             Query query = jpaApi.em().createNativeQuery(sql);
             return (String) query.getSingleResult();
@@ -54,8 +56,6 @@ public class AsserSfcgalInstallationTest extends AbstractIntegrationTest {
                                                     "(8.81599026768789 47.2231827764133,8.81598347117314 47.2231830933168))";
 
         assertEquals(calculatedMedialAxis, expectedMedialAxis);
-
-
     }
 
 }
