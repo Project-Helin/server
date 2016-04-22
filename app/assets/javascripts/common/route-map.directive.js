@@ -88,7 +88,29 @@
                 }
 
                 function routeStyle() {
-                    
+                    var circlesAtEdges = new ol.style.Circle({
+                        radius: 5,
+                        fill: new ol.style.Fill({
+                            color: 'rgba(0, 0, 255, 0.8)'
+                        }),
+                        stroke: null
+                    });
+
+                    return [
+                        new ol.style.Style({
+                            image: circlesAtEdges,
+                            geometry: function (feature) {
+                                var coordinates = feature.getGeometry().getCoordinates();
+                                return new ol.geom.MultiPoint(coordinates);
+                            }
+                        }),
+                        new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: 'blue',
+                                width: 2
+                            })
+                        })
+                    ];
                 }
 
                 function createVectorLayer() {
