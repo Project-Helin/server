@@ -2,7 +2,7 @@
 @(zones: util.List[Zone])
 
 @main("Project Helin") {
-    <div class="row">
+    <div class="col-xs-12">
         <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
         <script src="http://openlayers.org/en/v3.14.2/build/ol.js"></script>
         <div id="map" class="map"></div>
@@ -18,12 +18,12 @@
 
                 var format = new ol.format.WKT();
 
-                var features = [];
+                var readOnlyFeatures = [];
 
 
                 @for(zone <- zones) {
-                    features.push(
-                        format.readFeature('@zone.wktStringHack', {
+                    readOnlyFeatures.push(
+                        format.readFeature('', {
                             dataProjection: 'EPSG:4326',
                             featureProjection: 'EPSG:3857'
                         })
@@ -33,7 +33,7 @@
 
                 var vector = new ol.layer.Vector({
                     source: new ol.source.Vector({
-                        features: features
+                        readOnlyFeatures: readOnlyFeatures
                     })
                 });
 
@@ -53,7 +53,7 @@
         @for(zone <- zones) {
             <div class="gesture-item">
                 <p>@zone.getId</p>
-                <p>@zone.getGeom</p>
+                <p>@zone.getPolygon</p>
             </div>
         }
     </div>

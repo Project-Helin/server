@@ -14,12 +14,17 @@ angular.module('debugApp', []).controller('MainController', ['$scope', '$http', 
 }]);
 
 
-$(function() {
-    var webSocketToServer;
-    webSocketToServer = new WebSocket("ws://localhost:9000/messageviewer/register");
+window.onload = function() {
+
+
+    var url = "ws://localhost:9000/messageviewer/register";
+    var webSocketToServer = new WebSocket(url);
+    console.log("Connect to " + url);
+
     webSocketToServer.onmessage = function(event) {
         var messageToLog, time, timeAsString;
-        console.log("NaNaNa", event);
+        console.log("Got event", event);
+
         time = new Date();
         timeAsString = "Received Data at " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds();
         messageToLog = timeAsString + " " + event.data;
@@ -29,5 +34,5 @@ $(function() {
         console.log("Send message");
         return $.get("/sendSampleMessage");
     });
-});
+};
 

@@ -1,0 +1,24 @@
+@import views.html.products.fields
+@(form: Form[Product])
+
+@main("Project") {
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body">
+                @helper.form(action = routes.ProductsController.update(form.get().getId)) {
+
+                    @fields(form)
+
+                    <div class="form-actions">
+                        <input type="submit" class="btn btn-primary" value="Save" id="save">
+                        <a href="@routes.ProductsController.index()" class="btn btn-default">Zurück</a>
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

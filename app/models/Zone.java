@@ -1,59 +1,67 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.geolatte.geom.Polygon;
 
 import javax.persistence.*;
 import java.util.UUID;
 
-@Entity
-public class Zone {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+@Entity(name = "zones")
+public class Zone extends BaseEntity{
 
     @Column
-    @JsonBackReference
-    private Polygon geom;
+    private String name;
 
-    @Column(name = "height")
-    private String height;
+    @Column
+    private Polygon polygon;
 
-    public UUID getId() {
-        return id;
+    @Column
+    private Integer height;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ZoneType type;
+
+    @JoinColumn(name = "project_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Project project;
+
+    public Polygon getPolygon() {
+        return polygon;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setPolygon(Polygon geom) {
+        this.polygon = geom;
     }
 
-    public Polygon getGeom() {
-        return geom;
-    }
-
-    public void setGeom(Polygon geom) {
-        this.geom = geom;
-    }
-
-    public String getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(Integer height) {
         this.height = height;
     }
 
-    public String wktStringHack(){
-        return geom.toString().replace("SRID=4326;", "");
+    public ZoneType getType() {
+        return type;
     }
 
-    @Override
-    public String toString() {
-        return "Zone{" +
-                "id=" + id +
-                ", geom=" + geom +
-                ", height='" + height + '\'' +
-                '}';
+    public void setType(ZoneType zoneType) {
+        this.type = zoneType;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

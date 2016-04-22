@@ -1,0 +1,23 @@
+@(organisation: Organisation)
+@main("") {
+
+    <div class="row">
+        <div class="col-xs-4 col-xs-offset-4">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3>Add an Administrator</h3>
+                </div>
+
+                <div class="box-body">
+                @helper.form(action = routes.OrganisationsUsersController.create(), 'class -> "form-horizontal") {
+                    <input type="email" placeholder="E-Mail" id="email" name="email">
+                    <div class="form-actions">
+                        <input type="submit" id="register" class="btn btn-primary pull-right" value="Add as Administrator">
+                    </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

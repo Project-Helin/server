@@ -1,0 +1,41 @@
+@import views.html.bootstrapHelpers._
+@(userForm: Form[User])
+    @main("") {
+
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3>Register</h3>
+                    </div>
+
+                    <div class="box-body">
+                    @helper.form(action = routes.UsersController.create(), 'class -> "form-horizontal") {
+
+                        <fieldset>
+                            @text(userForm("name"),
+                                label = "Name",
+                                placeholder = "Your Name"
+                            )
+
+                            @text(userForm("email"),
+                                label = "Email",
+                                placeholder = "Email Address"
+                            )
+
+                            @password(userForm("password"),
+                                label = "Password",
+                                placeholder = ""
+                            )
+                        </fieldset>
+
+                        <div class="form-actions">
+                            <input type="submit" id="register-user" class="btn btn-primary pull-right" value="Register">
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }

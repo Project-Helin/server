@@ -1,0 +1,58 @@
+.main-header .sidebar-toggle:before {
+    content: ''
+}
+
+.main-header .sidebar-toggle {
+    padding: 0 15px 8px 15px;
+}
+
+#map {
+    width: 100%;
+    height: 500px;
+}
+
+.panel.active {
+    border: 2px solid deepskyblue;
+}
+
+.panel {
+    cursor: pointer;
+}
+
+.OrderZone {
+    background-color: rgba(0, 192, 239, 0.1);
+}
+
+.FlightZone {
+    background-color: rgba(0, 28, 247, 0.3);
+}
+
+.DeliveryZone {
+    background-color: rgba(0, 166, 90, 0.3);
+}
+
+.LoadingZone {
+    background-color: rgba(243, 156, 18, 0.3);
+}
+
+.error-content {
+    color: red;
+}
+
+.editable-click {
+    border-bottom: none!important;
+    color: black!important;
+}
+
+.site-title {
+    font-size: 24px;
+}
+
+.box-header > h3{
+    font-size: 24px;
+    margin: 0;
+}
+
+.position-relative {
+    position: relative;
+}

@@ -1,0 +1,46 @@
+package commons;
+
+import commons.gis.GisHelper;
+import org.geolatte.geom.ByteBuffer;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.Point;
+import org.geolatte.geom.codec.Wkb;
+import org.geolatte.geom.codec.Wkt;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.fest.assertions.Assertions.assertThat;
+
+public class GisHelperTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(GisHelperTest.class);
+
+    @Test
+    public void shouldConvertPointToWkb() {
+
+        //The magic binary represents the well readable point 'POINT (30 10)' in WKB
+        String pointAsWkb = "0101000020E61000000000000000003E400000000000002440";
+        Geometry<?> geometry = Wkb.fromWkb(ByteBuffer.from(pointAsWkb));
+        logger.info("{}", geometry);
+
+        Geometry wkt = GisHelper.convertFromWkbToGeometry(pointAsWkb);
+        assertThat(wkt).isEqualTo(geometry);
+    }
+
+    @Test
+    public void shouldConvertPointToWkt() {
+        Geometry<?> geometry = Wkt.fromWkt("SRID=4326; POINT (30 10)");
+        logger.info("{}", geometry);
+
+        String wkt = GisHelper.toWktStringWithoutSrid(geometry);
+        assertThat(wkt).isEqualTo("POINT(30 10)");
+    }
+
+    @Test
+    public void shouldCreatePoint() {
+        Point<?> point = GisHelper.createPoint(100, -150);
+
+        assertThat(point.toString()).isEqualTo("SRID=4326;POINT(100 -150)");
+    }
+}

@@ -5,6 +5,15 @@
 * Java 8
 * Enough Coffee 
 * RabbitMQ 
+* PostgreSQL
+
+## Database
+
+1. create Login-Role 'helin' with superuser permissions
+2. Create local database named 'helin'
+3. Create Login-Role 'test' with superuser permissions
+4. Create local database named 'test' (this is used for integrationtests)
+5. Apply this script on both databases: CREATE EXTENSION postgis;CREATE EXTENSION "uuid-ossp";
 
 ## Server Setup
 Tested with IntelliJ IDEA 15.0.3.
@@ -37,4 +46,5 @@ Tested with IntelliJ IDEA 15.0.3.
  vagrant up
  ```
 3. Go to http://localhost:15672 to verify if server has started correctly
+
 

@@ -1,0 +1,50 @@
+@import java.util
+@import views.html.helpers.deleteButton
+@(projects: util.List[Project])
+
+@main("Projects") {
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                @*<th>ID</th>*@
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(project <- projects) {
+                                <tr>
+                                    @*<th>@organisation.getId</th>*@
+                                    <th>@project.getName</th>
+                                    <th>
+                                        <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
+
+                                        @deleteButton(
+                                            controllers.routes.ProjectsController.delete(project.getId),
+                                            project.getId,
+                                            "Delete Project",
+                                            "Do you want to delete this project?"
+                                        )
+                                    </th>
+                                </tr>
+                            }
+
+                            <tr>
+                                <th></th>
+                                <th>
+                                    <a href="@controllers.routes.ProjectsController.create()" class="btn btn-primary" id="add">Add</a>
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div> <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+}
