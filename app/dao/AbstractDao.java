@@ -45,7 +45,5 @@ public abstract class AbstractDao<T extends BaseEntity> {
     public Class<T> getEntityClass() {
         return entityClass;
     }
-
-
 }
 
