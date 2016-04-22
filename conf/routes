@@ -75,6 +75,6 @@ POST        /api/drones                                             controllers.
 GET         /api/projects/                                          controllers.api.ProjectsApiController.index()
 GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
 POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
-
+GET         /api/projects/:projectId/calculate-route                controllers.api.ProjectsApiController.calculateRoute(projectId : java.util.UUID, dronePosition : String, customerPosition : String)
 #TODO Get Project including Zones
 

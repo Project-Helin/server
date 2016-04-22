@@ -8,7 +8,8 @@
                     routeData: {
                         dronePosition: null,
                         customerPosition: null
-                    }
+                    },
+                    routeWayPoints: null
                 };
 
                 $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
@@ -22,6 +23,13 @@
                 if ($scope.data.routeData.dronePosition && $scope.data.routeData.customerPosition) {
                     console.log($scope.data.routeData.dronePosition);
                     console.log($scope.data.routeData.customerPosition);
+                    ProjectsService.calculateRouteForProject(
+                        $scope.data.selectedProject.id,
+                        $scope.data.routeData.dronePosition, 
+                        $scope.data.routeData.customerPosition)
+                        .then(function (route) {
+                           $scope.data.routeWayPoints = route.wayPoints;
+                        });
                 } else {
                     toastr.error('Please click on the map to add a drone and a customer position', 'Error');
                 }

@@ -1,7 +1,12 @@
 package controllers.api;
 
+import ch.helin.messages.dto.Action;
+import ch.helin.messages.dto.way.Position;
+import ch.helin.messages.dto.way.Route;
+import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
+import commons.gis.GisHelper;
 import dao.ProjectsDao;
 import mappers.ProjectMapper;
 import models.Organisation;
@@ -50,9 +55,30 @@ public class ProjectsApiController extends Controller {
     }
 
     @Transactional
-    public Result calculateRoute(UUID projectID, String dronePosition, String customerPosition) {
+    public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
         Project found = projectsDao.findById(projectID);
-        return ok();
+        Position dronePosition = GisHelper.createPosition(dronePositionWkt);
+        Position customerPosition = GisHelper.createPosition(customerPositionWkt);
+
+        int wayPointCount = 20;
+
+        Route route = new Route();
+
+        Waypoint start = new Waypoint();
+        start.setPosition(dronePosition);
+        start.setAction(Action.TAKEOFF);
+        route.getWayPoints().add(start);
+
+        for(int i = 1; i < wayPointCount; i++) {
+            Waypoint waypoint = new Waypoint();
+            double lat = customerPosition.getLat() + i * 0.0001;
+            double lon = customerPosition.getLon() + i * 0.0001;
+
+
+            waypoint.setPosition(new Position(lat, lon));
+            route.getWayPoints().add(waypoint);
+        }
+        return ok(Json.toJson(route));
     }
 
     @Transactional
