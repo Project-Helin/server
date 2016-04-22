@@ -75,11 +75,12 @@ public class ProjectsApiController extends Controller {
 
         for(int i = 1; i < wayPointCount; i++) {
             Waypoint waypoint = new Waypoint();
+            waypoint.setId(UUID.randomUUID());
             double lat = customerPosition.getLat() + i * 0.0001;
             double lon = customerPosition.getLon() + i * 0.0001;
+            int randomHeight = 5 + (int) (Math.random() * 100);
 
-
-            waypoint.setPosition(new Position(lat, lon));
+            waypoint.setPosition(new Position(lat, lon, randomHeight));
             route.getWayPoints().add(waypoint);
         }
         return route;

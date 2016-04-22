@@ -49,6 +49,13 @@
                         }
 
                     });
+
+                    scope.map.on('pointermove', function (evt) {
+                        features = [];
+                        scope.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+
+                        });
+                    });
                 }
 
                 function addScopeListeners() {
@@ -89,24 +96,17 @@
 
                 function routeStyle() {
                     var circlesAtEdges = new ol.style.Circle({
-                        radius: 5,
+                        radius: 8,
                         fill: new ol.style.Fill({
-                            color: 'rgba(0, 0, 255, 0.8)'
+                            color: 'rgba(243, 156, 18, 0.8)',
                         }),
                         stroke: null
                     });
 
                     return [
                         new ol.style.Style({
-                            image: circlesAtEdges,
-                            geometry: function (feature) {
-                                var coordinates = feature.getGeometry().getCoordinates();
-                                return new ol.geom.MultiPoint(coordinates);
-                            }
-                        }),
-                        new ol.style.Style({
                             stroke: new ol.style.Stroke({
-                                color: 'blue',
+                                color: 'rgba(243, 156, 18, 0.8)',
                                 width: 2
                             })
                         })
@@ -144,6 +144,25 @@
                 }
 
                 function addMarker(coordinates, imageUrl) {
+                    var marker = new ol.Feature({
+                        geometry: new ol.geom.Point(coordinates)
+                    });
+
+                    var markerStyle = new ol.style.Style({
+                        image: new ol.style.Icon({
+                            anchor: [0.5, 1.0],
+                            anchorXUnits: "fraction",
+                            anchorYUnits: "fraction",
+                            src: imageUrl
+                        }),
+                        zIndex: 100000
+                    });
+                    marker.setStyle(markerStyle);
+                    scope.vectorLayer.getSource().addFeature(marker);
+                    return marker;
+                }
+
+                function addRouteMarker(coordinates, imageUrl, layer) {
                     var marker = new ol.Feature({
                         geometry: new ol.geom.Point(coordinates)
                     });
