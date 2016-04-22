@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import dao.ProductsDao;
+import models.Organisation;
 import models.Product;
 import models.User;
 import org.junit.Before;
@@ -10,7 +11,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static controllers.routes.OrganisationsController;
 import static controllers.routes.ProjectsController;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
@@ -20,17 +20,22 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
     @Inject
     private ProductsDao productsDao;
 
+    private Organisation currentOrganisation;
+
     @Before
     public void login() {
         String password = "bla";
-        User user = testHelper.createUserWithOrganisation(password);
+
+        currentOrganisation = testHelper.createNewOrganisation();
+        User loggedInUser = testHelper.createUserWithOrganisation(password, currentOrganisation);
+
         browser.goTo("/login");
-        fillInLoginForm(user, password);
+        fillInLoginForm(loggedInUser, password);
     }
 
     @Test
     public void shouldShowNewProduct() {
-        Product newProduct = testHelper.createProduct();
+        Product newProduct = testHelper.createProduct(currentOrganisation);
 
         browser.goTo(routes.ProductsController.index().url());
 
@@ -43,7 +48,7 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldRemoveProduct() {
-        Product product = testHelper.createProduct();
+        Product product = testHelper.createProduct(currentOrganisation);
 
         // go to table
         browser.goTo(routes.ProductsController.index().url());
@@ -81,10 +86,9 @@ public class ProductsControllerTest extends AbstractIntegrationTest {
         assertThat(all.get(0).getWeightGramm()).isEqualTo(300);
     }
 
-
     @Test
     public void shouldUpdateProduct() {
-        Product product = testHelper.createProduct();
+        Product product = testHelper.createProduct(currentOrganisation);
         browser.goTo(routes.ProductsController.index().url());
 
         // go to edit

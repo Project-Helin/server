@@ -34,7 +34,7 @@ public class ProductsController extends Controller {
     private static final Logger logger = LoggerFactory.getLogger(ProductsController.class);
 
     public Result index() {
-        List<Product> all = productsDao.findAll();
+        List<Product> all = productsDao.findByOrganisation(sessionHelper.getOrganisation(session()));
         return ok(index.render(all));
     }
 
@@ -69,7 +69,7 @@ public class ProductsController extends Controller {
     }
 
     public Result edit(UUID id) {
-        Product found = productsDao.findById(id);
+        Product found = findProduct(id);
 
         if (found == null) {
             return forbidden("Organisation not found!");
@@ -83,12 +83,11 @@ public class ProductsController extends Controller {
     }
 
     public Result update(UUID id) {
-        Product found = productsDao.findById(id);
+        Product found = findProduct(id);
 
         if (found == null) {
             return forbidden("Organisation not found!");
         }
-
 
         Form<Product> form = formFactory
             .form(Product.class)
@@ -108,8 +107,9 @@ public class ProductsController extends Controller {
         }
     }
 
-    public Result delete(UUID id) {
-        Product found = productsDao.findById(id);
+    public Result delete(UUID productId) {
+        Product found =
+            productsDao.findByIdAndOrganisation(productId, sessionHelper.getOrganisation(session()));
 
         if (found == null) {
             return forbidden("Organisation not found!");
@@ -118,5 +118,9 @@ public class ProductsController extends Controller {
         flash("success", "Deleted successfully");
         productsDao.delete(found);
         return index();
+    }
+
+    private Product findProduct(UUID id) {
+        return productsDao.findByIdAndOrganisation(id, sessionHelper.getOrganisation(session()));
     }
 }

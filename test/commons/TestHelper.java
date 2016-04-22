@@ -73,6 +73,10 @@ public class TestHelper {
     }
 
     public User createUserWithOrganisation(String plainTextPassword) {
+        return createUserWithOrganisation(plainTextPassword, createNewOrganisation());
+    }
+
+    public User createUserWithOrganisation(String plainTextPassword, Organisation organisation) {
         User user = new User();
 
         user.setId(UUID.randomUUID());
@@ -82,7 +86,6 @@ public class TestHelper {
         user.setPassword(plainTextPassword);
 
         jpaApi.withTransaction(() -> {
-            Organisation organisation = createNewOrganisation();
             userDao.persist(user);
             organisation.getAdministrators().add(user);
             jpaApi.em().merge(organisation);
@@ -96,15 +99,17 @@ public class TestHelper {
 
 
     public Product createProduct() {
+        return createProduct(createNewOrganisation());
+    }
+
+    public Product createProduct(Organisation newOrganisation) {
         Product product = new Product();
         product.setId(UUID.randomUUID());
         product.setName("This is a product");
         product.setPrice(10d);
         product.setWeightGramm(100);
 
-        product.setOrganisation(
-            createNewOrganisation()
-        );
+        product.setOrganisation(newOrganisation);
 
         jpaApi.withTransaction(() -> productsDao.persist(product));
         return product;
