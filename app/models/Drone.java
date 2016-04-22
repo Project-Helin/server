@@ -25,7 +25,6 @@ public class Drone extends BaseEntity {
     private Project project;
 
     public Coordinate getLastKnownPosition() {
-
         return lastKnownPosition;
     }
 

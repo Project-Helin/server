@@ -5,6 +5,7 @@ import commons.ModelHelper;
 import commons.SessionHelper;
 import dao.DroneDao;
 import models.Drone;
+import models.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -13,11 +14,10 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.drones.edit;
+import views.html.drones.index;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
-import views.html.drones.index;
 
 @Transactional
 public class DronesController extends Controller {
@@ -34,14 +34,13 @@ public class DronesController extends Controller {
     private static final Logger logger = LoggerFactory.getLogger(DronesController.class);
 
     public Result index() {
-        List<Drone> all =
-                droneDao.findAll();
-        String organisationToken = sessionHelper.getOrganisation(session()).getToken();
+        List<Drone> all = droneDao.findByOrganisation(getOrganisation());
+        String organisationToken = getOrganisation().getToken();
         return ok(index.render(all, organisationToken));
     }
 
     public Result edit(UUID id) {
-        Drone found = droneDao.findById(id);
+        Drone found = droneDao.findByIdAndOrganisation(id, getOrganisation());
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -59,8 +58,8 @@ public class DronesController extends Controller {
         }
     }
 
-    public Result update(UUID id) throws InvocationTargetException, IllegalAccessException {
-        Drone found = droneDao.findById(id);
+    public Result update(UUID id) {
+        Drone found = droneDao.findByIdAndOrganisation(id, getOrganisation());
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -83,8 +82,8 @@ public class DronesController extends Controller {
         }
     }
 
-    public Result delete(UUID id) {
-        Drone found = droneDao.findById(id);
+    public Result delete(UUID droneId) {
+        Drone found = droneDao.findByIdAndOrganisation(droneId, getOrganisation());
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -93,5 +92,9 @@ public class DronesController extends Controller {
         flash("success", "Deleted successfully");
         droneDao.delete(found);
         return redirect(routes.DronesController.index());
+    }
+
+    private Organisation getOrganisation() {
+        return sessionHelper.getOrganisation(session());
     }
 }

@@ -1,8 +1,6 @@
 package controllers;
 
-import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import dao.DroneDao;
 import models.Drone;
 import models.Organisation;
 import models.User;
@@ -13,25 +11,22 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
 public class DronesControllerTest extends AbstractIntegrationTest {
-    @Inject
-    private DroneDao droneDao;
 
-    private User user;
     private Organisation organisation;
-
 
     @Before
     public void login() {
         String password = "bla";
-        user = testHelper.createUserWithOrganisation(password);
-        organisation = user.getOrganisations().stream().findFirst().get();
+
+        organisation = testHelper.createNewOrganisation();
+        User user = testHelper.createUserWithOrganisation(password, organisation);
+
         browser.goTo("/login");
         fillInLoginForm(user, password);
     }
 
     @Test
     public void shouldShowNewDrone() {
-        organisation = user.getOrganisations().stream().findFirst().get();
         Drone drone = testHelper.createNewDrone(organisation);
 
         browser.goTo(routes.DronesController.index().url());
@@ -44,7 +39,21 @@ public class DronesControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldRemoveDrone() throws InterruptedException {
+    public void shouldNotShowDroneFromAnotherOrganisation() {
+        Organisation anotherOrganisation = testHelper.createNewOrganisation();
+        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+
+        browser.goTo(routes.DronesController.index().url());
+
+        // verify
+        assertThat(browser.pageSource()).doesNotContain(drone.getId().toString());
+        assertThat(browser.pageSource()).doesNotContain(drone.getName());
+        assertThat(browser.pageSource()).doesNotContain(String.valueOf(drone.getPayload()));
+        assertThat(browser.pageSource()).doesNotContain(drone.getToken().toString());
+    }
+
+    @Test
+    public void shouldRemoveDrone() {
         Drone drone = testHelper.createNewDrone(organisation);
 
         browser.goTo(routes.DronesController.index().url());
@@ -61,6 +70,16 @@ public class DronesControllerTest extends AbstractIntegrationTest {
         assertThat(browser.pageSource()).doesNotContain(drone.getName());
     }
 
+    @Test
+    public void shouldNotAllowToRemoveDroneFromOtherOrganisation() {
+        Organisation anotherOrganisation = testHelper.createNewOrganisation();
+        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+
+        browser.goTo(routes.DronesController.delete(drone.getId()).url());
+
+        // verify that it didn't work
+        assertThat(browser.pageSource()).contains("Drone not found!");
+    }
 
     @Test
     public void shouldUpdateDrone() {
@@ -87,5 +106,16 @@ public class DronesControllerTest extends AbstractIntegrationTest {
 
         assertThat(browser.pageSource()).doesNotContain(String.valueOf(drone.getPayload()));
         assertThat(browser.pageSource()).contains(String.valueOf(newPayload));
+    }
+
+    @Test
+    public void shouldNotAllowToUpdateDroneFromOtherOrganisation() {
+        Organisation anotherOrganisation = testHelper.createNewOrganisation();
+        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+
+        browser.goTo(routes.DronesController.edit(drone.getId()).url());
+
+        // verify that it didn't work
+        assertThat(browser.pageSource()).contains("Drone not found!");
     }
 }

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import models.BaseEntity;
 import play.db.jpa.JPAApi;
 
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +45,20 @@ public abstract class AbstractDao<T extends BaseEntity> {
 
     public Class<T> getEntityClass() {
         return entityClass;
+    }
+
+    protected T getSingleResultOrNull(TypedQuery<T> query) {
+        List<T> resultList = query.getResultList();
+
+        if (resultList.isEmpty()) {
+            return null;
+        }
+
+        if (resultList.size() == 1) {
+            return resultList.get(0);
+        }
+
+        throw new RuntimeException("Expected to get one result, but got " + resultList.size());
     }
 }
 
