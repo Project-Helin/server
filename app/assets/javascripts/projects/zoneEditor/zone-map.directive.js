@@ -1,5 +1,5 @@
 (function () {
-    angular.module('ProjectsApp').directive('zoneMap', [function () {
+    angular.module('ProjectsApp').directive('zoneMap', ['gisHelper', function (gisHelper) {
         return {
             restrict: 'E',
             scope: {
@@ -59,7 +59,7 @@
                 }
 
                 function selectZoneIfnotInDrawMode(event) {
-                    if(!scope.inDrawMode) {
+                    if (!scope.inDrawMode) {
                         scope.map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
                             if (feature.getId()) {
                                 scope.$apply(function () {
@@ -83,13 +83,13 @@
                         updateInteractionPossibilities(scope.selectedZone);
                     });
 
-                    scope.map.on("click", function(e) {
+                    scope.map.on("click", function (e) {
                         selectZoneIfnotInDrawMode(e);
                     });
                 }
 
                 function createVectorLayer() {
-                    scope.readOnlyFeatures = getFeaturesFromZones(scope.zones);
+                    scope.readOnlyFeatures = gisHelper.getFeaturesFromZones(scope.zones, scope.format);
 
                     scope.vectorLayer = new ol.layer.Vector({
                         source: new ol.source.Vector({
@@ -142,12 +142,12 @@
 
                 function updateStyle(newZone, oldZone) {
                     if (newZone && newZone.polygon) {
-                        getFeatureForZone(newZone).changed();
+                        gisHelper.getFeatureForZone(newZone, scope.vectorLayer).changed();
                     }
 
                     if (oldZone && oldZone.polygon) {
-                        if (getFeatureForZone(oldZone)) {
-                            getFeatureForZone(oldZone).changed();
+                        if (gisHelper.getFeatureForZone(oldZone, scope.vectorLayer)) {
+                            gisHelper.getFeatureForZone(oldZone, scope.vectorLayer).changed();
                         }
                     }
                 }
@@ -155,7 +155,7 @@
 
                 function getModifyInteraction(zone) {
                     var modifyFeatures = new ol.Collection();
-                    modifyFeatures.push(getFeatureForZone(zone));
+                    modifyFeatures.push(gisHelper.getFeatureForZone(zone, scope.vectorLayer));
 
                     var modifyInteraction = new ol.interaction.Modify({
                         features: modifyFeatures,
@@ -176,7 +176,7 @@
                         })[0];
 
                         scope.$apply(function () {
-                                zone.polygon = convertFeatureToWKT(modifiedFeature);
+                                zone.polygon = gisHelper.convertFeatureToWKT(modifiedFeature, scope.format);
                             }
                         );
 
@@ -194,55 +194,18 @@
                     scope.map.removeInteraction(scope.drawInteraction);
                 }
 
-
-                function getFeaturesFromZones(zones) {
-                    var readOnlyFeatures = new ol.Collection();
-
-                    zones.forEach(function (zone) {
-                            if (zone.polygon !== null) {
-                                readOnlyFeatures.push(convertZoneToFeature(zone));
-                            }
-                        }
-                    );
-
-                    return readOnlyFeatures;
-                }
-
-                function getFeatureForZone(zone) {
-                    return scope.vectorLayer.getSource().getFeatureById(zone.id);
-                }
-
-                function convertZoneToFeature(zone) {
-                    var feature = scope.format.readFeature(zone.polygon, {
-                        dataProjection: 'EPSG:4326',
-                        featureProjection: 'EPSG:3857'
-                    });
-
-                    feature.setId(zone.id);
-
-                    return feature;
-                }
-
-                function convertFeatureToWKT(feature) {
-
-                    return scope.format.writeFeature(feature, {
-                        dataProjection: 'EPSG:4326',
-                        featureProjection: 'EPSG:3857'
-                    });
-                }
-
                 function removeDeletedZoneFromMap(oldValue, newValue) {
                     var deletedZone = oldValue.filter(function (i) {
                         return newValue.indexOf(i) < 0;
                     })[0];
                     if (deletedZone.polygon) {
-                        var featureToDelete = getFeatureForZone(deletedZone);
+                        var featureToDelete = gisHelper.getFeatureForZone(deletedZone,  scope.vectorLayer);
                         scope.vectorLayer.getSource().removeFeature(featureToDelete);
                     }
                 }
 
                 function getZone(id) {
-                    return scope.zones.filter(function(zone) {
+                    return scope.zones.filter(function (zone) {
                         return zone.id === id;
                     })[0];
                 }
@@ -256,7 +219,7 @@
 
                     drawedFeature.setId(scope.selectedZone.id);
                     scope.$apply(function () {
-                        scope.selectedZone.polygon = convertFeatureToWKT(drawedFeature);
+                        scope.selectedZone.polygon = gisHelper.convertFeatureToWKT(drawedFeature, scope.format);
                     });
                 }
 

@@ -46,6 +46,10 @@ POST        /login                                                  controllers.
 GET         /register                                               controllers.UsersController.add()
 POST        /register                                               controllers.UsersController.create()
 
+#RouteDebugger
+GET         /route-debugger                                          controllers.Application.routeDebugger()
+
+
 #Organisations-Users
 GET         /administrators                                         controllers.OrganisationsUsersController.index()
 GET         /administrators/add                                     controllers.OrganisationsUsersController.add()
@@ -68,8 +72,9 @@ GET         /registerDrone                                          controllers.
 POST        /api/drones                                             controllers.api.DronesApiController.create()
 
 ##Project
+GET         /api/projects/                                          controllers.api.ProjectsApiController.index()
 GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
 POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
-
+GET         /api/projects/:projectId/calculate-route                controllers.api.ProjectsApiController.calculateRoute(projectId : java.util.UUID, dronePosition : String, customerPosition : String)
 #TODO Get Project including Zones
 

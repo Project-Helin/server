@@ -1,8 +1,15 @@
 package controllers.api;
 
+import ch.helin.messages.dto.Action;
+import ch.helin.messages.dto.way.Position;
+import ch.helin.messages.dto.way.Route;
+import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
+import commons.gis.GisHelper;
 import dao.ProjectsDao;
+import mappers.ProjectMapper;
+import models.Organisation;
 import models.Project;
 import models.Zone;
 import play.db.jpa.Transactional;
@@ -10,7 +17,10 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ProjectsApiController extends Controller {
@@ -21,6 +31,19 @@ public class ProjectsApiController extends Controller {
     @Inject
     private SessionHelper sessionHelper;
 
+    @Inject
+    private ProjectMapper projectMapper;
+
+    @Transactional
+    public Result index() {
+        Organisation organisation = sessionHelper.getOrganisation(session());
+
+        List<Project> projects = projectsDao.findByOrganisation(organisation.getId());
+
+        List<ProjectDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
+        return ok(Json.toJson(projectDtos));
+    }
+
     @Transactional
     public Result show(UUID projectID) {
         Project found = projectsDao.findById(projectID);
@@ -28,18 +51,38 @@ public class ProjectsApiController extends Controller {
             return forbidden("Project not found for id " + projectID.toString());
         }
 
-        List<ZoneDto> zones = new ArrayList<>();
-        for (Zone zone : found.getZones()) {
-            zones.add(new ZoneDto(zone.getId(), zone.getPolygon(), zone.getHeight(), zone.getType(), zone.getName()));
+        return ok(Json.toJson(projectMapper.getProjectDto(found)));
+    }
+
+    @Transactional
+    public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
+        Project found = projectsDao.findById(projectID);
+        Position dronePosition = GisHelper.createPosition(dronePositionWkt);
+        Position customerPosition = GisHelper.createPosition(customerPositionWkt);
+
+        int wayPointCount = 20;
+
+        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
+        return ok(Json.toJson(mockRoute));
+    }
+
+    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
+        Route route = new Route();
+        Waypoint start = new Waypoint();
+        start.setPosition(dronePosition);
+        start.setAction(Action.TAKEOFF);
+        route.getWayPoints().add(start);
+
+        for(int i = 1; i < wayPointCount; i++) {
+            Waypoint waypoint = new Waypoint();
+            double lat = customerPosition.getLat() + i * 0.0001;
+            double lon = customerPosition.getLon() + i * 0.0001;
+
+
+            waypoint.setPosition(new Position(lat, lon));
+            route.getWayPoints().add(waypoint);
         }
-
-        ProjectDto projectDto = new ProjectDto(
-            found.getId(),
-            found.getName(),
-            zones
-        );
-
-        return ok(Json.toJson(projectDto));
+        return route;
     }
 
     @Transactional
