@@ -1,13 +1,13 @@
 package commons.gis;
 
 import ch.helin.messages.commons.AssertUtils;
+import ch.helin.messages.dto.way.Position;
 import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.codec.Wkb;
 import org.geolatte.geom.codec.WkbDecoder;
 import org.geolatte.geom.codec.Wkt;
-import org.geolatte.geom.jts.JTS;
 
 /**
  * Contains common static methods related to post gis
@@ -35,6 +35,16 @@ public class GisHelper {
     public static Point createPoint(long longitude, long latitude) {
         Geometry<?> geometry = Wkt.fromWkt("SRID=4326; POINT (" + longitude + " " + latitude + ")");
         return (Point) geometry;
+    }
+
+    public static Position createPosition(String wktWithoutSRID) {
+        String wktWithSRID = "SRID=4326; " + wktWithoutSRID;
+        Geometry<?> geometry = Wkt.fromWkt(wktWithSRID);
+        Point point = (Point) geometry;
+        Position position = new Position();
+        position.setLat(point.getPosition().getCoordinate(1));
+        position.setLon(point.getPosition().getCoordinate(0));
+        return position;
     }
 
     /**

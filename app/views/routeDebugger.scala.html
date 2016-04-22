@@ -20,12 +20,15 @@
     <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.controller.js")'></script>
     <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.service.js")'></script>
 
-    <div ng-app="RouteDebugger" ng-controller="RouteDebuggerCtrl">
-        <route-map zones="data.selectedProject.zones" ng-if="data.selectedProject"></route-map>
+    <div class="row" ng-app="RouteDebugger" ng-controller="RouteDebuggerCtrl">
+        <div class="col-xs-4 m-b-lg">
+            <select class="form-control" ng-disabled="data.selectedProject" ng-model="data.selectedProject" ng-options="option.name for option in data.projects track by option.id"></select>
+        </div>
+        <div class="col-xs-8 m-b-lg">
+            <div class="btn btn-info" ng-click="calculateRoute()">Calculate Route</div>
+        </div>
 
-        <select class="form-control" ng-model="data.selectedProject" ng-options="option.name for option in projects track by option.id"></select>
-
-        {{selectedProject.zones}}
+        <route-map zones="data.selectedProject.zones" route-data="data.routeData" ng-if="data.selectedProject"></route-map>
     </div>
 
 

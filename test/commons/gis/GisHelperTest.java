@@ -1,6 +1,6 @@
-package commons;
+package commons.gis;
 
-import commons.gis.GisHelper;
+import ch.helin.messages.dto.way.Position;
 import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
@@ -35,6 +35,17 @@ public class GisHelperTest {
 
         String wkt = GisHelper.toWktStringWithoutSrid(geometry);
         assertThat(wkt).isEqualTo("POINT(30 10)");
+    }
+
+    @Test
+    public void shouldConvertWktWithoutSRIDToPosition() {
+        String longitude = "8.817091584205626";
+        String latitude = "47.22393280096793";
+        String wktWithoutSRID = "POINT (" + longitude + " " + latitude + ")";
+
+        Position position = GisHelper.createPosition(wktWithoutSRID);
+        assertThat(String.valueOf(position.getLat())).isEqualTo(latitude);
+        assertThat(String.valueOf(position.getLon())).isEqualTo(longitude);
     }
 
     @Test

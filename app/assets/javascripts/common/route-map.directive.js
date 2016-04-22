@@ -3,7 +3,8 @@
         return {
             restrict: 'E',
             scope: {
-                zones: '='
+                zones: '=',
+                routeData: '='
             },
             replace: true,
             template: '<div id="map" class="map"></div>',
@@ -11,8 +12,8 @@
 
                 function activate() {
                     createMap();
+                    AddMapInteractions();
                 }
-
 
                 function createMap() {
                     var raster = new ol.layer.Tile({
@@ -33,6 +34,28 @@
                     });
                 }
 
+                function AddMapInteractions() {
+                    scope.map.on('click', function(evt) {
+                        var coordinates = evt.coordinate;
+
+                        if(!scope.droneMarker) {
+                            scope.droneMarker = addDroneMarker(coordinates);
+                            scope.routeData.dronePosition = gisHelper.convertFeatureToWKT(scope.droneMarker, scope.format);
+                        } else if (!scope.customerMarker) {
+                            scope.customerMarker = addCustomerMarker(coordinates);
+                            scope.routeData.customerPosition = gisHelper.convertFeatureToWKT(scope.customerMarker, scope.format);
+                        }
+
+                    });
+                }
+
+                function addScopeListeners() {
+                    scope.$watch('zones', function (newValue, oldValue) {
+                        if (zoneWasDeleted(newValue, oldValue)) {
+                            removeDeletedZoneFromMap(oldValue, newValue);
+                        }
+                    });
+                }
 
                 function createVectorLayer() {
                     scope.readOnlyFeatures = gisHelper.getFeaturesFromZones(scope.zones, scope.format);
@@ -71,6 +94,33 @@
                             })
                         })
                     ];
+                }
+
+                function addDroneMarker(coordinates) {
+                   return addMarker(coordinates, "assets/images/drone-icon.png");
+                }
+
+                function addCustomerMarker(coordinates) {
+                    return addMarker(coordinates, "assets/images/customer-icon.png");
+                }
+
+                function addMarker(coordinates, imageUrl) {
+                    var marker = new ol.Feature({
+                        geometry: new ol.geom.Point(coordinates)
+                    });
+
+                    var markerStyle = new ol.style.Style({
+                        image: new ol.style.Icon({
+                            anchor: [0.5, 1.0],
+                            anchorXUnits: "fraction",
+                            anchorYUnits: "fraction",
+                            src: imageUrl
+                        }),
+                        zIndex: 100000
+                    });
+                    marker.setStyle(markerStyle);
+                    scope.vectorLayer.getSource().addFeature(marker);
+                    return marker;
                 }
 
                 activate();

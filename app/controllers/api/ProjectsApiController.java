@@ -12,7 +12,10 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ProjectsApiController extends Controller {
@@ -44,6 +47,12 @@ public class ProjectsApiController extends Controller {
         }
 
         return ok(Json.toJson(projectMapper.getProjectDto(found)));
+    }
+
+    @Transactional
+    public Result calculateRoute(UUID projectID, String dronePosition, String customerPosition) {
+        Project found = projectsDao.findById(projectID);
+        return ok();
     }
 
     @Transactional
