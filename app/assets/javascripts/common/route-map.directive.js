@@ -15,6 +15,8 @@
                     createMap();
                     addMapInteractions();
                     addScopeListeners();
+                    scope.popup = new ol.Overlay.Popup();
+                    scope.map.addOverlay(scope.popup);
                 }
 
                 function createMap() {
@@ -50,20 +52,35 @@
 
                     });
 
-                    scope.map.on('pointermove', function (evt) {
-                        features = [];
+                    scope.map.on('click', function (evt) {
                         scope.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                            if (scope.route && feature.getId()) {
+                                var foundWayPoint = scope.route.filter(function (wayPoint) {
+                                    return wayPoint.id == feature.getId();
+                                });
 
+                                if (foundWayPoint[0]) {
+                                    scope.popup.show(evt.coordinate, '<div><h2>Height</h2><p>' + foundWayPoint[0].position.height + '</p></div>');
+                                }
+                            }
                         });
                     });
                 }
 
+                function createRouteMarkers(route) {
+                    return route.map(function (wayPoint) {
+                        return addRouteMarker(gisHelper.convertPositionToCoordinate(wayPoint.position), wayPoint.id)
+                    });
+                }
+
                 function addScopeListeners() {
-                    scope.$watch('route', function (newValue, oldValue) {
-                        if (newValue != null) {
-                            scope.routeLayer = createRouteLineLayer(newValue);
+                    scope.$watch('route', function (newRoute, oldValue) {
+                        if (newRoute != null) {
+                            var coordinates = gisHelper.convertRouteToCoordinates(newRoute);
+                            scope.routeLayer = createRouteLayerWithRouteLine(coordinates);
+                            scope.routeMarkers = createRouteMarkers(newRoute);
+                            scope.routeLayer.getSource().addFeatures(scope.routeMarkers);
                             scope.map.addLayer(scope.routeLayer);
-                            console.log(scope.routeLayer);
                         }
                     });
 
@@ -73,16 +90,14 @@
                         scope.vectorLayer.getSource().removeFeature(scope.droneMarker);
                         scope.customerMarker = null;
                         scope.droneMarker = null;
+                        if (scope.popup) {
+                            scope.popup.hide();
+                        }
 
                     });
                 }
 
-                function createRouteLineLayer(route) {
-                    var coordinates = route.map(function (wayPoint) {
-                            return ol.proj.transform([wayPoint.position.lon, wayPoint.position.lat], 'EPSG:4326', 'EPSG:3857')
-                        }
-                    );
-
+                function createRouteLayerWithRouteLine(coordinates) {
                     return new ol.layer.Vector({
                         source: new ol.source.Vector({
                             features: [new ol.Feature({
@@ -94,25 +109,6 @@
                     });
                 }
 
-                function routeStyle() {
-                    var circlesAtEdges = new ol.style.Circle({
-                        radius: 8,
-                        fill: new ol.style.Fill({
-                            color: 'rgba(243, 156, 18, 0.8)',
-                        }),
-                        stroke: null
-                    });
-
-                    return [
-                        new ol.style.Style({
-                            stroke: new ol.style.Stroke({
-                                color: 'rgba(243, 156, 18, 0.8)',
-                                width: 2
-                            })
-                        })
-                    ];
-                }
-
                 function createVectorLayer() {
                     scope.readOnlyFeatures = gisHelper.getFeaturesFromZones(scope.zones, scope.format);
 
@@ -122,6 +118,17 @@
                         }),
                         style: polygonStyle()
                     });
+                }
+
+                function routeStyle() {
+                    return [
+                        new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: 'rgba(243, 156, 18, 0.8)',
+                                width: 2
+                            })
+                        })
+                    ];
                 }
 
                 function polygonStyle() {
@@ -162,22 +169,29 @@
                     return marker;
                 }
 
-                function addRouteMarker(coordinates, imageUrl, layer) {
+                function addRouteMarker(coordinates, id) {
                     var marker = new ol.Feature({
-                        geometry: new ol.geom.Point(coordinates)
+                        geometry: new ol.geom.Point(coordinates),
+                    });
+
+                    if(id) {
+                        marker.setId(id);
+                    }
+
+                    var circle = new ol.style.Circle({
+                        radius: 8,
+                        fill: new ol.style.Fill({
+                            color: 'rgba(243, 156, 18, 0.8)'
+                        }),
+                        stroke: null
                     });
 
                     var markerStyle = new ol.style.Style({
-                        image: new ol.style.Icon({
-                            anchor: [0.5, 1.0],
-                            anchorXUnits: "fraction",
-                            anchorYUnits: "fraction",
-                            src: imageUrl
-                        }),
-                        zIndex: 100000
+                        image: circle,
+                        zIndex: 5000
                     });
+
                     marker.setStyle(markerStyle);
-                    scope.vectorLayer.getSource().addFeature(marker);
                     return marker;
                 }
 
