@@ -62,8 +62,12 @@ public class ProjectsApiController extends Controller {
 
         int wayPointCount = 20;
 
-        Route route = new Route();
+        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
+        return ok(Json.toJson(mockRoute));
+    }
 
+    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
+        Route route = new Route();
         Waypoint start = new Waypoint();
         start.setPosition(dronePosition);
         start.setAction(Action.TAKEOFF);
@@ -78,7 +82,7 @@ public class ProjectsApiController extends Controller {
             waypoint.setPosition(new Position(lat, lon));
             route.getWayPoints().add(waypoint);
         }
-        return ok(Json.toJson(route));
+        return route;
     }
 
     @Transactional

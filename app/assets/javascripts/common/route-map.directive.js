@@ -4,7 +4,8 @@
             restrict: 'E',
             scope: {
                 zones: '=',
-                routeData: '='
+                routeData: '=',
+                route: '='
             },
             replace: true,
             template: '<div id="map" class="map"></div>',
@@ -12,7 +13,8 @@
 
                 function activate() {
                     createMap();
-                    AddMapInteractions();
+                    addMapInteractions();
+                    addScopeListeners();
                 }
 
                 function createMap() {
@@ -34,11 +36,11 @@
                     });
                 }
 
-                function AddMapInteractions() {
-                    scope.map.on('click', function(evt) {
+                function addMapInteractions() {
+                    scope.map.on('click', function (evt) {
                         var coordinates = evt.coordinate;
 
-                        if(!scope.droneMarker) {
+                        if (!scope.droneMarker) {
                             scope.droneMarker = addDroneMarker(coordinates);
                             scope.routeData.dronePosition = gisHelper.convertFeatureToWKT(scope.droneMarker, scope.format);
                         } else if (!scope.customerMarker) {
@@ -50,11 +52,43 @@
                 }
 
                 function addScopeListeners() {
-                    scope.$watch('zones', function (newValue, oldValue) {
-                        if (zoneWasDeleted(newValue, oldValue)) {
-                            removeDeletedZoneFromMap(oldValue, newValue);
+                    scope.$watch('route', function (newValue, oldValue) {
+                        if (newValue != null) {
+                            scope.routeLayer = createRouteLineLayer(newValue);
+                            scope.map.addLayer(scope.routeLayer);
+                            console.log(scope.routeLayer);
                         }
                     });
+
+                    scope.$on('resetMap', function () {
+                        scope.map.removeLayer(scope.routeLayer);
+                        scope.vectorLayer.getSource().removeFeature(scope.customerMarker);
+                        scope.vectorLayer.getSource().removeFeature(scope.droneMarker);
+                        scope.customerMarker = null;
+                        scope.droneMarker = null;
+
+                    });
+                }
+
+                function createRouteLineLayer(route) {
+                    var coordinates = route.map(function (wayPoint) {
+                            return ol.proj.transform([wayPoint.position.lon, wayPoint.position.lat], 'EPSG:4326', 'EPSG:3857')
+                        }
+                    );
+
+                    return new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: [new ol.Feature({
+                                geometry: new ol.geom.LineString(coordinates, 'XY'),
+                                name: 'Line'
+                            })]
+                        }),
+                        style: routeStyle()
+                    });
+                }
+
+                function routeStyle() {
+                    
                 }
 
                 function createVectorLayer() {
@@ -64,29 +98,12 @@
                         source: new ol.source.Vector({
                             features: scope.readOnlyFeatures
                         }),
-                        style: styleFunction()
+                        style: polygonStyle()
                     });
                 }
 
-                function styleFunction() {
-                    var circlesAtEdges = new ol.style.Circle({
-                        radius: 5,
-                        fill: new ol.style.Fill({
-                            color: 'rgba(0, 0, 255, 0.8)'
-                        }),
-                        stroke: null
-                    });
-
+                function polygonStyle() {
                     return [
-                        new ol.style.Style({
-                            image: circlesAtEdges,
-                            geometry: function (feature) {
-                                if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
-                                    var coordinates = feature.getGeometry().getCoordinates()[0];
-                                    return new ol.geom.MultiPoint(coordinates);
-                                }
-                            }
-                        }),
                         new ol.style.Style({
                             stroke: null,
                             fill: new ol.style.Fill({
@@ -97,7 +114,7 @@
                 }
 
                 function addDroneMarker(coordinates) {
-                   return addMarker(coordinates, "assets/images/drone-icon.png");
+                    return addMarker(coordinates, "assets/images/drone-icon.png");
                 }
 
                 function addCustomerMarker(coordinates) {

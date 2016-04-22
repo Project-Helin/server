@@ -25,10 +25,11 @@
             <select class="form-control" ng-disabled="data.selectedProject" ng-model="data.selectedProject" ng-options="option.name for option in data.projects track by option.id"></select>
         </div>
         <div class="col-xs-8 m-b-lg">
-            <div class="btn btn-info" ng-click="calculateRoute()">Calculate Route</div>
+            <div class="btn btn-warning pull-right" ng-show="data.routeWayPoints" ng-click="reset()">Reset</div>
+            <div class="btn btn-info pull-right" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">Calculate Route</div>
         </div>
 
-        <route-map zones="data.selectedProject.zones" route-data="data.routeData" ng-if="data.selectedProject"></route-map>
+        <route-map zones="data.selectedProject.zones" route-data="data.routeData" route="data.routeWayPoints" ng-if="data.selectedProject"></route-map>
     </div>
 
 

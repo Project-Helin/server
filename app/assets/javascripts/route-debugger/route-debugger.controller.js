@@ -22,7 +22,6 @@
             $scope.calculateRoute = function () {
                 if ($scope.data.routeData.dronePosition && $scope.data.routeData.customerPosition) {
                     console.log($scope.data.routeData.dronePosition);
-                    console.log($scope.data.routeData.customerPosition);
                     ProjectsService.calculateRouteForProject(
                         $scope.data.selectedProject.id,
                         $scope.data.routeData.dronePosition, 
@@ -33,6 +32,11 @@
                 } else {
                     toastr.error('Please click on the map to add a drone and a customer position', 'Error');
                 }
+            };
+            
+            $scope.reset = function() {
+                $scope.$broadcast('resetMap');
+                $scope.data.routeWayPoints = null;
             };
 
 
