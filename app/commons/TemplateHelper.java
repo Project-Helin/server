@@ -6,7 +6,6 @@ import models.User;
 import play.api.Application;
 import play.api.Play;
 import play.api.inject.Injector;
-import play.db.jpa.JPA;
 import play.db.jpa.JPAApi;
 
 import java.util.*;
@@ -39,8 +38,8 @@ public class TemplateHelper {
             if (user != null) {
                 Set<Organisation> loadedOrganisations = user.getOrganisations();
                 return new ArrayList<>(loadedOrganisations);
-            }else {
-                return Collections.emptyList();
+            } else {
+                return Collections.<Organisation>emptyList();
             }
 
         });
