@@ -49,8 +49,8 @@
                     });
 
                     drawInteraction.on('drawend', function (event) {
-                        scope.inDrawMode = false;
                         writePolygonValueToZone(event);
+                        scope.inDrawMode = false;
                     });
 
                     return drawInteraction;
@@ -58,8 +58,10 @@
 
                 function addScopeListeners() {
                     scope.$watch('selectedZone', function (newValue, oldValue) {
-                        updateInteractionPossibilities(newValue);
-                        updateStyle(newValue, oldValue);
+                        if(!scope.inDrawMode) {
+                            updateInteractionPossibilities(newValue);
+                            updateStyle(newValue, oldValue);
+                        }
                     }, true);
 
                     scope.$watch('zones', function (newValue, oldValue) {
@@ -73,10 +75,10 @@
                     if (!scope.inDrawMode) {
                         scope.map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
                             if (feature.getId()) {
-                                var zone = getZone(feature.getId());
+                                var zone = gisHelper.getZoneById(scope.zones, feature.getId());
                                 if (zone.type != 'OrderZone') {
                                     scope.$apply(function () {
-                                        scope.selectedZone = getZone(feature.getId());
+                                        scope.selectedZone = zone;
                                     })
                                 }
                             }
@@ -105,49 +107,10 @@
                     });
                 }
 
+
                 function styleFunction(feature) {
-
-                    var styleForZoneType;
-
-                    var zoneType = getZone(feature.getId()).type;
-
-                    switch (zoneType) {
-                        case 'OrderZone':
-                            styleForZoneType = new ol.style.Style({
-                                stroke: new ol.style.Stroke({
-                                    color: 'rgba(0, 192, 239, 1.0)',
-                                    width: 3
-                                }),
-                                fill: null
-                            });
-                            break;
-                        case 'FlightZone':
-                            styleForZoneType = new ol.style.Style({
-                                stroke: null,
-                                fill: new ol.style.Fill({
-                                    color: 'rgba(0, 28, 247, 0.8)'
-                                })
-                            });
-                            break;
-                        case 'DeliveryZone':
-                            styleForZoneType = new ol.style.Style({
-                                stroke: null,
-                                fill: new ol.style.Fill({
-                                    color: 'rgba(0, 166, 90, 0.8)'
-                                })
-                            });
-                            break;
-                        case 'LoadingZone':
-                            styleForZoneType = new ol.style.Style({
-                                stroke: null,
-                                fill: new ol.style.Fill({
-                                    color: 'rgba(243, 156, 18, 0.8)'
-                                })
-                            });
-                            break;
-                    }
-
-                    return [getEditInteractionStyle(), styleForZoneType];
+                    var zone = gisHelper.getZoneById(scope.zones, feature.getId());
+                    return [getEditInteractionStyle(), gisHelper.getZoneStyle(zone)];
                 }
 
                 function getEditInteractionStyle() {
@@ -249,12 +212,6 @@
                         var featureToDelete = gisHelper.getFeatureForZone(deletedZone, scope.vectorLayer);
                         scope.vectorLayer.getSource().removeFeature(featureToDelete);
                     }
-                }
-
-                function getZone(id) {
-                    return scope.zones.filter(function (zone) {
-                        return zone.id === id;
-                    })[0];
                 }
 
                 function zoneWasDeleted(newValue, oldValue) {

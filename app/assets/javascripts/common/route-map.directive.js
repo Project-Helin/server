@@ -116,7 +116,7 @@
                         source: new ol.source.Vector({
                             features: scope.readOnlyFeatures
                         }),
-                        style: polygonStyle()
+                        style: polygonStyle
                     });
                 }
 
@@ -131,15 +131,8 @@
                     ];
                 }
 
-                function polygonStyle() {
-                    return [
-                        new ol.style.Style({
-                            stroke: null,
-                            fill: new ol.style.Fill({
-                                color: 'rgba(0, 0, 255, 0.5)'
-                            })
-                        })
-                    ];
+                function polygonStyle(feature) {
+                    return [gisHelper.getZoneStyle(gisHelper.getZoneById(scope.zones, feature.getId()))];
                 }
 
                 function addDroneMarker(coordinates) {
