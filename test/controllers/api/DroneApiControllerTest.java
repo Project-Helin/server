@@ -20,8 +20,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 public class DroneApiControllerTest extends AbstractIntegrationTest {
+
     @Inject
-    WSClient ws;
+    private WSClient ws;
 
     @Inject
     private ApiHelper apiHelper;
