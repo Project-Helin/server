@@ -19,19 +19,23 @@
             <a href="@controllers.routes.OrganisationsUsersController.index()" ><i class="glyphicon glyphicon-user"></i> <span>Administrators</span></a>
         </li>
     }
-    <li class="@activeLink(controllers.routes.ProductsController.index())">
-        <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>
-    </li>
-    <li class="@activeLink(controllers.routes.ProjectsController.index())">
-        <a href="@controllers.routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> <span>Projects</span></a>
-    </li>
-    <li class="@activeLink(controllers.routes.DronesController.index())">
-        <a href="@controllers.routes.DronesController.index()"><i class="glyphicon glyphicon-plane"></i> <span>Drones</span></a>
-    </li>
-    @*<li class="@activeLink(routes.ZoneCrudController.index())">*@
-    @*<a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zones</a>*@
-    @*</li>*@
-    <li class="@activeLink(routes.MessageViewer.index())">
-        <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> <span>Debug</span></a>
-    </li>
+
+    @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+        <li class="@activeLink(controllers.routes.ProductsController.index())">
+            <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>
+        </li>
+        <li class="@activeLink(controllers.routes.ProjectsController.index())">
+            <a href="@controllers.routes.ProjectsController.index()"><i class="glyphicon glyphicon-map-marker"></i> <span>Projects</span></a>
+        </li>
+        <li class="@activeLink(controllers.routes.DronesController.index())">
+            <a href="@controllers.routes.DronesController.index()"><i class="glyphicon glyphicon-plane"></i> <span>Drones</span></a>
+        </li>
+
+        @*<li class="@activeLink(routes.ZoneCrudController.index())">*@
+        @*<a href="@routes.ZoneCrudController.index()"><i class="glyphicon glyphicon-map-marker"></i> Zones</a>*@
+        @*</li>*@
+        <li class="@activeLink(routes.MessageViewer.index())">
+         <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> <span>Debug</span></a>
+        </li>
+    }
 </ul>

@@ -16,6 +16,9 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+/**
+ * Provides some useful methods to do get/post requests to the server.
+ */
 public class ApiHelper {
 
     private static final String BASE_URL = "http://localhost:19001";
