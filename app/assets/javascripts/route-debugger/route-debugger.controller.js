@@ -16,6 +16,14 @@
 
                 ProjectsService.loadProjects().then(function (projects) {
                     $scope.data.projects = projects;
+                    if($scope.projectId) {
+                        var foundProject = $scope.data.projects.filter(function(project) {
+                            return project.id === $scope.projectId;
+                        });
+                        if (foundProject.length) {
+                            $scope.data.selectedProject = foundProject[0];
+                        }
+                    }
                 });
             }
             

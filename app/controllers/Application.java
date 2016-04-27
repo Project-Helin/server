@@ -11,7 +11,8 @@ public class Application extends Controller {
         return ok(index.render());
     }
 
-    public Result routeDebugger() {
-        return ok(routeDebugger.render());
+    public Result routeDebugger(String projectId) {
+
+        return ok(routeDebugger.render(projectId));
     }
 }

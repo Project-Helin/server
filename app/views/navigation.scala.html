@@ -18,6 +18,10 @@
         <li class="@activeLink(controllers.routes.OrganisationsUsersController.index())">
             <a href="@controllers.routes.OrganisationsUsersController.index()" ><i class="glyphicon glyphicon-user"></i> <span>Administrators</span></a>
         </li>
+
+        <li class="@activeLink(controllers.routes.Application.routeDebugger(""))">
+            <a href="@controllers.routes.Application.routeDebugger("")" ><i class="glyphicon glyphicon-send"></i> <span>Test your Projects</span></a>
+        </li>
     }
 
     @if(session.get(commons.SessionKey.USER_ID.name) != null) {

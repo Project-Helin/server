@@ -38,6 +38,19 @@
             });
         };
 
+        this.convertPositionToCoordinate = function(position) {
+            return ol.proj.transform([position.lon, position.lat], 'EPSG:4326', 'EPSG:3857');
+        };
+
+        this.convertRouteToCoordinates = function(route) {
+            var _this = this;
+            var coordinates = route.map(function (wayPoint) {
+                    return _this.convertPositionToCoordinate(wayPoint.position)
+                }
+            );
+            return coordinates;
+        }
+
     })
 }());
 
