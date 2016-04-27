@@ -1,6 +1,7 @@
 logs
 target
 /.idea
+!/.idea/inspectionProfiles/*
 /.idea_modules
 /.classpath
 /.project
