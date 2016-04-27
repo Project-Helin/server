@@ -28,8 +28,6 @@ public class ProjectsController extends Controller {
 
     public Result index() {
         UUID organisationId = sessionHelper.getOrganisation(session()).getId();
-
-        logger.info("Organisation id {}", organisationId);
         List<Project> all = projectsDao.findByOrganisation(organisationId);
 
         return ok(index.render(all));

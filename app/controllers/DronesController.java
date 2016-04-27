@@ -13,6 +13,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.drones.edit;
 import views.html.drones.index;
 
@@ -33,6 +34,7 @@ public class DronesController extends Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(DronesController.class);
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         List<Drone> all = droneDao.findByOrganisation(getOrganisation());
         String organisationToken = getOrganisation().getToken();
@@ -40,7 +42,7 @@ public class DronesController extends Controller {
     }
 
     public Result edit(UUID id) {
-        Drone found = droneDao.findByIdAndOrganisation(id, getOrganisation());
+        Drone found = getDroneById(id);
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -59,7 +61,7 @@ public class DronesController extends Controller {
     }
 
     public Result update(UUID id) {
-        Drone found = droneDao.findByIdAndOrganisation(id, getOrganisation());
+        Drone found = getDroneById(id);
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -83,7 +85,7 @@ public class DronesController extends Controller {
     }
 
     public Result delete(UUID droneId) {
-        Drone found = droneDao.findByIdAndOrganisation(droneId, getOrganisation());
+        Drone found = getDroneById(droneId);
 
         if (found == null) {
             return forbidden("Drone not found!");
@@ -93,6 +95,12 @@ public class DronesController extends Controller {
         droneDao.delete(found);
         return redirect(routes.DronesController.index());
     }
+
+
+    private Drone getDroneById(UUID id) {
+        return droneDao.findByIdAndOrganisation(id, getOrganisation());
+    }
+
 
     private Organisation getOrganisation() {
         return sessionHelper.getOrganisation(session());
