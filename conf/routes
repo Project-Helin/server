@@ -47,8 +47,7 @@ GET         /register                                               controllers.
 POST        /register                                               controllers.UsersController.create()
 
 #RouteDebugger
-GET         /route-debugger                                          controllers.Application.routeDebugger()
-
+GET         /route-debugger                                         controllers.Application.routeDebugger(projectId : String)
 
 #Organisations-Users
 GET         /administrators                                         controllers.OrganisationsUsersController.index()

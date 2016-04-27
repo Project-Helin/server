@@ -1,4 +1,4 @@
-@()
+@(projectId: String)
 
 @main("Route Debugger") {
     <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
@@ -19,19 +19,13 @@
     <script src='@routes.Assets.at("javascripts/common/gis-helper.service.js")'></script>
     <script src='@routes.Assets.at("javascripts/common/route-map.directive.js")'></script>
     <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.module.js")'></script>
+    <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.directive.js")'></script>
     <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.controller.js")'></script>
     <script src='@routes.Assets.at("javascripts/route-debugger/route-debugger.service.js")'></script>
 
-    <div class="row" ng-app="RouteDebugger" ng-controller="RouteDebuggerCtrl">
-        <div class="col-xs-4 m-b-lg">
-            <select class="form-control" ng-disabled="data.selectedProject" ng-model="data.selectedProject" ng-options="option.name for option in data.projects track by option.id"></select>
-        </div>
-        <div class="col-xs-8 m-b-lg">
-            <div class="btn btn-warning pull-right" ng-show="data.routeWayPoints" ng-click="reset()">Reset</div>
-            <div class="btn btn-info pull-right" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">Calculate Route</div>
-        </div>
-
-        <route-map zones="data.selectedProject.zones" route-data="data.routeData" route="data.routeWayPoints" ng-if="data.selectedProject"></route-map>
+    <div class="row" ng-app="RouteDebugger">
+        <route-debugger project-id="@projectId">
+          </route-debugger>
     </div>
 
 
