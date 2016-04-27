@@ -16,10 +16,8 @@ public class ModelHelper extends BeanUtilsBean {
     public static void updateAttributes(Object destination, Object source) {
         try {
             new ModelHelper().copyProperties(destination, source);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
