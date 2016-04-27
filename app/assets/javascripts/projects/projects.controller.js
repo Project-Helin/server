@@ -4,7 +4,9 @@
             function ($scope, HelperService, $http, ProjectsService, $timeout) {
 
                 function initialize() {
-                    $scope.selectedZone = null;
+                    $scope.data = {
+                        selectedZone: null
+                    };
                     $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
                     $scope.projectId = document.getElementById('projectId').value;
                     $scope.project = {};
@@ -32,7 +34,7 @@
                 };
 
                 $scope.selectZone = function (zone) {
-                    $scope.selectedZone = zone;
+                    $scope.data.selectedZone = zone;
                 };
 
                 $scope.createZone = function () {

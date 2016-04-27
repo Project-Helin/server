@@ -54,9 +54,9 @@
                         </div>
                     </div>
 
-                    <div class="row panel panel-info" ng-class="{'active': selectedZone === zone}" ng-repeat="zone in zones" ng-click="selectZone(zone)">
+                    <div class="row panel panel-info" ng-class="{'active': data.selectedZone === zone}" ng-repeat="zone in zones" ng-click="selectZone(zone)">
                         <div class="panel-body col-xs-12" ng-class="zone.type">
-                            <div class="row" ng-hide="selectedZone === zone">
+                            <div class="row" ng-hide="data.selectedZone === zone">
                                 <div class="col-xs-6" ng-hide="zone.name">
                                     {{zone.type}}
                                 </div>
@@ -68,14 +68,14 @@
                                 </div>
                             </div>
 
-                            <div class="row m-t-md" ng-show="selectedZone === zone">
+                            <div class="row m-t-md" ng-show="data.selectedZone === zone">
                                 <div class="col-xs-12">
                                     <div class="row">
                                         <div class="col-xs-6">
-                                            <input type="text" placeholder="Zone-Name" ng-model="selectedZone.name">
+                                            <input type="text" placeholder="Zone-Name" ng-model="data.selectedZone.name">
                                         </div>
                                         <div class="col-xs-6">
-                                            Flyheight <input type="number" min="5" max="500" ng-model="selectedZone.height">
+                                            Flyheight <input type="number" min="5" max="500" ng-model="data.selectedZone.height">
                                             m
                                         </div>
                                     </div>
@@ -83,13 +83,13 @@
                                 </div>
                                 <div class="col-xs-11 m-t-md">
                                     <div class="btn-group">
-                                        <label class="btn btn-primary btn-sm" ng-repeat="type in zoneTypes" ng-model="selectedZone.type" uib-btn-radio="type">
+                                        <label class="btn btn-primary btn-sm" ng-repeat="type in zoneTypes" ng-model="data.selectedZone.type" uib-btn-radio="type">
                                             {{type}}</label>
                                     </div>
                                 </div>
                                 <div class="col-xs-1 m-t-md">
                                     <div class="m-t">
-                                        <a href="#" ng-click="deleteZone(selectedZone)"><i class="glyphicon glyphicon-trash"></i></a>
+                                        <a href="#" ng-click="deleteZone(data.selectedZone)"><i class="glyphicon glyphicon-trash"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
 
 
                 <div class="col-xs-8">
-                    <zone-map ng-if="zones.length" zones="zones" selected-zone="selectedZone"></zone-map>
+                    <zone-map ng-if="zones.length" zones="zones" selected-zone="data.selectedZone"></zone-map>
                 </div>
             </div>
         </div>

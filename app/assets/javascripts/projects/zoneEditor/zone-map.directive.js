@@ -13,7 +13,6 @@
 
                 function activate() {
                     createMap();
-                    createDrawInteraction();
                     addScopeListeners();
                     addMapListeners();
                 }
@@ -38,11 +37,23 @@
                     });
                 }
 
-                function createDrawInteraction() {
-                    scope.drawInteraction = new ol.interaction.Draw({
+                function getDrawInteraction() {
+                    var drawInteraction = new ol.interaction.Draw({
                         features: scope.readOnlyFeatures,
                         type: 'Polygon'
                     });
+
+
+                    drawInteraction.on('drawstart', function (event) {
+                        scope.inDrawMode = true;
+                    });
+
+                    drawInteraction.on('drawend', function (event) {
+                        scope.inDrawMode = false;
+                        writePolygonValueToZone(event);
+                    });
+
+                    return drawInteraction;
                 }
 
                 function addScopeListeners() {
@@ -71,14 +82,6 @@
                 }
 
                 function addMapListeners() {
-                    scope.drawInteraction.on('drawstart', function (event) {
-                        scope.inDrawMode = true;
-                    });
-                    scope.drawInteraction.on('drawend', function (event) {
-                        scope.inDrawMode = false;
-                        writePolygonValueToZone(event);
-                    });
-
                     scope.readOnlyFeatures.on('add', function (event) {
                         updateInteractionPossibilities(scope.selectedZone);
                     });
@@ -132,6 +135,7 @@
 
                     if (currentZone) {
                         if (currentZone.polygon === null) {
+                            scope.drawInteraction = getDrawInteraction();
                             scope.map.addInteraction(scope.drawInteraction);
                         } else {
                             scope.modifyInteraction = getModifyInteraction(currentZone);
@@ -139,6 +143,18 @@
                         }
                     }
                 }
+
+                function removeCurrentInteractions() {
+                    if (scope.modifyInteraction) {
+                        scope.map.removeInteraction(scope.modifyInteraction);
+                        delete scope.modifyInteraction;
+                    }
+                    if (scope.drawInteraction) {
+                        scope.map.removeInteraction(scope.drawInteraction);
+                        delete  scope.drawInteraction;
+                    }
+                }
+
 
                 function updateStyle(newZone, oldZone) {
                     if (newZone && newZone.polygon) {
@@ -183,15 +199,6 @@
                     });
 
                     return modifyInteraction;
-                }
-
-                function removeCurrentInteractions() {
-                    if (scope.modifyInteraction) {
-                        scope.map.removeInteraction(scope.modifyInteraction);
-                        delete scope.modifyInteraction;
-                    }
-
-                    scope.map.removeInteraction(scope.drawInteraction);
                 }
 
                 function removeDeletedZoneFromMap(oldValue, newValue) {
