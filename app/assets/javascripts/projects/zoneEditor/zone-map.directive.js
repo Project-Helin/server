@@ -73,9 +73,12 @@
                     if (!scope.inDrawMode) {
                         scope.map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
                             if (feature.getId()) {
-                                scope.$apply(function () {
-                                    scope.selectedZone = getZone(feature.getId());
-                                })
+                                var zone = getZone(feature.getId());
+                                if (zone.type != 'OrderZone') {
+                                    scope.$apply(function () {
+                                        scope.selectedZone = getZone(feature.getId());
+                                    })
+                                }
                             }
                         });
                     }
@@ -98,11 +101,56 @@
                         source: new ol.source.Vector({
                             features: scope.readOnlyFeatures
                         }),
-                        style: styleFunction()
+                        style: styleFunction
                     });
                 }
 
-                function styleFunction() {
+                function styleFunction(feature) {
+
+                    var styleForZoneType;
+
+                    var zoneType = getZone(feature.getId()).type;
+
+                    switch (zoneType) {
+                        case 'OrderZone':
+                            styleForZoneType = new ol.style.Style({
+                                stroke: new ol.style.Stroke({
+                                    color: 'rgba(0, 192, 239, 1.0)',
+                                    width: 3
+                                }),
+                                fill: null
+                            });
+                            break;
+                        case 'FlightZone':
+                            styleForZoneType = new ol.style.Style({
+                                stroke: null,
+                                fill: new ol.style.Fill({
+                                    color: 'rgba(0, 28, 247, 0.8)'
+                                })
+                            });
+                            break;
+                        case 'DeliveryZone':
+                            styleForZoneType = new ol.style.Style({
+                                stroke: null,
+                                fill: new ol.style.Fill({
+                                    color: 'rgba(0, 166, 90, 0.8)'
+                                })
+                            });
+                            break;
+                        case 'LoadingZone':
+                            styleForZoneType = new ol.style.Style({
+                                stroke: null,
+                                fill: new ol.style.Fill({
+                                    color: 'rgba(243, 156, 18, 0.8)'
+                                })
+                            });
+                            break;
+                    }
+
+                    return [getEditInteractionStyle(), styleForZoneType];
+                }
+
+                function getEditInteractionStyle() {
                     var circlesAtEdges = new ol.style.Circle({
                         radius: 5,
                         fill: new ol.style.Fill({
@@ -111,23 +159,15 @@
                         stroke: null
                     });
 
-                    return [
-                        new ol.style.Style({
-                            image: circlesAtEdges,
-                            geometry: function (feature) {
-                                if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
-                                    var coordinates = feature.getGeometry().getCoordinates()[0];
-                                    return new ol.geom.MultiPoint(coordinates);
-                                }
+                    return new ol.style.Style({
+                        image: circlesAtEdges,
+                        geometry: function (feature) {
+                            if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
+                                var coordinates = feature.getGeometry().getCoordinates()[0];
+                                return new ol.geom.MultiPoint(coordinates);
                             }
-                        }),
-                        new ol.style.Style({
-                            stroke: null,
-                            fill: new ol.style.Fill({
-                                color: 'rgba(0, 0, 255, 0.5)'
-                            })
-                        })
-                    ];
+                        }
+                    });
                 }
 
                 function updateInteractionPossibilities(currentZone) {
@@ -206,7 +246,7 @@
                         return newValue.indexOf(i) < 0;
                     })[0];
                     if (deletedZone.polygon) {
-                        var featureToDelete = gisHelper.getFeatureForZone(deletedZone,  scope.vectorLayer);
+                        var featureToDelete = gisHelper.getFeatureForZone(deletedZone, scope.vectorLayer);
                         scope.vectorLayer.getSource().removeFeature(featureToDelete);
                     }
                 }
