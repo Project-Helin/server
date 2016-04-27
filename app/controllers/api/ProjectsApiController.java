@@ -36,7 +36,7 @@ public class ProjectsApiController extends Controller {
 
     @Transactional
     public Result index() {
-        Organisation organisation = sessionHelper.getOrganisation(session());
+        Organisation organisation = getOrganisation();
 
         List<Project> projects = projectsDao.findByOrganisation(organisation.getId());
 
@@ -44,9 +44,13 @@ public class ProjectsApiController extends Controller {
         return ok(Json.toJson(projectDtos));
     }
 
+    private Organisation getOrganisation() {
+        return sessionHelper.getOrganisation(session());
+    }
+
     @Transactional
     public Result show(UUID projectID) {
-        Project found = projectsDao.findById(projectID);
+        Project found = projectsDao.findByIdAndOrganisation(projectID, getOrganisation());
         if (found == null) {
             return forbidden("Project not found for id " + projectID.toString());
         }
@@ -56,7 +60,7 @@ public class ProjectsApiController extends Controller {
 
     @Transactional
     public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
-        Project found = projectsDao.findById(projectID);
+        Project found = projectsDao.findByIdAndOrganisation(projectID, getOrganisation());
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
@@ -94,7 +98,7 @@ public class ProjectsApiController extends Controller {
             // create new project
             project = new Project();
             project.setId(UUID.randomUUID());
-            project.setOrganisation(sessionHelper.getOrganisation(session()));
+            project.setOrganisation(getOrganisation());
         }
 
         ProjectDto fromRequest =

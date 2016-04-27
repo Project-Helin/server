@@ -45,8 +45,11 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
         );
 
-        ProjectDto project = apiHelper.doGetWithJsonResponse(
-            routes.ProjectsApiController.show(newProject.getId()), ProjectDto.class);
+        ProjectDto project = apiHelper.doGet(
+            routes.ProjectsApiController.show(newProject.getId()),
+            ProjectDto.class,
+            browser
+        );
 
         // verify
         assertThat(project).isNotNull();
@@ -60,6 +63,23 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
 
         assertThat(zones.get(1).getName()).isEqualTo("Loading zone");
         assertThat(zones.get(1).getType()).isEqualTo(ZoneType.LoadingZone);
+    }
+
+    @Test(expected = Exception.class)
+    public void shouldNotShowProjectAsJson() {
+        Organisation anotherOrganisation = testHelper.createNewOrganisation();
+
+        Project newProject = testHelper.createNewProject(
+            anotherOrganisation,
+            testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
+            testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
+        );
+
+        apiHelper.doPost(
+            routes.ProjectsApiController.show(newProject.getId()),
+            ProjectDto.class,
+            browser
+        );
     }
 
     @Test(expected = Exception.class)
