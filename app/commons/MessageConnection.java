@@ -1,15 +1,9 @@
 package commons;
 
 import com.rabbitmq.client.*;
-import com.rabbitmq.client.Consumer;
 
 import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-import java.util.function.*;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class MessageConnection {
 
     private Channel channel;

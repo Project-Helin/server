@@ -10,9 +10,6 @@ import play.mvc.Result;
 import play.mvc.WebSocket;
 import views.html.messageviewer;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class MessageViewer extends Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageViewer.class);
