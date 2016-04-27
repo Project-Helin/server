@@ -115,7 +115,7 @@ public class TestHelper {
         return product;
     }
 
-    public Project createNewProject(User user, Zone... zones) {
+    public Project createNewProject(Organisation organisation, Zone... zones) {
 
         Project project = new Project();
         project.setId(UUID.randomUUID());
@@ -130,7 +130,6 @@ public class TestHelper {
 
 
         jpaApi.withTransaction(() -> {
-            Organisation organisation = user.getOrganisations().stream().findFirst().get();
             project.setOrganisation(organisation);
             projectsDao.persist(project);
         });

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.TestHelper;
 import dao.ProjectsDao;
+import models.Organisation;
 import models.Project;
 import models.User;
 import org.junit.Before;
@@ -20,29 +21,32 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
     @Inject
     private TestHelper testHelper;
 
-    private User user;
+    private Organisation organisation;
 
     @Before
     public void login() {
         String password = "bla";
-        user = testHelper.createUserWithOrganisation(password);
+
+        organisation = testHelper.createNewOrganisation();
+        User user = testHelper.createUserWithOrganisation(password, organisation);
+
         browser.goTo("/login");
         fillInLoginForm(user, password);
     }
 
     @Test
     public void shouldShowNewProject() {
-        Project project = testHelper.createNewProject(user);
+        Project project = testHelper.createNewProject(organisation);
 
         browser.goTo(routes.ProjectsController.index().url());
 
         // verify
-        assertThat(browser.pageSource()).containsIgnoringCase(project.getName());
+        assertThat(browser.pageSource()).contains(project.getName());
     }
 
     @Test
     public void shouldRemoveProject() {
-        Project project = testHelper.createNewProject(user);
+        Project project = testHelper.createNewProject(organisation);
 
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).contains(project.getName());
@@ -62,5 +66,6 @@ public class ProjectsControllerTest extends AbstractIntegrationTest {
             assertThat(projectsDao.findById(project.getId())).isNull();
         });
     }
+
 
 }

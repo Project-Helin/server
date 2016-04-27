@@ -51,7 +51,7 @@ public class ProjectsController extends Controller {
     }
 
     public Result delete(UUID projectId) {
-        Project found = projectsDao.findById(projectId);
+        Project found = projectsDao.findByIdAndOrganisation(projectId, sessionHelper.getOrganisation(session()));
 
         if (found == null) {
             return forbidden("Projects not found!");

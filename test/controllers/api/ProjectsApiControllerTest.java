@@ -4,10 +4,7 @@ import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.TestHelper;
 import dao.ProjectsDao;
-import models.Project;
-import models.User;
-import models.Zone;
-import models.ZoneType;
+import models.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,12 +23,16 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
 
     @Inject
     private ProjectsDao projectsDao;
-    private User loggedInUser;
+
+    private Organisation currentOrganisation;
 
     @Before
     public void login() {
         String password = "bla";
-        loggedInUser = testHelper.createUserWithOrganisation(password);
+        
+        currentOrganisation = testHelper.createNewOrganisation();
+        User loggedInUser = testHelper.createUserWithOrganisation(password, currentOrganisation);
+        
         browser.goTo("/login");
         fillInLoginForm(loggedInUser, password);
     }
@@ -39,7 +40,7 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldShowProjectAsJson() {
         Project newProject = testHelper.createNewProject(
-            loggedInUser,
+            currentOrganisation,
             testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
         );
@@ -84,7 +85,7 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void shouldUpdateProjectWithoutZones() {
-        Project project = testHelper.createNewProject(loggedInUser);
+        Project project = testHelper.createNewProject(currentOrganisation);
 
         ProjectDto projectDto = new ProjectDto(project.getId(), "My Super Project", Collections.emptyList());
         apiHelper.doPost( routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
@@ -122,7 +123,7 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldRemoveZoneFromProject() {
         Project newProject = testHelper.createNewProject(
-            loggedInUser,
+            currentOrganisation,
             testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
         );
@@ -150,7 +151,7 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldAddZoneToProject() {
         Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
-        Project newProject = testHelper.createNewProject(loggedInUser, firstSavedZone);
+        Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
 
         Zone firstZone = newProject.getZones().iterator().next();
         ZoneDto secondNew = new ZoneDto(UUID.randomUUID(), null, 100, ZoneType.LoadingZone, "JO");
@@ -184,7 +185,7 @@ public class ProjectsApiControllerTest extends AbstractIntegrationTest {
     @Test
     public void shouldUpdateSavedZones(){
         Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
-        Project newProject = testHelper.createNewProject(loggedInUser, firstSavedZone);
+        Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
 
         Zone firstZone = newProject.getZones().iterator().next();
         firstZone.setName("Jo!");
