@@ -107,9 +107,8 @@ public class ProductsController extends Controller {
         }
     }
 
-    public Result delete(UUID productId) {
-        Product found =
-            productsDao.findByIdAndOrganisation(productId, sessionHelper.getOrganisation(session()));
+    public Result delete(UUID id) {
+        Product found = findProduct(id);
 
         if (found == null) {
             return forbidden("Organisation not found!");
