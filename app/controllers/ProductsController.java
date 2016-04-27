@@ -12,6 +12,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.products.add;
 import views.html.products.edit;
 import views.html.products.index;
@@ -33,6 +34,7 @@ public class ProductsController extends Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductsController.class);
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         List<Product> all = productsDao.findByOrganisation(sessionHelper.getOrganisation(session()));
         return ok(index.render(all));
@@ -107,9 +109,8 @@ public class ProductsController extends Controller {
         }
     }
 
-    public Result delete(UUID productId) {
-        Product found =
-            productsDao.findByIdAndOrganisation(productId, sessionHelper.getOrganisation(session()));
+    public Result delete(UUID id) {
+        Product found = findProduct(id);
 
         if (found == null) {
             return forbidden("Organisation not found!");

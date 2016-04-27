@@ -49,8 +49,8 @@
                     });
 
                     drawInteraction.on('drawend', function (event) {
-                        scope.inDrawMode = false;
                         writePolygonValueToZone(event);
+                        scope.inDrawMode = false;
                     });
 
                     return drawInteraction;
@@ -58,9 +58,11 @@
 
                 function addScopeListeners() {
                     scope.$watch('selectedZone', function (newValue, oldValue) {
-                        updateInteractionPossibilities(newValue);
-                        updateStyle(newValue, oldValue);
-                    });
+                        if(!scope.inDrawMode) {
+                            updateInteractionPossibilities(newValue);
+                            updateStyle(newValue, oldValue);
+                        }
+                    }, true);
 
                     scope.$watch('zones', function (newValue, oldValue) {
                         if (zoneWasDeleted(newValue, oldValue)) {
@@ -73,9 +75,12 @@
                     if (!scope.inDrawMode) {
                         scope.map.forEachFeatureAtPixel(event.pixel, function (feature, layer) {
                             if (feature.getId()) {
-                                scope.$apply(function () {
-                                    scope.selectedZone = getZone(feature.getId());
-                                })
+                                var zone = gisHelper.getZoneById(scope.zones, feature.getId());
+                                if (zone.type != 'OrderZone') {
+                                    scope.$apply(function () {
+                                        scope.selectedZone = zone;
+                                    })
+                                }
                             }
                         });
                     }
@@ -98,11 +103,17 @@
                         source: new ol.source.Vector({
                             features: scope.readOnlyFeatures
                         }),
-                        style: styleFunction()
+                        style: styleFunction
                     });
                 }
 
-                function styleFunction() {
+
+                function styleFunction(feature) {
+                    var zone = gisHelper.getZoneById(scope.zones, feature.getId());
+                    return [getEditInteractionStyle(), gisHelper.getZoneStyle(zone)];
+                }
+
+                function getEditInteractionStyle() {
                     var circlesAtEdges = new ol.style.Circle({
                         radius: 5,
                         fill: new ol.style.Fill({
@@ -111,23 +122,15 @@
                         stroke: null
                     });
 
-                    return [
-                        new ol.style.Style({
-                            image: circlesAtEdges,
-                            geometry: function (feature) {
-                                if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
-                                    var coordinates = feature.getGeometry().getCoordinates()[0];
-                                    return new ol.geom.MultiPoint(coordinates);
-                                }
+                    return new ol.style.Style({
+                        image: circlesAtEdges,
+                        geometry: function (feature) {
+                            if (scope.selectedZone && feature.getId() === scope.selectedZone.id) {
+                                var coordinates = feature.getGeometry().getCoordinates()[0];
+                                return new ol.geom.MultiPoint(coordinates);
                             }
-                        }),
-                        new ol.style.Style({
-                            stroke: null,
-                            fill: new ol.style.Fill({
-                                color: 'rgba(0, 0, 255, 0.5)'
-                            })
-                        })
-                    ];
+                        }
+                    });
                 }
 
                 function updateInteractionPossibilities(currentZone) {
@@ -206,15 +209,9 @@
                         return newValue.indexOf(i) < 0;
                     })[0];
                     if (deletedZone.polygon) {
-                        var featureToDelete = gisHelper.getFeatureForZone(deletedZone,  scope.vectorLayer);
+                        var featureToDelete = gisHelper.getFeatureForZone(deletedZone, scope.vectorLayer);
                         scope.vectorLayer.getSource().removeFeature(featureToDelete);
                     }
-                }
-
-                function getZone(id) {
-                    return scope.zones.filter(function (zone) {
-                        return zone.id === id;
-                    })[0];
                 }
 
                 function zoneWasDeleted(newValue, oldValue) {

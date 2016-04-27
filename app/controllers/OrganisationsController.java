@@ -8,7 +8,6 @@ import dao.OrganisationsDao;
 import dao.UserDao;
 import models.Organisation;
 import models.User;
-import org.hibernate.internal.util.beans.BeanInfoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -75,29 +74,29 @@ public class OrganisationsController extends Controller {
     }
 
     public Result edit() {
-        Organisation found = sessionHelper.getOrganisation(session());
+        Organisation organisation = sessionHelper.getOrganisation(session());
 
-        if (found == null) {
+        if (organisation == null) {
             return forbidden("Organisation not found!");
         }
 
         Form<Organisation> form = formFactory
                 .form(Organisation.class)
-                .fill(found);
+                .fill(organisation);
 
         if (form.hasErrors()) {
             logger.info("Has error, go back {}", form.errorsAsJson());
             return badRequest(add.render(form));
         } else {
-            sessionHelper.setOrganisation(found, session());
+            sessionHelper.setOrganisation(organisation, session());
             return ok(edit.render(form));
         }
     }
 
     public Result update(UUID id) {
-        Organisation found = organisationsDao.findById(id);
+        Organisation organisation = organisationsDao.findById(id);
 
-        if (found == null) {
+        if (organisation == null) {
             return forbidden("Organisation not found!");
         }
 
@@ -110,8 +109,8 @@ public class OrganisationsController extends Controller {
             return badRequest(edit.render(form));
         } else {
 
-            ModelHelper.updateAttributes(found, form.get());
-            organisationsDao.persist(found);
+            ModelHelper.updateAttributes(organisation, form.get());
+            organisationsDao.persist(organisation);
             flash("success", "Saved successfully");
 
             return redirect(routes.Application.index());
