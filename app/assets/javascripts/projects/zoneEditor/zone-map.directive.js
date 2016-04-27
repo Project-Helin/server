@@ -60,7 +60,7 @@
                     scope.$watch('selectedZone', function (newValue, oldValue) {
                         updateInteractionPossibilities(newValue);
                         updateStyle(newValue, oldValue);
-                    });
+                    }, true);
 
                     scope.$watch('zones', function (newValue, oldValue) {
                         if (zoneWasDeleted(newValue, oldValue)) {
