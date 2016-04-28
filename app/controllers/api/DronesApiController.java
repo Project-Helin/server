@@ -2,7 +2,7 @@ package controllers.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
-import commons.DroneConnection;
+import commons.drone.DroneCommunicationManager;
 import dao.DroneDao;
 import dao.OrganisationsDao;
 import mappers.DroneMapper;
@@ -26,6 +26,9 @@ public class DronesApiController extends Controller {
 
     @Inject
     private DroneMapper droneMapper;
+
+    @Inject
+    private DroneCommunicationManager droneCommunicationManager;
 
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
@@ -54,14 +57,10 @@ public class DronesApiController extends Controller {
 
             droneDao.persist(drone);
 
-            createDroneConnection(drone);
+            droneCommunicationManager.addDrone(drone);
 
             return ok(Json.toJson(droneMapper.getDroneDto(drone)));
         }
-    }
-
-    private void createDroneConnection(Drone drone) {
-        new DroneConnection(drone);
     }
 
     private Organisation getOrganisation(String organisationToken) {

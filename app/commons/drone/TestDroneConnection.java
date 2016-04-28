@@ -1,18 +1,19 @@
-package commons;
+package commons.drone;
 
 import com.rabbitmq.client.*;
+import commons.QueueName;
 import models.Drone;
 
 import java.io.IOException;
 
-public class DroneConnection {
+public class TestDroneConnection {
 
     private Channel channel;
     private Connection connection;
     private String queueName;
 
 
-    public DroneConnection(Drone drone) {
+    public TestDroneConnection(Drone drone) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setPort(5672);
