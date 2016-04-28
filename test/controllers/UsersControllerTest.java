@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import dao.UserDao;
 import models.User;
 import org.junit.Test;
@@ -9,7 +9,7 @@ import play.i18n.Messages;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class UsersControllerTest extends AbstractIntegrationTest {
+public class UsersControllerTest extends AbstractE2ETest {
 
     @Inject
     private UserDao userDao;

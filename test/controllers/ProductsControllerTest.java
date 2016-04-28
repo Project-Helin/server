@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import dao.ProductsDao;
 import models.Organisation;
 import models.Product;
@@ -15,7 +15,7 @@ import static controllers.routes.ProjectsController;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
 
-public class ProductsControllerTest extends AbstractIntegrationTest {
+public class ProductsControllerTest extends AbstractE2ETest {
 
     @Inject
     private ProductsDao productsDao;

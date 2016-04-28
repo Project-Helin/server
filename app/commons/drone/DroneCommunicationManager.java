@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import dao.DroneDao;
 import models.Drone;
+import play.db.jpa.JPAApi;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -16,11 +17,13 @@ public class DroneCommunicationManager {
     private HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
 
     @Inject
-    public DroneCommunicationManager(DroneDao droneDao, DroneMessageDispatcher droneMessageDispatcher) {
+    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi, DroneMessageDispatcher droneMessageDispatcher) {
         this.droneDao = droneDao;
         this.droneMessageDispatcher = droneMessageDispatcher;
+        jpaApi.withTransaction( () -> {
+            droneDao.findAll().stream().forEach(this::addDrone);
+        });
 
-        droneDao.findAll().stream().forEach(this::addDrone);
     }
 
     public void addDrone(Drone drone) {

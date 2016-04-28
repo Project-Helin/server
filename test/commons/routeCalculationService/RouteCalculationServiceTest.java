@@ -4,7 +4,7 @@ import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.Route;
 import ch.helin.messages.dto.way.Waypoint;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import commons.gis.GisHelper;
 import models.Zone;
 import org.geolatte.geom.Polygon;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RouteCalculationServiceTest extends AbstractIntegrationTest {
+public class RouteCalculationServiceTest extends AbstractE2ETest {
 
     @Test
     public void initTest(){

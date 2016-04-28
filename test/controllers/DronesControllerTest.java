@@ -1,6 +1,6 @@
 package controllers;
 
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import models.Drone;
 import models.Organisation;
 import models.User;
@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
-public class DronesControllerTest extends AbstractIntegrationTest {
+public class DronesControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;
 

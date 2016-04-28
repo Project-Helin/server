@@ -3,7 +3,7 @@ package controllers.api;
 import ch.helin.messages.dto.message.DroneDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import models.Drone;
 import models.Organisation;
 import models.User;
@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-public class DroneApiControllerTest extends AbstractIntegrationTest {
+public class DroneApiControllerTest extends AbstractE2ETest {
 
     @Inject
     private WSClient ws;

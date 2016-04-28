@@ -1,5 +1,6 @@
 package commons;
 
+import ch.helin.messages.dto.state.DroneState;
 import com.google.inject.Inject;
 import dao.*;
 import models.*;
@@ -30,7 +31,7 @@ public class TestHelper {
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
         organisation.setId(UUID.randomUUID());
-        organisation.setToken(UUID.randomUUID().toString().substring(0,5));
+        organisation.setToken(UUID.randomUUID().toString().substring(0, 5));
         organisation.setName("Super HSR " + System.currentTimeMillis());
 
         jpaApi.withTransaction(() -> {
@@ -147,4 +148,15 @@ public class TestHelper {
 
         return zone;
     }
+
+    public DroneState getDroneState() {
+        DroneState droneState = new DroneState();
+        droneState.setAltitude(12);
+        droneState.setIsConnected(true);
+        droneState.setGroundSpeed(35);
+        droneState.setFirmeware("Ardupilot 3.3");
+        droneState.setVerticalSpeed(3);
+        return droneState;
+    }
+
 }

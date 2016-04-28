@@ -1,7 +1,7 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import commons.TestHelper;
 import dao.ProjectsDao;
 import models.*;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class ProjectsApiControllerTest extends AbstractIntegrationTest {
+public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Inject
     private ApiHelper apiHelper;

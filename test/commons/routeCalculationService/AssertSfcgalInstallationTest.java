@@ -1,6 +1,6 @@
 package commons.routeCalculationService;
 
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * SFCGAL is a library used by PostGis. It is not part of PostGis and must therefore
  * be installed separately. This tests verifies - that SFCGAL ist correctly installed.
  */
-public class AssertSfcgalInstallationTest extends AbstractIntegrationTest {
+public class AssertSfcgalInstallationTest extends AbstractE2ETest {
 
     @Inject
     private JPAApi jpaApi;

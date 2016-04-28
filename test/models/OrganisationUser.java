@@ -1,7 +1,7 @@
 package models;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import dao.OrganisationsDao;
 import dao.UserDao;
 import org.hamcrest.CoreMatchers;
@@ -9,11 +9,11 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class OrganisationUser extends AbstractIntegrationTest {
+public class OrganisationUser extends AbstractE2ETest {
 
     private String plainTextPassword = "foobar";
 

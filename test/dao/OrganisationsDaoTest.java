@@ -1,7 +1,7 @@
 package dao;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import models.Organisation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import static org.fest.assertions.Assertions.assertThat;
 /**
  * Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
-public class OrganisationsDaoTest extends AbstractIntegrationTest{
+public class OrganisationsDaoTest extends AbstractE2ETest {
 
     @Inject
     private OrganisationsDao organisationsDao;

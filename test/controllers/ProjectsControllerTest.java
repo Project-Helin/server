@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import commons.TestHelper;
 import dao.ProjectsDao;
 import models.Organisation;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
 
-public class ProjectsControllerTest extends AbstractIntegrationTest {
+public class ProjectsControllerTest extends AbstractE2ETest {
 
     @Inject
     private ProjectsDao projectsDao;

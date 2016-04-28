@@ -1,21 +1,19 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import commons.AbstractE2ETest;
 import dao.OrganisationsDao;
 import models.Organisation;
 import models.User;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
-public class OrganisationsControllerTest extends AbstractIntegrationTest {
+public class OrganisationsControllerTest extends AbstractE2ETest {
 
 
     @Inject
