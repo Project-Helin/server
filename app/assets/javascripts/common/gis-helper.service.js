@@ -3,16 +3,16 @@
 
         this.getFeaturesFromZones = function (zones, format) {
             var _this = this;
-            var readOnlyFeatures = new ol.Collection();
+            var features = new ol.Collection();
 
             zones.forEach(function (zone) {
                     if (zone.polygon !== null) {
-                        readOnlyFeatures.push(_this.convertZoneToFeature(zone, format));
+                        features.push(_this.convertZoneToFeature(zone, format));
                     }
                 }
             );
 
-            return readOnlyFeatures;
+            return features;
         };
 
         this.getFeatureForZone = function (zone, vectorLayer) {
