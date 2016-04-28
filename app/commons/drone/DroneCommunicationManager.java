@@ -11,21 +11,20 @@ import java.util.UUID;
 @Singleton
 public class DroneCommunicationManager {
 
+    private DroneMessageDispatcher droneMessageDispatcher;
     private DroneDao droneDao;
-
-    HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
+    private HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
 
     @Inject
-    public DroneCommunicationManager(DroneDao droneDao) {
+    public DroneCommunicationManager(DroneDao droneDao, DroneMessageDispatcher droneMessageDispatcher) {
         this.droneDao = droneDao;
+        this.droneMessageDispatcher = droneMessageDispatcher;
 
         droneDao.findAll().stream().forEach(this::addDrone);
-
-        //Loop over all active drones and create a droneconnection for each. Then add them to droneConnections
     }
 
     public void addDrone(Drone drone) {
-        droneConnections.put(drone.getId(), new DroneConnection(drone.getToken()));
+        droneConnections.put(drone.getId(), new DroneConnection(drone, droneMessageDispatcher));
     }
 
 

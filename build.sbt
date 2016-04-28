@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   * didn't have it by default.
   */
 libraryDependencies += "junit" % "junit" % "4.12" % "test"
-
+libraryDependencies += "org.mockito" % "mockito-all" % "1.9.5"
 /**
   * RabbitMQ: For connection with the Android-App on the phone
   */

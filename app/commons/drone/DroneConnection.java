@@ -1,26 +1,28 @@
 package commons.drone;
 
-import com.google.inject.Inject;
+import ch.helin.messages.commons.ConnectionUtils;
 import com.rabbitmq.client.*;
-import commons.QueueName;
 import models.Drone;
 
 import java.io.IOException;
 
 public class DroneConnection {
 
-    @Inject
     DroneMessageDispatcher droneMessageDispatcher;
     private Channel channel;
 
     private Drone drone;
-    private Connection connection;
-    private String queueName;
 
-    public DroneConnection(Drone drone) {
+    private Connection connection;
+    private String consumerQueueName;
+    private String producerQueueName;
+
+    public DroneConnection(Drone drone, DroneMessageDispatcher droneMessageDispatcher) {
         //Create two queues, based on token of the drone
 
         this.drone = drone;
+        this.droneMessageDispatcher = droneMessageDispatcher;
+
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setPort(5672);
@@ -30,9 +32,11 @@ public class DroneConnection {
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
-            queueName = drone.getToken().toString();
+            consumerQueueName = ConnectionUtils.getServerSideConsumerQueueName(drone.getToken().toString());
+            producerQueueName = ConnectionUtils.getServerSideProducerQueueName(drone.getToken().toString());
 
-            channel.queueDeclare(queueName, false, false, false, null);
+            channel.queueDeclare(consumerQueueName, false, false, false, null);
+            channel.queueDeclare(producerQueueName, false, false, false, null);
         } catch (Exception e) {
             closeConnection(connection);
             throw new RuntimeException(e);
@@ -48,7 +52,7 @@ public class DroneConnection {
     public void sendMessage(String message) {
         try {
             System.out.println("Send message " + message);
-            channel.basicPublish("", QueueName.SERVER_TO_DRONE.name(), null, message.getBytes());
+            channel.basicPublish("", producerQueueName, null, message.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,7 +78,7 @@ public class DroneConnection {
         }
     }
 
-    public void receiveMessage(java.util.function.Consumer<String> onMessage) {
+    public void receiveMessage() {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
@@ -85,7 +89,7 @@ public class DroneConnection {
         };
 
         try {
-            channel.basicConsume(queueName, true, consumer);
+            channel.basicConsume(consumerQueueName, true, consumer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
