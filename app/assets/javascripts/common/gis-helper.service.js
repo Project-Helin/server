@@ -1,18 +1,21 @@
 (function () {
     angular.module('common').service('gisHelper', function () {
 
+        this.dataProjectionCode = 'EPSG:4326';
+        this.mapProjectionCode = 'EPSG:3857';
+
         this.getFeaturesFromZones = function (zones, format) {
             var _this = this;
-            var readOnlyFeatures = new ol.Collection();
+            var features = new ol.Collection();
 
             zones.forEach(function (zone) {
                     if (zone.polygon !== null) {
-                        readOnlyFeatures.push(_this.convertZoneToFeature(zone, format));
+                        features.push(_this.convertZoneToFeature(zone, format));
                     }
                 }
             );
 
-            return readOnlyFeatures;
+            return features;
         };
 
         this.getFeatureForZone = function (zone, vectorLayer) {
@@ -21,8 +24,8 @@
 
         this.convertZoneToFeature = function (zone, format) {
             var feature = format.readFeature(zone.polygon, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
+                dataProjection: this.dataProjectionCode,
+                featureProjection:this.mapProjectionCode
             });
 
             feature.setId(zone.id);
@@ -33,13 +36,13 @@
         this.convertFeatureToWKT = function (feature, format) {
 
             return format.writeFeature(feature, {
-                dataProjection: 'EPSG:4326',
-                featureProjection: 'EPSG:3857'
+                dataProjection: this.dataProjectionCode,
+                featureProjection:this.mapProjectionCode
             });
         };
 
         this.convertPositionToCoordinate = function (position) {
-            return ol.proj.transform([position.lon, position.lat], 'EPSG:4326', 'EPSG:3857');
+            return ol.proj.transform([position.lon, position.lat], this.dataProjectionCode,this.mapProjectionCode);
         };
 
         this.convertRouteToCoordinates = function (route) {
