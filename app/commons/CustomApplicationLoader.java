@@ -2,7 +2,6 @@ package commons;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import controllers.DroneStateController;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
@@ -30,13 +29,15 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
 
         ObjectMapper currentMapper = installJsonGeometryConverter();
 
-        BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
-
-        registerMessageHandlingControllers();
+        addSettingForModelhelper();
 
         // replace the mapper
         Json.setObjectMapper(currentMapper);
         return super.builder(context);
+    }
+
+    private void addSettingForModelhelper() {
+        BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
     }
 
     private ObjectMapper installJsonGeometryConverter() {
@@ -55,9 +56,5 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
 
         currentMapper.registerModule(module);
         return currentMapper;
-    }
-
-    private void registerMessageHandlingControllers() {
-        new DroneStateController().initialize();
     }
 }
