@@ -6,10 +6,13 @@ import ch.helin.messages.dto.message.Message;
 import ch.helin.messages.dto.message.stateMessage.DroneStateMessage;
 import com.google.inject.Inject;
 import controllers.DroneStateController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class DroneMessageDispatcher {
+    private static final Logger logger = LoggerFactory.getLogger(DroneMessageDispatcher.class);
 
     @Inject
     public DroneStateController droneStateController;
@@ -19,6 +22,9 @@ public class DroneMessageDispatcher {
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 
         switch(message.getPayloadType()) {
+            case GpsState:
+                logger.debug(message.getPayloadType().toString());
+                break;
             case DroneState:
                 DroneStateMessage droneStateMessage = (DroneStateMessage) message;
                 droneStateController.onDroneStateReceived(droneId, droneStateMessage.getDroneState());

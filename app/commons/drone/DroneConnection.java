@@ -37,6 +37,8 @@ public class DroneConnection {
 
             channel.queueDeclare(consumerQueueName, false, false, false, null);
             channel.queueDeclare(producerQueueName, false, false, false, null);
+
+            startConsumer();
         } catch (Exception e) {
             closeConnection(connection);
             throw new RuntimeException(e);
@@ -78,7 +80,7 @@ public class DroneConnection {
         }
     }
 
-    public void receiveMessage() {
+    public void startConsumer() {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
