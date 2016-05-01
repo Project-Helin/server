@@ -23,6 +23,8 @@
                                     <th>@project.getName</th>
                                     <th>
                                         <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Edit</a>
+                                        <a href="@controllers.routes.ProjectsController.edit(project.getId)" class="btn btn-info btn-sm" role="button">Products</a>
+
                                         <a href="@controllers.routes.Application.routeDebugger(project.getId.toString)" class="btn btn-success btn-sm" id="test">Test</a>
 
                                         @deleteButton(
@@ -31,6 +33,8 @@
                                             "Delete Project",
                                             "Do you want to delete this project?"
                                         )
+
+
                                     </th>
                                 </tr>
                             }

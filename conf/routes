@@ -24,6 +24,9 @@ GET         /projects/create                                        controllers.
 GET         /projects/:projectId/edit                               controllers.ProjectsController.edit(projectId : java.util.UUID)
 GET         /projects/:projectId/delete                             controllers.ProjectsController.delete(projectId : java.util.UUID)
 
+#Project Products
+GET         /projects/:projectId/products/edit                      controllers.ProjectsProductsController.edit(projectId : java.util.UUID)
+
 #Product
 GET         /products                                               controllers.ProductsController.index()
 GET         /products/add                                           controllers.ProductsController.add()
