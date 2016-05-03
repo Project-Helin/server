@@ -1,22 +1,26 @@
 package controllers;
 
+import com.google.common.base.Function;
 import com.google.inject.Inject;
-import commons.ModelHelper;
 import commons.SessionHelper;
 import dao.ProductsDao;
+import dao.ProjectsDao;
 import models.Product;
+import models.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import play.data.Form;
+import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.products.edit;
+import views.html.projectsProducts.index;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-@Transactional
 public class ProjectsProductsController extends Controller {
 
     @Inject
@@ -26,60 +30,72 @@ public class ProjectsProductsController extends Controller {
     private ProductsDao productsDao;
 
     @Inject
+    private ProjectsDao projectsDao;
+
+    @Inject
     private FormFactory formFactory;
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectsProductsController.class);
 
-    public Result edit(UUID projectId) {
-        Product found = findProduct(projectId);
+    @Transactional
+    public Result index(UUID projectId) {
+        Project foundProject = getProject(projectId);
 
-        if (found == null) {
-            return forbidden("Organisation not found!");
+        if (foundProject == null) {
+            return forbidden("Project not found!");
         }
 
-        Form<Product> form = formFactory
-            .form(Product.class)
-            .fill(found);
+        ArrayList<Product> products = new ArrayList<>(foundProject.getProducts());
+        Collections.sort(products, (a, b) -> a.getName().compareTo(b.getName()));
 
-        return ok(edit.render(form));
+        // possible products to add
+        List<Product> allProducts = productsDao.findAll();
+        allProducts.removeAll(products);
+
+        return ok(index.render(projectId, products, allProducts));
     }
 
-    public Result update(UUID id) {
-        Product found = findProduct(id);
+    public Result addProduct(UUID projectId) {
+        Project foundProject = getProject(projectId);
 
-        if (found == null) {
-            return forbidden("Organisation not found!");
+        if (foundProject == null) {
+            return forbidden("Project not found!");
         }
 
-        Form<Product> form = formFactory
-            .form(Product.class)
-            .bindFromRequest(request());
 
-        if (form.hasErrors()) {
-
-            logger.info("Has error, go back {}", form.errorsAsJson());
-            return badRequest(edit.render(form));
-
-        } else {
-
-            ModelHelper.updateAttributes(found, form.get());
-            productsDao.persist(found);
-            // return redirect(ProjectsProductsController.index());
-            return null;
-
+        DynamicForm dynamicForm = formFactory.form().bindFromRequest(request());
+        String productId = dynamicForm.get("productId");
+        Product newProductToAdd = findProduct(UUID.fromString(productId));
+        if (newProductToAdd == null) {
+            return forbidden("Product not found!");
         }
+
+        foundProject.getProducts().add(newProductToAdd);
+        projectsDao.persist(foundProject);
+
+        return index(projectId);
     }
 
-    public Result delete(UUID id) {
-        Product found = findProduct(id);
+    public Result delete(UUID projectId, UUID productId) {
+        Project foundProject = getProject(projectId);
 
-        if (found == null) {
-            return forbidden("Organisation not found!");
+        if (foundProject == null) {
+            return forbidden("Project not found!");
+        }
+
+        Product productToDelete = findProduct(productId);
+        if (productToDelete == null) {
+            return forbidden("Product not found!");
         }
 
         flash("success", "Deleted successfully");
-        productsDao.delete(found);
-        return index();
+        foundProject.getProducts().remove(productToDelete);
+        productsDao.persist(productToDelete);;
+        return index(projectId);
+    }
+
+    private Project getProject(UUID projectId) {
+        return projectsDao.findByIdAndOrganisation(projectId, sessionHelper.getOrganisation(session()));
     }
 
     private Product findProduct(UUID id) {

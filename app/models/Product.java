@@ -3,6 +3,7 @@ package models;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "products")
@@ -23,6 +24,9 @@ public class Product extends BaseEntity{
     @JoinColumn(name = "organisation_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Organisation organisation;
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Project> projects;
 
     public String getName() {
         return name;
@@ -56,4 +60,11 @@ public class Product extends BaseEntity{
         this.organisation = organisation;
     }
 
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
 }

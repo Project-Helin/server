@@ -1,0 +1,60 @@
+@import java.util
+@import views.html.helpers.deleteButton
+@(projectId : UUID, products: util.List[Product], allProducts: util.List[Product])
+
+@main("Products") {
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(product <- products) {
+                                <tr>
+                                    <th>@product.getName</th>
+                                    <th>
+                                    @deleteButton(
+                                        controllers.routes.ProjectsProductsController.delete(projectId, product.getId),
+                                        product.getId,
+                                        "Remove product from project",
+                                        "Do you want to remove this product from project?"
+                                    )
+                                    </th>
+                                </tr>
+                            }
+
+
+                            <tr>
+                            @helper.form(action = routes.ProjectsProductsController.addProduct(projectId)) {
+                                <th>
+                                    <div class="form-group">
+                                        <select class="form-control" name="productId">
+                                        @for(eachProduct <- allProducts) {
+                                            <option value="@eachProduct.getId">@eachProduct.getName</option>
+                                        }
+                                        </select>
+                                    </div>
+                                </th>
+                                <th>
+                                    <input type="submit" value="Add">
+                                </th>
+                            }
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div> <!-- /.box-body -->
+            </div>
+
+        </div>
+    </div>
+
+}
