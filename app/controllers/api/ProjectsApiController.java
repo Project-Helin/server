@@ -13,6 +13,8 @@ import mappers.ProjectMapper;
 import models.Organisation;
 import models.Project;
 import models.Zone;
+import org.apache.commons.lang3.RandomUtils;
+import org.geolatte.geom.PositionSequence;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -63,25 +65,28 @@ public class ProjectsApiController extends Controller {
 
         int wayPointCount = 20;
 
-        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
+        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount, found);
+
         return ok(Json.toJson(mockRoute));
     }
 
-    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
+    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount, Project found) {
+        org.geolatte.geom.LineString lineString = projectsDao.calculateSkeleton(found.getId());
+
         Route route = new Route();
         Waypoint start = new Waypoint();
         start.setPosition(dronePosition);
         start.setAction(Action.TAKEOFF);
-        route.getWayPoints().add(start);
 
-        for(int i = 1; i < wayPointCount; i++) {
+        PositionSequence positions = lineString.getPositions();
+        for (Object each : positions) {
+            org.geolatte.geom.Position p  = (org.geolatte.geom.Position) each;
+            double lon = p.getCoordinate(0);
+            double lat = p.getCoordinate(1);
+
             Waypoint waypoint = new Waypoint();
             waypoint.setId(UUID.randomUUID());
-            double lat = customerPosition.getLat() + i * 0.0001;
-            double lon = customerPosition.getLon() + i * 0.0001;
-            int randomHeight = 5 + (int) (Math.random() * 100);
-
-            waypoint.setPosition(new Position(lat, lon, randomHeight));
+            waypoint.setPosition(new Position(lat, lon, RandomUtils.nextInt(0, 100)));
             route.getWayPoints().add(waypoint);
         }
         return route;
