@@ -37,4 +37,13 @@ public class ProjectsDao extends AbstractDao<Project> {
 
         return getSingleResultOrNull(query);
     }
+
+    public void calculateSkeleton(UUID projectId){
+
+        //TypedQuery<LineString>
+
+        //SELECT ST_asText(ST_LineMerge(((ST_ApproximateMedialAxis(ST_UNION(polygon::geometry)))))) FROM zones WHERE project_id = '1670de53-01f3-4126-9711-f309ab007a96' AND type != 'OrderZone'
+
+
+    }
 }
