@@ -2,7 +2,7 @@
 @import views.html.helpers.deleteButton
 @(projectId : UUID, products: util.List[Product], allProducts: util.List[Product])
 
-@main("Products") {
+@main("Project - Products") {
 
     <div class="row">
         <div class="col-xs-12">
@@ -32,6 +32,7 @@
                             }
 
 
+                            @if(!allProducts.isEmpty){
                             <tr>
                             @helper.form(action = routes.ProjectsProductsController.addProduct(projectId)) {
                                 <th>
@@ -48,6 +49,7 @@
                                 </th>
                             }
                             </tr>
+                            }
                         </tbody>
                     </table>
 

@@ -1,14 +1,11 @@
 package controllers;
 
-import com.google.common.base.Function;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import dao.ProductsDao;
 import dao.ProjectsDao;
 import models.Product;
 import models.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
@@ -35,8 +32,6 @@ public class ProjectsProductsController extends Controller {
     @Inject
     private FormFactory formFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsProductsController.class);
-
     @Transactional
     public Result index(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -49,12 +44,13 @@ public class ProjectsProductsController extends Controller {
         Collections.sort(products, (a, b) -> a.getName().compareTo(b.getName()));
 
         // possible products to add
-        List<Product> allProducts = productsDao.findAll();
-        allProducts.removeAll(products);
+        List<Product> missingProducts = productsDao.findAll();
+        missingProducts.removeAll(products);
 
-        return ok(index.render(projectId, products, allProducts));
+        return ok(index.render(projectId, products, missingProducts));
     }
 
+    @Transactional
     public Result addProduct(UUID projectId) {
         Project foundProject = getProject(projectId);
 
@@ -62,10 +58,7 @@ public class ProjectsProductsController extends Controller {
             return forbidden("Project not found!");
         }
 
-
-        DynamicForm dynamicForm = formFactory.form().bindFromRequest(request());
-        String productId = dynamicForm.get("productId");
-        Product newProductToAdd = findProduct(UUID.fromString(productId));
+        Product newProductToAdd = getProductFromRequest();
         if (newProductToAdd == null) {
             return forbidden("Product not found!");
         }
@@ -76,6 +69,7 @@ public class ProjectsProductsController extends Controller {
         return index(projectId);
     }
 
+    @Transactional
     public Result delete(UUID projectId, UUID productId) {
         Project foundProject = getProject(projectId);
 
@@ -88,10 +82,16 @@ public class ProjectsProductsController extends Controller {
             return forbidden("Product not found!");
         }
 
-        flash("success", "Deleted successfully");
         foundProject.getProducts().remove(productToDelete);
         productsDao.persist(productToDelete);;
-        return index(projectId);
+
+        return redirect(routes.ProjectsProductsController.index(projectId));
+    }
+
+    private Product getProductFromRequest() {
+        DynamicForm dynamicForm = formFactory.form().bindFromRequest(request());
+        String productId = dynamicForm.get("productId");
+        return findProduct(UUID.fromString(productId));
     }
 
     private Project getProject(UUID projectId) {

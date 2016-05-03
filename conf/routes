@@ -27,7 +27,7 @@ GET         /projects/:projectId/delete                             controllers.
 #Project Products
 GET         /projects/:projectId/products/                          controllers.ProjectsProductsController.index(projectId : java.util.UUID)
 POST        /projects/:projectId/products/add                       controllers.ProjectsProductsController.addProduct(projectId : java.util.UUID)
-POST        /projects/:projectId/products/:productId/delete         controllers.ProjectsProductsController.delete(projectId : java.util.UUID, productId : java.util.UUID)
+GET         /projects/:projectId/products/:productId/delete         controllers.ProjectsProductsController.delete(projectId : java.util.UUID, productId : java.util.UUID)
 
 #Product
 GET         /products                                               controllers.ProductsController.index()

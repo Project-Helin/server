@@ -21,9 +21,9 @@ public class Project extends BaseEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name="projects_products",
-        joinColumns=@JoinColumn(name="product_id", referencedColumnName="id"),
-        inverseJoinColumns=@JoinColumn(name="project_id", referencedColumnName="id"))
+        name = "projects_products",
+        joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
     private Set<Product> products;
 
     public String getName() {
