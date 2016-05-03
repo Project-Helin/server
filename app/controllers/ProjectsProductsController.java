@@ -44,7 +44,7 @@ public class ProjectsProductsController extends Controller {
         Collections.sort(products, (a, b) -> a.getName().compareTo(b.getName()));
 
         // possible products to add
-        List<Product> missingProducts = productsDao.findAll();
+        List<Product> missingProducts = productsDao.findByOrganisation(sessionHelper.getOrganisation(session()));
         missingProducts.removeAll(products);
 
         return ok(index.render(projectId, products, missingProducts));

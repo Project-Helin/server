@@ -6,6 +6,7 @@ import dao.*;
 import models.*;
 import play.db.jpa.JPAApi;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 public class TestHelper {
@@ -116,6 +117,11 @@ public class TestHelper {
         return product;
     }
 
+    public Project createNewProject(Organisation organisation) {
+        // force to use zone function wiht empty zones
+        return createNewProject(organisation, new Zone[]{});
+    }
+
     public Project createNewProject(Organisation organisation, Zone... zones) {
 
         Project project = new Project();
@@ -129,7 +135,6 @@ public class TestHelper {
             project.getZones().add(each);
         }
 
-
         jpaApi.withTransaction(() -> {
             project.setOrganisation(organisation);
             projectsDao.persist(project);
@@ -138,6 +143,23 @@ public class TestHelper {
         return project;
     }
 
+    public Project createNewProject(Organisation organisation, Product... products) {
+        Project project = new Project();
+        project.setId(UUID.randomUUID());
+        project.setName("First Demo");
+        project.setProducts(new HashSet<>());
+
+        for (Product each : products) {
+            project.getProducts().add(each);
+        }
+
+        jpaApi.withTransaction(() -> {
+            project.setOrganisation(organisation);
+            projectsDao.persist(project);
+        });
+
+        return project;
+    }
 
     public Zone createUnsavedZone(String name, ZoneType type) {
         Zone zone = new Zone();

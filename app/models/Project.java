@@ -57,4 +57,5 @@ public class Project extends BaseEntity {
     public Set<Product> getProducts() {
         return products;
     }
+
 }
