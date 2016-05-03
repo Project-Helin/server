@@ -1,12 +1,15 @@
 package commons.routeCalculationService;
 
 import commons.AbstractE2ETest;
+import org.apache.commons.collections.comparators.BooleanComparator;
+import org.apache.xpath.operations.Bool;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -17,6 +20,24 @@ public class AssertSfcgalInstallationTest extends AbstractE2ETest {
 
     @Inject
     private JPAApi jpaApi;
+
+    /**
+     * So It seems that casting with postgres and JPA parameter don't like each other.
+     * so ::geometry does not work with jpa -> because JPAs feelings are hurt and it seems
+     * to interpret that as a parameter.
+     *
+     * This tests is prove that it is possible to use casting, but with escaping each colon.
+     */
+    @Test
+    public void testCastingWithJPA(){
+        Boolean doesIntersect = jpaApi.withTransaction((em) -> {
+            Query query = jpaApi.em().createNativeQuery(
+                "SELECT ST_Intersects('POINT(0 0)'\\:\\:geometry, 'LINESTRING ( 2 0, 0 2 )'\\:\\:geometry);"
+            );
+            return (Boolean) query.getSingleResult();
+        });
+        assertThat(doesIntersect).isTrue();
+    }
 
     @Test
     public void assertSfcgalIsInstalledInPostgis(){
