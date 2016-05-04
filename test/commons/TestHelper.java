@@ -122,6 +122,26 @@ public class TestHelper {
         return createNewProject(organisation, new Zone[]{});
     }
 
+    public Project createNewProject(Organisation organisation, Drone... drones) {
+
+        Project project = new Project();
+        project.setId(UUID.randomUUID());
+        project.setName("First Demo");
+        project.setDrones(new HashSet<>());
+
+        for (Drone each : drones) {
+            each.setProject(project);
+            project.getDrones().add(each);
+        }
+
+        jpaApi.withTransaction(() -> {
+            project.setOrganisation(organisation);
+            projectsDao.persist(project);
+        });
+
+        return project;
+    }
+
     public Project createNewProject(Organisation organisation, Zone... zones) {
 
         Project project = new Project();

@@ -29,6 +29,11 @@ GET         /projects/:projectId/products/                          controllers.
 POST        /projects/:projectId/products/add                       controllers.ProjectsProductsController.addProduct(projectId : java.util.UUID)
 GET         /projects/:projectId/products/:productId/delete         controllers.ProjectsProductsController.delete(projectId : java.util.UUID, productId : java.util.UUID)
 
+#Projects Drones
+GET         /projects/:projectId/drones/                            controllers.ProjectsDronesController.index(projectId : java.util.UUID)
+POST        /projects/:projectId/drones/add                         controllers.ProjectsDronesController.addDrone(projectId : java.util.UUID)
+GET         /projects/:projectId/drones/:droneId/delete             controllers.ProjectsDronesController.delete(projectId : java.util.UUID, droneId : java.util.UUID)
+
 #Product
 GET         /products                                               controllers.ProductsController.index()
 GET         /products/add                                           controllers.ProductsController.add()

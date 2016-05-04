@@ -26,6 +26,13 @@ public class Project extends BaseEntity {
         inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
     private Set<Product> products;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "projects_drones",
+        joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "drone_id", referencedColumnName = "id"))
+    private Set<Drone> drones;
+
     public String getName() {
         return name;
     }
@@ -58,4 +65,11 @@ public class Project extends BaseEntity {
         return products;
     }
 
+    public Set<Drone> getDrones() {
+        return drones;
+    }
+
+    public void setDrones(Set<Drone> drones) {
+        this.drones = drones;
+    }
 }
