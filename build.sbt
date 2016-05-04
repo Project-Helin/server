@@ -72,3 +72,9 @@ routesGenerator := InjectedRoutesGenerator
   *
   */
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
+
+/**
+  * See this to understand this magic key properly:
+  * https://github.com/playframework/playframework/issues/4590#issuecomment-117051996
+  */
+PlayKeys.externalizeResources := false
