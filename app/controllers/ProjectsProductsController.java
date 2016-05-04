@@ -40,7 +40,7 @@ public class ProjectsProductsController extends Controller {
             return forbidden("Project not found!");
         }
 
-        ArrayList<Product> products = new ArrayList<>(foundProject.getProducts());
+        List<Product> products = new ArrayList<>(foundProject.getProducts());
         Collections.sort(products, (a, b) -> a.getName().compareTo(b.getName()));
 
         // possible products to add
