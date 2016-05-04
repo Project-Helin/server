@@ -7,7 +7,7 @@ public class WayPoint extends BaseEntity{
 
     private int orderNumber;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")
     private Route route;
 

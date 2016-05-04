@@ -5,7 +5,7 @@ import ch.helin.messages.converter.MessageConverter;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;
 import com.google.inject.Inject;
-import controllers.DroneInfoController;
+import controllers.DroneInfosController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ public class DroneMessageDispatcher {
     private static final Logger logger = LoggerFactory.getLogger(DroneMessageDispatcher.class);
 
     @Inject
-    public DroneInfoController droneInfoController;
+    public DroneInfosController droneInfoController;
 
     public void dispatchMessage (UUID droneId, String jsonMessage) {
         MessageConverter messageConverter = new JsonBasedMessageConverter();
@@ -24,7 +24,7 @@ public class DroneMessageDispatcher {
         switch(message.getPayloadType()) {
             case DroneInfo:
                 DroneInfoMessage droneInfoMessage = (DroneInfoMessage) message;
-                droneInfoController.onDroneInfoReceived(droneInfoMessage);
+                droneInfoController.onDroneInfoReceived(droneId, droneInfoMessage);
         }
     }
 

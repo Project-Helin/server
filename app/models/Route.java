@@ -1,27 +1,25 @@
 package models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.util.Set;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "routes")
 public class Route extends BaseEntity {
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="mission_id")
     private Mission mission;
 
-    @OneToMany(mappedBy = "route")
-    private Set<WayPoint> wayPoints;
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OrderBy("order_number")
+    private List<WayPoint> wayPoints;
 
-    public Set<WayPoint> getWayPoints() {
+    public List<WayPoint> getWayPoints() {
         return wayPoints;
     }
 
-    public void setWayPoints(Set<WayPoint> wayPoints) {
+    public void setWayPoints(List<WayPoint> wayPoints) {
         this.wayPoints = wayPoints;
     }
 

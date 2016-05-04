@@ -2,7 +2,7 @@ package controllers.api;
 
 import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.Route;
+import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
@@ -63,12 +63,12 @@ public class ProjectsApiController extends Controller {
 
         int wayPointCount = 20;
 
-        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
+        RouteDto mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
         return ok(Json.toJson(mockRoute));
     }
 
-    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
-        Route route = new Route();
+    private RouteDto createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
+        RouteDto route = new RouteDto();
         Waypoint start = new Waypoint();
         start.setPosition(dronePosition);
         start.setAction(Action.TAKEOFF);

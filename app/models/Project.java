@@ -9,7 +9,6 @@ import java.util.UUID;
 @Entity(name = "projects")
 public class Project extends BaseEntity {
 
-    @Column()
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
