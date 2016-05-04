@@ -1,11 +1,11 @@
 package commons.drone;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import dao.DroneDao;
 import models.Drone;
 import play.db.jpa.JPAApi;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.UUID;
 
