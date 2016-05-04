@@ -15,7 +15,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class OrganisationUser extends AbstractE2ETest {
 
-    private String plainTextPassword = "foobar";
+    private static final String PLAIN_TEXT_PASSWORD = "foobar";
 
     @Inject
     private OrganisationsDao organisationsDao;
@@ -26,7 +26,7 @@ public class OrganisationUser extends AbstractE2ETest {
     @Test
     public void addUserToOrganisation() {
         jpaApi.withTransaction(() -> {
-            User user = testHelper.createUserWithOrganisation(plainTextPassword);
+            User user = testHelper.createUserWithOrganisation(PLAIN_TEXT_PASSWORD);
 
             Organisation organisation = testHelper.createNewOrganisation();
             organisation.getAdministrators().add(user);
@@ -47,7 +47,7 @@ public class OrganisationUser extends AbstractE2ETest {
     @Test
     public void removeUserFromOrganisation() {
         jpaApi.withTransaction(() -> {
-            User user = testHelper.createUser(plainTextPassword);
+            User user = testHelper.createUser(PLAIN_TEXT_PASSWORD);
 
             Organisation organisation = testHelper.createNewOrganisation();
             organisation.getAdministrators().add(user);

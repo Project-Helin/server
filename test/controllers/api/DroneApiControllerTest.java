@@ -27,7 +27,7 @@ public class DroneApiControllerTest extends AbstractE2ETest {
     @Inject
     private ApiHelper apiHelper;
 
-    String baseUrl = "http://localhost:19001";
+    private static final String BASE_URL = "http://localhost:19001";
 
     @Test
     public void createDrone() throws ExecutionException, InterruptedException {
@@ -71,7 +71,7 @@ public class DroneApiControllerTest extends AbstractE2ETest {
                 .set("drone", jsonDrone);
 
 
-        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesApiController.create().url())
+        CompletionStage<JsonNode> r = ws.url(BASE_URL + routes.DronesApiController.create().url())
                 .setContentType("application/json")
                 .setHeader("Accept", "application/json")
                 .post(wrapper)
@@ -93,7 +93,7 @@ public class DroneApiControllerTest extends AbstractE2ETest {
         JsonNode wrapper = Json.newObject()
                 .set("drone", jsonDrone);
 
-        CompletionStage<JsonNode> r = ws.url(baseUrl + routes.DronesApiController.create().url())
+        CompletionStage<JsonNode> r = ws.url(BASE_URL + routes.DronesApiController.create().url())
                 .setContentType("application/json")
                 .setHeader("Accept", "application/json")
                 .post(wrapper)

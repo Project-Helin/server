@@ -16,13 +16,7 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Before
     public void login() {
-        String password = "bla";
-
-        organisation = testHelper.createNewOrganisation();
-        User user = testHelper.createUserWithOrganisation(password, organisation);
-
-        browser.goTo("/login");
-        fillInLoginForm(user, password);
+        organisation = doLogin();
     }
 
     @Test

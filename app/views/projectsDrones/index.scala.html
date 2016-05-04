@@ -1,0 +1,61 @@
+@import java.util
+@import views.html.helpers.deleteButton
+@(projectId: UUID, drones: util.List[Drone], allDrones: util.List[Drone])
+
+    @main("Project - Drones") {
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for(drone <- drones) {
+                                    <tr>
+                                        <th>@drone.getName</th>
+                                        <th>
+                                        @deleteButton(
+                                            controllers.routes.ProjectsDronesController.delete(projectId, drone.getId),
+                                            drone.getId,
+                                            "Remove drone from project",
+                                            "Do you want to remove this drone from project?"
+                                        )
+                                        </th>
+                                    </tr>
+                                }
+
+                                @if(!allDrones.isEmpty) {
+                                    <tr>
+                                    @helper.form(action = routes.ProjectsDronesController.addDrone(projectId)) {
+                                        <th>
+                                            <div class="form-group">
+                                                <select class="form-control" name="droneId">
+                                                @for(eachDrone <- allDrones) {
+                                                    <option value="@eachDrone.getId">@eachDrone.getName</option>
+                                                }
+                                                </select>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <input type="submit" value="Add" id="add">
+                                        </th>
+                                    }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div> <!-- /.box-body -->
+                </div>
+
+            </div>
+        </div>
+
+    }

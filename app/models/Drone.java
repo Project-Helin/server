@@ -3,6 +3,7 @@ package models;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "drones")
@@ -23,6 +24,9 @@ public class Drone extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
+
+    @ManyToMany(mappedBy = "drones")
+    private Set<Project> projects;
 
     public Coordinate getLastKnownPosition() {
         return lastKnownPosition;
@@ -70,5 +74,13 @@ public class Drone extends BaseEntity {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 }
