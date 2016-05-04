@@ -23,7 +23,6 @@ public class DroneCommunicationManager {
         jpaApi.withTransaction( () -> {
             droneDao.findAll().stream().forEach(this::addDrone);
         });
-
     }
 
     public void addDrone(Drone drone) {
