@@ -23,7 +23,6 @@ public class OrganisationsDaoTest extends AbstractE2ETest {
     @Inject
     private JPAApi jpaApi;
 
-
     @Test
     public void shouldSetUpdatedAndCreatedAtDate(){
         UUID savedOrganisation = jpaApi.withTransaction((em) -> {

@@ -1,6 +1,7 @@
 package commons;
 
 import com.google.inject.Inject;
+import models.Organisation;
 import models.User;
 import org.junit.After;
 import org.junit.Before;
@@ -107,5 +108,21 @@ public abstract class AbstractE2ETest extends WithBrowser {
         browser.fill(withName("email")).with(user.getEmail());
         browser.fill(withName("password")).with(plainTextPassword);
         browser.submit("#login");
+    }
+
+    /**
+     * Create new user and do login as that user.
+     * @return the organisation where the user was created
+     */
+    protected Organisation doLogin() {
+        String password = "bla";
+
+        Organisation organisation = testHelper.createNewOrganisation();
+        User user = testHelper.createUserWithOrganisation(password, organisation);
+
+        browser.goTo("/login");
+        fillInLoginForm(user, password);
+
+        return organisation;
     }
 }

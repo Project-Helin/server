@@ -28,13 +28,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Before
     public void login() {
-        String password = "bla";
-        
-        currentOrganisation = testHelper.createNewOrganisation();
-        User loggedInUser = testHelper.createUserWithOrganisation(password, currentOrganisation);
-        
-        browser.goTo("/login");
-        fillInLoginForm(loggedInUser, password);
+        currentOrganisation = doLogin();
     }
 
     @Test
@@ -108,7 +102,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         Project project = testHelper.createNewProject(currentOrganisation);
 
         ProjectDto projectDto = new ProjectDto(project.getId(), "My Super Project", Collections.emptyList());
-        apiHelper.doPost( routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
+        apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
 
         List<Project> found = jpaApi.withTransaction(em -> projectsDao.findAll());
         assertThat(found).hasSize(1);
@@ -128,16 +122,16 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
 
-         jpaApi.withTransaction(() -> {
-             List<Project> found = projectsDao.findAll();
-             assertThat(found).hasSize(1);
+        jpaApi.withTransaction(() -> {
+            List<Project> found = projectsDao.findAll();
+            assertThat(found).hasSize(1);
 
-             // verify zones
-             assertThat(found.get(0).getZones()).hasSize(1);
-             Zone firstZone = found.get(0).getZones().iterator().next();
-             assertThat(firstZone.getName()).isEqualTo("My Flightzone");
-             assertThat(firstZone.getType()).isEqualTo(ZoneType.LoadingZone);
-         });
+            // verify zones
+            assertThat(found.get(0).getZones()).hasSize(1);
+            Zone firstZone = found.get(0).getZones().iterator().next();
+            assertThat(firstZone.getName()).isEqualTo("My Flightzone");
+            assertThat(firstZone.getType()).isEqualTo(ZoneType.LoadingZone);
+        });
     }
 
     @Test
@@ -203,7 +197,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
     }
 
     @Test
-    public void shouldUpdateSavedZones(){
+    public void shouldUpdateSavedZones() {
         Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
         Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
 

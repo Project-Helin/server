@@ -15,20 +15,12 @@ import static org.fluentlenium.core.filter.FilterConstructor.withName;
 
 public class OrganisationsControllerTest extends AbstractE2ETest {
 
-
     @Inject
     private OrganisationsDao organisationsDao;
 
-    private void login() {
-        String password = "bla";
-        User user = testHelper.createUserWithOrganisation(password);
-        browser.goTo("/login");
-        fillInLoginForm(user, password);
-    }
-
     @Test
     public void shouldAddNewOrganisation() throws InterruptedException {
-        login();
+        doLogin();
         browser.goTo(routes.OrganisationsController.add().url());
 
         browser.fill(withName("name")).with("HSR Tester");
@@ -45,7 +37,7 @@ public class OrganisationsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldUpdateOrganisation() {
-        login();
+        doLogin();
         browser.goTo(routes.OrganisationsController.edit().url());
 
         // save it

@@ -24,13 +24,7 @@ public class ProductsControllerTest extends AbstractE2ETest {
 
     @Before
     public void login() {
-        String password = "bla";
-
-        currentOrganisation = testHelper.createNewOrganisation();
-        User loggedInUser = testHelper.createUserWithOrganisation(password, currentOrganisation);
-
-        browser.goTo("/login");
-        fillInLoginForm(loggedInUser, password);
+        currentOrganisation = doLogin();
     }
 
     @Test
