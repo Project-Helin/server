@@ -5,7 +5,7 @@ import ch.helin.messages.dto.message.stateMessage.DroneStateMessage;
 import ch.helin.messages.dto.state.DroneState;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import controllers.DroneStateController;
+import controllers.DroneInfoController;
 import models.Drone;
 import models.Organisation;
 import models.User;
@@ -20,7 +20,7 @@ import static play.inject.Bindings.bind;
 
 public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
 
-    private DroneStateController droneStateController;
+    private DroneInfoController droneStateController;
 
     @Inject
     DroneMessageDispatcher droneMessageDispatcher;
@@ -31,14 +31,14 @@ public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
     @Override
     protected Application provideApplication() {
 
-        this.droneStateController = mock(DroneStateController.class);
+        this.droneStateController = mock(DroneInfoController.class);
 
         return new GuiceApplicationBuilder()
                 .configure("driver", "org.postgresql.Driver")
                 .configure("url", "jdbc:postgresql://localhost:5455/test")
                 .configure("username", "test")
                 .configure("password", "test")
-                .overrides(bind(DroneStateController.class).toInstance(droneStateController))
+                .overrides(bind(DroneInfoController.class).toInstance(droneStateController))
                 .build();
     }
 
@@ -59,7 +59,7 @@ public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
         String messageAsJSON = messageConverter.parseMessageToString(droneStateMessage);
         droneMessageDispatcher.dispatchMessage(drone.getId(), messageAsJSON);
 
-        verify(droneStateController, times(1)).onDroneStateReceived(drone.getId(), droneState);
+        verify(droneStateController, times(1)).onDroneInfoReceived(drone.getId(), droneState);
     }
 
 
