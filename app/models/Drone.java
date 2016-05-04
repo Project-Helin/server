@@ -25,6 +25,9 @@ public class Drone extends BaseEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "drone")
+    private Set<DroneInfo> droneInfos;
+
     @ManyToMany(mappedBy = "drones")
     private Set<Project> projects;
 

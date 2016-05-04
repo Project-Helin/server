@@ -1,8 +1,5 @@
 package models;
 
-import commons.SessionHelper;
-import play.mvc.Http;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,7 +8,7 @@ import java.util.UUID;
 public class BaseEntity {
 
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
