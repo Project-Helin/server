@@ -19,6 +19,7 @@ window.onload = function() {
 
     var url = "ws://localhost:9000/messageviewer/register";
     var webSocketToServer = new WebSocket(url);
+
     console.log("Connect to " + url);
 
     webSocketToServer.onmessage = function(event) {

@@ -14,7 +14,13 @@ import models.Organisation;
 import models.Project;
 import models.Zone;
 import org.apache.commons.lang3.RandomUtils;
-import org.geolatte.geom.PositionSequence;
+import org.geolatte.geom.LineString;
+import org.geolatte.geom.MultiLineString;
+import org.geolatte.geom.Point;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -68,15 +74,123 @@ public class ProjectsApiController extends Controller {
         Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount, found);
 
         return ok(Json.toJson(mockRoute));
+
+    }
+
+
+    public static class A {
+        private final org.geolatte.geom.Position startPosition;
+        private final org.geolatte.geom.Position endPosition;
+
+        public A(org.geolatte.geom.Position startPosition, org.geolatte.geom.Position endPosition) {
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+        }
+
+        public org.geolatte.geom.Position getEndPosition() {
+            return endPosition;
+        }
+
+        public org.geolatte.geom.Position getStartPosition() {
+            return startPosition;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            A a = (A) o;
+
+            if (startPosition != null ? !startPosition.equals(a.startPosition) : a.startPosition != null) return false;
+            return endPosition != null ? endPosition.equals(a.endPosition) : a.endPosition == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = startPosition != null ? startPosition.hashCode() : 0;
+            result = 31 * result + (endPosition != null ? endPosition.hashCode() : 0);
+            return result;
+        }
+    }
+
+    private List<A> getResultFromDijkstra(List<LineString> allPossiblePath, org.geolatte.geom.Position dronePosition, org.geolatte.geom.Position customerPosition){
+        UndirectedGraph<org.geolatte.geom.Position, A> graph = new SimpleGraph<>(A.class);
+
+
+        for (LineString lineString : allPossiblePath) {
+            graph.addVertex(lineString.getStartPosition());
+            graph.addVertex(lineString.getEndPosition());
+
+            graph.addEdge(lineString.getStartPosition(), lineString.getEndPosition(), new A(lineString.getStartPosition(), lineString.getEndPosition()));
+        }
+
+        System.out.println(graph.toString());
+
+        List<A> foundPath = DijkstraShortestPath.findPathBetween(graph, dronePosition, customerPosition);
+
+        return foundPath;
+
     }
 
     private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount, Project found) {
-        org.geolatte.geom.LineString lineString = projectsDao.calculateSkeleton(found.getId());
+        List<LineString> listLineString = projectsDao.calculateSkeleton(found.getId());
+
+        LineString[] lineStrings1 = listLineString.toArray(new LineString[]{});
+        MultiLineString<org.geolatte.geom.Position> lineStrings = new MultiLineString<>(lineStrings1);
+
+        Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
+
+        LineString e = projectsDao.calculateShortestLineToPoint(lineStrings, dronePoint);
+        listLineString.add(e);
+
+        Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
+        LineString b = projectsDao.calculateShortestLineToPoint(lineStrings, customerPoint);
+        listLineString.add(b);
+
+
+        System.out.println(listLineString);
 
         Route route = new Route();
         Waypoint start = new Waypoint();
         start.setPosition(dronePosition);
         start.setAction(Action.TAKEOFF);
+
+        List<A> resultFromDijkstra =
+                getResultFromDijkstra(listLineString, e.getEndPosition(), b.getEndPosition());
+
+        /*
+        A a = resultFromDijkstra.get(0);
+        double lon = a.getStartPosition().getCoordinate(0);
+        double lat = a.getStartPosition().getCoordinate(1);
+        Waypoint waypoint = new Waypoint();
+        waypoint.setId(UUID.randomUUID());
+        waypoint.setPosition(new Position(lat, lon, RandomUtils.nextInt(0, 100)));
+        route.getWayPoints().add(waypoint);
+*/
+        for (A d : resultFromDijkstra) {
+            double lon = d.getEndPosition().getCoordinate(0);
+            double lat = d.getEndPosition().getCoordinate(1);
+            Waypoint waypoint = new Waypoint();
+            waypoint.setId(UUID.randomUUID());
+            waypoint.setPosition(new Position(lat, lon, RandomUtils.nextInt(0, 100)));
+            route.getWayPoints().add(waypoint);
+
+            lon = d.getStartPosition().getCoordinate(0);
+            lat = d.getStartPosition().getCoordinate(1);
+            waypoint = new Waypoint();
+            waypoint.setId(UUID.randomUUID());
+            waypoint.setPosition(new Position(lat, lon, RandomUtils.nextInt(0, 100)));
+            route.getWayPoints().add(waypoint);
+
+
+
+        }
+
+
+
+        /*
 
         PositionSequence positions = lineString.getPositions();
         for (Object each : positions) {
@@ -89,6 +203,7 @@ public class ProjectsApiController extends Controller {
             waypoint.setPosition(new Position(lat, lon, RandomUtils.nextInt(0, 100)));
             route.getWayPoints().add(waypoint);
         }
+        */
         return route;
     }
 
