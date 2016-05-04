@@ -9,6 +9,9 @@ import play.db.jpa.JPAApi;
 import java.util.HashSet;
 import java.util.UUID;
 
+/**
+ * This class provides helper methods to create sample entities.
+ */
 public class TestHelper {
 
     @Inject
