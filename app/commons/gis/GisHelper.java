@@ -8,6 +8,9 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.codec.Wkb;
 import org.geolatte.geom.codec.WkbDecoder;
 import org.geolatte.geom.codec.Wkt;
+import org.geolatte.geom.crs.CoordinateReferenceSystem;
+import org.geolatte.geom.crs.CoordinateReferenceSystems;
+import org.geolatte.geom.crs.CrsRegistry;
 
 /**
  * Contains common static methods related to post gis
@@ -72,7 +75,10 @@ public class GisHelper {
         if (wktString == null) {
             return null;
         }
-        return Wkt.fromWkt(wktString);
+        CoordinateReferenceSystem<?> referenceSystem =
+                CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
+
+        return Wkt.fromWkt(wktString, referenceSystem);
     }
 
 }
