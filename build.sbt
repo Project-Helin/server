@@ -72,3 +72,14 @@ routesGenerator := InjectedRoutesGenerator
   *
   */
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-q", "-a")
+
+/**
+  * We need to use this operation, because otherwise Hibernate can not scan
+  * all the entities in production ( only in production, dev mode had no problems ).
+  * The reason was that persistence.xml was not present in the classpath.
+  * This was the root cause of the bug:
+  * https://github.com/playframework/playframework/issues/4590#issuecomment-117051996
+  * As far as I understood does this flag keep the persistence.xml in the class path
+  * and also all the classes annoated with @Entity
+  */
+PlayKeys.externalizeResources := false
