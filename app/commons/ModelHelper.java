@@ -10,6 +10,7 @@ public class ModelHelper extends BeanUtilsBean {
     public void copyProperty(Object dest, String name, Object value)
             throws IllegalAccessException, InvocationTargetException {
         if (value == null) return;
+        if (name.equals("id")) return;
         super.copyProperty(dest, name, value);
     }
 

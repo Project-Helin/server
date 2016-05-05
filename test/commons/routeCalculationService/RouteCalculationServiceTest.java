@@ -2,9 +2,8 @@ package commons.routeCalculationService;
 
 import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.Route;
+import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
-import commons.AbstractE2ETest;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
 import models.Zone;
@@ -50,7 +49,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
 
         RouteCalculationService routeCalculationService = new RouteCalculationService();
-        Route route = routeCalculationService.calculateRoute(waypointList, startPoint, zoneList);
+        RouteDto route = routeCalculationService.calculateRoute(waypointList, startPoint, zoneList);
     }
 
 
