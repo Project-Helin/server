@@ -32,7 +32,7 @@ public class DroneInfosController {
         droneInfo.setDrone(drone);
 
         if(drone.getCurrentMission() != null) {
-            droneInfo.setMission(drone.getCurrentMission());
+           droneInfo.setMission(drone.getCurrentMission());
         }
 
         droneInfoDao.persist(droneInfo);

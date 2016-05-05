@@ -52,7 +52,6 @@ public class TestHelper {
 
     public Drone createNewDrone(Organisation organisation) {
         Drone drone = new Drone();
-        drone.setId(UUID.randomUUID());
         drone.setName("Super HSR Drone" + System.currentTimeMillis());
         drone.setPayload(400);
         drone.setToken(UUID.randomUUID());
@@ -68,8 +67,6 @@ public class TestHelper {
 
     public User createUser(String plainTextPassword) {
         User user = new User();
-
-        user.setId(UUID.randomUUID());
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setName("Anna Bolika");
         user.setEmail("anna.bolika@example.com");
@@ -88,8 +85,6 @@ public class TestHelper {
 
     public User createUserWithOrganisation(String plainTextPassword, Organisation organisation) {
         User user = new User();
-
-        user.setId(UUID.randomUUID());
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setName("Anna Bolika");
         user.setEmail("anna.bolika@example.com");
@@ -114,7 +109,6 @@ public class TestHelper {
 
     public Product createProduct(Organisation newOrganisation) {
         Product product = new Product();
-        product.setId(UUID.randomUUID());
         product.setName("This is a product");
         product.setPrice(10d);
         product.setWeightGramm(100);
@@ -133,7 +127,6 @@ public class TestHelper {
     public Project createNewProject(Organisation organisation, Drone... drones) {
 
         Project project = new Project();
-        project.setId(UUID.randomUUID());
         project.setName("First Demo");
         project.setDrones(new HashSet<>());
 
@@ -153,7 +146,6 @@ public class TestHelper {
     public Project createNewProject(Organisation organisation, Zone... zones) {
 
         Project project = new Project();
-        project.setId(UUID.randomUUID());
         project.setName("First Demo");
         /**
          * we need to set the Project to the zone
@@ -173,7 +165,6 @@ public class TestHelper {
 
     public Project createNewProject(Organisation organisation, Product... products) {
         Project project = new Project();
-        project.setId(UUID.randomUUID());
         project.setName("First Demo");
         project.setProducts(new HashSet<>());
 
@@ -191,7 +182,6 @@ public class TestHelper {
 
     public Zone createUnsavedZone(String name, ZoneType type) {
         Zone zone = new Zone();
-        zone.setId(UUID.randomUUID());
         zone.setName(name);
         zone.setType(type);
         zone.setHeight(100);

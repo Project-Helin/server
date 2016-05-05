@@ -1,7 +1,7 @@
 package models;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity(name = "missions")
 public class Mission extends BaseEntity {
@@ -10,9 +10,11 @@ public class Mission extends BaseEntity {
     private MissionState state;
 
     @OneToMany(mappedBy = "mission")
-    private Set<DroneInfo> droneInfos;
+    @OrderBy("clientTime DESC")
+    private List<DroneInfo> droneInfos;
 
-    @OneToOne(mappedBy = "currentMission")
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "drone_id")
     private Drone drone;
 
     @OneToOne(mappedBy = "mission")
@@ -26,11 +28,11 @@ public class Mission extends BaseEntity {
         this.state = state;
     }
 
-    public Set<DroneInfo> getDroneInfos() {
+    public List<DroneInfo> getDroneInfos() {
         return droneInfos;
     }
 
-    public void setDroneInfos(Set<DroneInfo> droneInfos) {
+    public void setDroneInfos(List<DroneInfo> droneInfos) {
         this.droneInfos = droneInfos;
     }
 
@@ -40,5 +42,13 @@ public class Mission extends BaseEntity {
 
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    public Drone getDrone() {
+        return drone;
+    }
+
+    public void setDrone(Drone drone) {
+        this.drone = drone;
     }
 }

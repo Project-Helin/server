@@ -29,7 +29,8 @@ public class Drone extends BaseEntity {
     @OrderBy("clientTime DESC")
     private Set<DroneInfo> droneInfos;
 
-    @OneToOne()
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "current_mission_id")
     private Mission currentMission;
 
     @ManyToMany(mappedBy = "drones")
