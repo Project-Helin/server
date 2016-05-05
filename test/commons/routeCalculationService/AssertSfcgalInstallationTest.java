@@ -1,6 +1,7 @@
 package commons.routeCalculationService;
 
 import commons.AbstractE2ETest;
+import commons.AbstractIntegrationTest;
 import org.apache.commons.collections.comparators.BooleanComparator;
 import org.apache.xpath.operations.Bool;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  * SFCGAL is a library used by PostGis. It is not part of PostGis and must therefore
  * be installed separately. This tests verifies - that SFCGAL ist correctly installed.
  */
-public class AssertSfcgalInstallationTest extends AbstractE2ETest {
+public class AssertSfcgalInstallationTest extends AbstractIntegrationTest {
 
     @Inject
     private JPAApi jpaApi;
@@ -32,7 +33,7 @@ public class AssertSfcgalInstallationTest extends AbstractE2ETest {
     public void testCastingWithJPA(){
         Boolean doesIntersect = jpaApi.withTransaction((em) -> {
             Query query = jpaApi.em().createNativeQuery(
-                "SELECT ST_Intersects('POINT(0 0)'\\:\\:geometry, 'LINESTRING ( 2 0, 0 2 )'\\:\\:geometry);"
+                "SELECT ST_Intersects('POINT(0 0)'\\:\\:geometry, 'LINESTRING ( 0 0, 0 2 )'\\:\\:geometry);"
             );
             return (Boolean) query.getSingleResult();
         });
