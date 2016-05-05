@@ -8,6 +8,9 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.codec.Wkb;
 import org.geolatte.geom.codec.WkbDecoder;
 import org.geolatte.geom.codec.Wkt;
+import org.geolatte.geom.crs.CoordinateReferenceSystem;
+import org.geolatte.geom.crs.CoordinateReferenceSystems;
+import org.geolatte.geom.crs.CrsRegistry;
 
 /**
  * Contains common static methods related to post gis
@@ -32,7 +35,7 @@ public class GisHelper {
      * Create point from longitude and latitude using WGS-84
      * ( see http://spatialreference.org/ref/epsg/wgs-84/ )
      */
-    public static Point createPoint(long longitude, long latitude) {
+    public static Point createPoint(double longitude, double latitude) {
         Geometry<?> geometry = Wkt.fromWkt("SRID=4326; POINT (" + longitude + " " + latitude + ")");
         return (Point) geometry;
     }
@@ -72,7 +75,10 @@ public class GisHelper {
         if (wktString == null) {
             return null;
         }
-        return Wkt.fromWkt(wktString);
+        CoordinateReferenceSystem<?> referenceSystem =
+                CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
+
+        return Wkt.fromWkt(wktString, referenceSystem);
     }
 
 }
