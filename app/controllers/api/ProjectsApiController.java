@@ -1,24 +1,28 @@
 package controllers.api;
 
-import ch.helin.messages.dto.Action;
+
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.routeCalculationService.RouteCalculationService;
+import controllers.Default;
 import controllers.SecurityAuthenticator;
 import dao.ProjectsDao;
 import mappers.ProjectMapper;
 import models.Organisation;
 import models.Project;
+import models.Route;
 import models.Zone;
+
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import javax.sound.sampled.Line;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +39,9 @@ public class ProjectsApiController extends Controller {
 
     @Inject
     private ProjectMapper projectMapper;
+
+    @Inject
+    private RouteCalculationService routeCalculationService;
 
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
@@ -61,30 +68,10 @@ public class ProjectsApiController extends Controller {
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        int wayPointCount = 20;
+        RouteDto realRoute = routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
 
-        RouteDto mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
-        return ok(Json.toJson(mockRoute));
-    }
+        return ok(Json.toJson(realRoute));
 
-    private RouteDto createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
-        RouteDto route = new RouteDto();
-        Waypoint start = new Waypoint();
-        start.setPosition(dronePosition);
-        start.setAction(Action.TAKEOFF);
-        route.getWayPoints().add(start);
-
-        for(int i = 1; i < wayPointCount; i++) {
-            Waypoint waypoint = new Waypoint();
-            waypoint.setId(UUID.randomUUID());
-            double lat = customerPosition.getLat() + i * 0.0001;
-            double lon = customerPosition.getLon() + i * 0.0001;
-            int randomHeight = 5 + (int) (Math.random() * 100);
-
-            waypoint.setPosition(new Position(lat, lon, randomHeight));
-            route.getWayPoints().add(waypoint);
-        }
-        return route;
     }
 
     @Transactional
