@@ -7,6 +7,7 @@ import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.routeCalculationService.RouteCalculationService;
 import controllers.Default;
 import controllers.SecurityAuthenticator;
 import dao.ProjectsDao;
@@ -48,6 +49,9 @@ public class ProjectsApiController extends Controller {
     @Inject
     private ProjectMapper projectMapper;
 
+    @Inject
+    private RouteCalculationService routeCalculationService;
+
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
@@ -73,18 +77,9 @@ public class ProjectsApiController extends Controller {
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        int wayPointCount = 20;
+        Route realRoute = routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
 
-        Route mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount, found);
-
-        return ok(Json.toJson(mockRoute));
-
-    }
-
-
-    private Route createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount, Project found) {
-
-        return null;
+        return ok(Json.toJson(realRoute));
 
     }
 

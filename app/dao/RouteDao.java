@@ -1,7 +1,7 @@
 package dao;
 
-import ch.helin.messages.dto.way.Route;
 import commons.gis.GisHelper;
+import models.Route;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
-
 
 public class RouteDao extends AbstractDao<Route>{
     private static final Logger logger = getLogger(RouteDao.class);

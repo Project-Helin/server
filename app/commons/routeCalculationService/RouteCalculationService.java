@@ -1,23 +1,16 @@
 package commons.routeCalculationService;
 
-import ch.helin.messages.dto.way.Route;
+import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.geom.Coordinate;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-
-import commons.dijkstra.Dijkstra;
 import commons.gis.GisHelper;
-import dao.ProjectsDao;
-import models.Zone;
+import dao.RouteDao;
+import models.Project;
 import org.apache.commons.lang3.RandomUtils;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
-import org.geolatte.geom.Polygon;
 import org.geolatte.geom.Position;
-import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
@@ -26,39 +19,42 @@ import org.jgrapht.graph.SimpleGraph;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class RouteCalculationService {
 
     @Inject
-    private ProjectsDao projectsDao;
+    private RouteDao routeDao;
 
-    public Route calculateRoute(List<Waypoint> waypoints, Waypoint startPoint, List<Zone> zones){
+    public RouteDto calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
+                                   ch.helin.messages.dto.way.Position customerPosition,
+                                   Project project) {
 
-        List<LineString> listLineString = projectsDao.calculateSkeleton(found.getId());
+        List<LineString> listLineString = routeDao.calculateSkeleton(project.getId());
 
         LineString[] lineStrings1 = listLineString.toArray(new LineString[]{});
         MultiLineString<Position> lineStrings = new MultiLineString<>(lineStrings1);
 
         org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
 
-        LineString e = projectsDao.calculateShortestLineToPoint(lineStrings, dronePoint);
+        LineString e = routeDao.calculateShortestLineToPoint(lineStrings, dronePoint);
         listLineString.add(e);
 
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
-        LineString b = projectsDao.calculateShortestLineToPoint(lineStrings, customerPoint);
+        LineString b = routeDao.calculateShortestLineToPoint(lineStrings, customerPoint);
         listLineString.add(b);
 
 
         System.out.println(listLineString);
 
-        Route route = new Route();
+        RouteDto route = new RouteDto();
 
-        List<org.geolatte.geom.Position> resultFromDijkstra =
+        List<Position> resultFromDijkstra =
                 getResultFromDijkstra(listLineString, e.getEndPosition(), b.getEndPosition());
 
-        for (org.geolatte.geom.Position position : resultFromDijkstra) {
-            org.geolatte.geom.Position p  = position;
+        for (Position position : resultFromDijkstra) {
+            Position p  = position;
             double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
             double lat = p.getCoordinate(1);
 
@@ -70,9 +66,7 @@ public class RouteCalculationService {
 
         return route;
 
-        return new Route();
     }
-
 
     private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath, org.geolatte.geom.Position dronePosition, org.geolatte.geom.Position customerPosition){
         UndirectedGraph<Position, LineString> graph = new SimpleGraph<>(LineString.class);
@@ -94,8 +88,6 @@ public class RouteCalculationService {
         System.out.println(pathVertexList);
         return pathVertexList;
     }
-
-
 
 
 
