@@ -1,8 +1,11 @@
 package models;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.geolatte.geom.Point;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Entity(name = "drone_infos")
@@ -16,8 +19,8 @@ public class DroneInfo extends BaseEntity{
     @JoinColumn(name = "drone_id")
     private Drone drone;
 
-    private Coordinate dronePosition;
-    private Coordinate phonePosition;
+    private Point dronePosition;
+    private Point phonePosition;
     private double remainingBatteryPercent;
     private double batteryDischarge;
     private double batteryVoltage;
@@ -30,19 +33,19 @@ public class DroneInfo extends BaseEntity{
 
     private Date clientTime;
 
-    public Coordinate getDronePosition() {
+    public Point getDronePosition() {
         return dronePosition;
     }
 
-    public void setDronePosition(Coordinate dronePosition) {
+    public void setDronePosition(Point dronePosition) {
         this.dronePosition = dronePosition;
     }
 
-    public Coordinate getPhonePosition() {
+    public Point getPhonePosition() {
         return phonePosition;
     }
 
-    public void setPhonePosition(Coordinate phonePosition) {
+    public void setPhonePosition(Point phonePosition) {
         this.phonePosition = phonePosition;
     }
 

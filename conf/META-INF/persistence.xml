@@ -12,6 +12,7 @@
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect"/>
             <property name = "hibernate.show_sql" value = "true" />
+            <property name="hibernate.physical_naming_strategy" value="commons.CustomNamingStrategy" />
         </properties>
     </persistence-unit>
 

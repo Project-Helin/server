@@ -32,7 +32,7 @@ public class GisHelper {
      * Create point from longitude and latitude using WGS-84
      * ( see http://spatialreference.org/ref/epsg/wgs-84/ )
      */
-    public static Point createPoint(long longitude, long latitude) {
+    public static Point createPoint(double longitude, double latitude) {
         Geometry<?> geometry = Wkt.fromWkt("SRID=4326; POINT (" + longitude + " " + latitude + ")");
         return (Point) geometry;
     }

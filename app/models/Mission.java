@@ -12,6 +12,9 @@ public class Mission extends BaseEntity {
     @OneToMany(mappedBy = "mission")
     private Set<DroneInfo> droneInfos;
 
+    @OneToOne(mappedBy = "currentMission")
+    private Drone drone;
+
     @OneToOne(mappedBy = "mission")
     private Route route;
 

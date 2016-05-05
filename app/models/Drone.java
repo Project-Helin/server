@@ -25,8 +25,12 @@ public class Drone extends BaseEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "drone")
-//    private Set<DroneInfo> droneInfos;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "drone")
+    @OrderBy("clientTime DESC")
+    private Set<DroneInfo> droneInfos;
+
+    @OneToOne()
+    private Mission currentMission;
 
     @ManyToMany(mappedBy = "drones")
     private Set<Project> projects;
@@ -85,5 +89,31 @@ public class Drone extends BaseEntity {
 
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    public Set<DroneInfo> getDroneInfos() {
+        return droneInfos;
+    }
+
+    public void setDroneInfos(Set<DroneInfo> droneInfos) {
+        this.droneInfos = droneInfos;
+    }
+
+    public Mission getCurrentMission() {
+        return currentMission;
+    }
+
+    public void setCurrentMission(Mission currentMission) {
+        this.currentMission = currentMission;
+    }
+
+    @Transient
+    public double getRemainingBatteryPercent() {
+        if (droneInfos != null && !droneInfos.isEmpty()) {
+            DroneInfo latestDroneInfo = droneInfos.stream().findFirst().get();
+            return latestDroneInfo.getRemainingBatteryPercent();
+        } else {
+            return -1;
+        }
     }
 }

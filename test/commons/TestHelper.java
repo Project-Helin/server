@@ -2,10 +2,12 @@ package commons;
 
 import ch.helin.messages.dto.state.DroneState;
 import com.google.inject.Inject;
+import commons.gis.GisHelper;
 import dao.*;
 import models.*;
 import play.db.jpa.JPAApi;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -31,6 +33,9 @@ public class TestHelper {
 
     @Inject
     private ProjectsDao projectsDao;
+
+    @Inject
+    private DroneInfoDao droneInfoDao;
 
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
@@ -202,6 +207,23 @@ public class TestHelper {
         droneState.setFirmeware("Ardupilot 3.3");
         droneState.setVerticalSpeed(3);
         return droneState;
+    }
+
+    public DroneInfo createDroneInfo (Drone drone) {
+        DroneInfo droneInfo = new DroneInfo();
+
+        droneInfo.setAltitude(10);
+        droneInfo.setRemainingBatteryPercent(10);
+        droneInfo.setClientTime(new Date());
+        droneInfo.setBatteryVoltage(11.5);
+        droneInfo.setDronePosition(GisHelper.createPoint(12.1, 45.2));
+        droneInfo.setPhonePosition(GisHelper.createPoint(12.2, 45.1));
+
+        droneInfo.setDrone(drone);
+
+        droneInfoDao.persist(droneInfo);
+
+        return droneInfo;
     }
 
 }

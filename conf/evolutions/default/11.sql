@@ -12,7 +12,7 @@ CREATE TABLE drone_infos (
   vertical_speed                DOUBLE PRECISION,
   ground_speed                  DOUBLE PRECISION,
   is_connected_to_drone         BOOLEAN,
-  satellitesCount               SMALLINT,
+  satellites_count              SMALLINT,
   client_time                   TIMESTAMP           NOT NULL,
   drone_position                GEOGRAPHY(POINT, 4326),
   phone_position                GEOGRAPHY(POINT, 4326),
