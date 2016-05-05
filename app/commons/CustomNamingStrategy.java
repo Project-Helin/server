@@ -5,6 +5,7 @@ import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
+//is used to convert Camel-Case-Entity fields to db column names with underscore
 public class CustomNamingStrategy extends PhysicalNamingStrategyStandardImpl {
     @Override
     public Identifier toPhysicalColumnName(Identifier name, JdbcEnvironment context) {
