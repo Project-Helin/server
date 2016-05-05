@@ -7,7 +7,20 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <non-jta-data-source>DefaultDS</non-jta-data-source>
 
+        <class>models.BaseEntity</class>
         <class>models.Drone</class>
+        <class>models.DroneInfo</class>
+        <class>models.Mission</class>
+        <class>models.MissionState</class>
+        <class>models.Organisation</class>
+        <class>models.Product</class>
+        <class>models.Project</class>
+        <class>models.Route</class>
+        <class>models.User</class>
+        <class>models.WayPoint</class>
+        <class>models.Zone</class>
+        <class>models.ZoneType</class>
+
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect"/>
