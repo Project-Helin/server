@@ -4,13 +4,18 @@ import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
 import dao.RouteDao;
 import models.Project;
 import org.apache.commons.lang3.RandomUtils;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
+import org.geolatte.geom.Point;
 import org.geolatte.geom.Position;
+import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
@@ -40,7 +45,6 @@ public class RouteCalculationService {
         logger.info("State of calculateRoute customerPosition {}", customerPosition.toString());
         logger.info("State of calculateRoute Project {}", project);
 
-
         List<LineString> listLineString = routeDao.calculateSkeleton(project.getId());
 
         LineString[] lineStrings1 = listLineString.toArray(new LineString[]{});
@@ -51,10 +55,11 @@ public class RouteCalculationService {
         LineString e = routeDao.calculateShortestLineToPoint(lineStrings, dronePoint);
         listLineString.add(e);
 
+
+
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
         LineString b = routeDao.calculateShortestLineToPoint(lineStrings, customerPoint);
         listLineString.add(b);
-
 
         RouteDto route = new RouteDto();
 
@@ -75,6 +80,8 @@ public class RouteCalculationService {
         return route;
 
     }
+
+
 
     private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath, org.geolatte.geom.Position dronePosition, org.geolatte.geom.Position customerPosition){
         UndirectedGraph<Position, LineString> graph = new SimpleGraph<>(LineString.class);
