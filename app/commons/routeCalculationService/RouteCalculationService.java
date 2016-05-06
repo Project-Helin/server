@@ -4,6 +4,7 @@ import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
@@ -52,13 +53,13 @@ public class RouteCalculationService {
 
         org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
 
-        LineString e = routeDao.calculateShortestLineToPoint(lineStrings, dronePoint);
+        LineString e = calculateShortestLineToPoint(lineStrings, dronePoint);
         listLineString.add(e);
 
 
 
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
-        LineString b = routeDao.calculateShortestLineToPoint(lineStrings, customerPoint);
+        LineString b = calculateShortestLineToPoint(lineStrings, customerPoint);
         listLineString.add(b);
 
         RouteDto route = new RouteDto();
@@ -83,7 +84,10 @@ public class RouteCalculationService {
 
 
 
-    private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath, org.geolatte.geom.Position dronePosition, org.geolatte.geom.Position customerPosition){
+    private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath,
+                                                                   org.geolatte.geom.Position dronePosition,
+                                                                   org.geolatte.geom.Position customerPosition){
+
         UndirectedGraph<Position, LineString> graph = new SimpleGraph<>(LineString.class);
 
         for (LineString lineString : allPossiblePath) {
@@ -97,7 +101,6 @@ public class RouteCalculationService {
 
         GraphPath<Position, LineString> path = algorithm.getPath();
 
-
         List<org.geolatte.geom.Position> pathVertexList = Graphs.getPathVertexList(path);
 
         System.out.println(pathVertexList);
@@ -105,5 +108,33 @@ public class RouteCalculationService {
     }
 
 
+    public LineString calculateShortestLineToPoint(MultiLineString multiLineString, Point point){
+        com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
+        com.vividsolutions.jts.geom.MultiLineString jtsLineString = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(multiLineString);
+
+        Coordinate[] coordinates = DistanceOp.nearestPoints(jtsLineString, jtsPoint);
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        com.vividsolutions.jts.geom.LineString jtsResultlineString = geometryFactory.createLineString(coordinates);
+
+        return (LineString) JTS.from(jtsResultlineString, GisHelper.getReferenceSystem());
+    }
+
+    public boolean isLineSplitNeeded(LineString line, MultiLineString path){
+
+        com.vividsolutions.jts.geom.LineString jtsLine = (com.vividsolutions.jts.geom.LineString) JTS.to(line);
+        com.vividsolutions.jts.geom.MultiLineString jtsMultiLine = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(path);
+
+        Coordinate[] multiLineCoordinates = jtsMultiLine.getCoordinates();
+
+        boolean endPointOnVertex = Arrays.asList(multiLineCoordinates).contains(jtsLine.getEndPoint().getCoordinate());
+        boolean startPointOnVertex = Arrays.asList(multiLineCoordinates).contains(jtsLine.getStartPoint().getCoordinate());
+
+        return (startPointOnVertex) || (endPointOnVertex);
+
+    }
+
+
 
 }
+

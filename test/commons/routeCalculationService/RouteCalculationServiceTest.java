@@ -5,18 +5,21 @@ import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.AbstractIntegrationTest;
+import commons.dijkstra.Dijkstra;
 import commons.gis.GisHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
 import models.Project;
 import models.Zone;
 import models.ZoneType;
-import org.geolatte.geom.MultiLineString;
+import org.geolatte.geom.*;
+import org.geolatte.geom.Geometry;
 import org.geolatte.geom.LineString;
+import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.crs.CoordinateReferenceSystem;
@@ -25,12 +28,12 @@ import org.geolatte.geom.crs.CrsRegistry;
 import org.geolatte.geom.jts.JTS;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
@@ -95,9 +98,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
         LineString resultLineString = (LineString) JTS.from(jtsResultlineString, wgs84ReferenceSystem);
 
-
         assertEquals("SRID=4326;LINESTRING(1 1,0 1)", resultLineString.toString());
-
     }
 
     @Test
@@ -106,22 +107,56 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(1 1)");
         MultiLineString line = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
 
-        com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
-        com.vividsolutions.jts.geom.MultiLineString jtsLineString = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(line);
+        LineString lineString = routeCalculationService.calculateShortestLineToPoint(line, point);
 
-        Coordinate[] coordinates = DistanceOp.nearestPoints(jtsPoint, jtsLineString);
-
-        GeometryFactory geometryFactory = new GeometryFactory();
-        com.vividsolutions.jts.geom.LineString jtsResultlineString = geometryFactory.createLineString(coordinates);
-
-        LineString resultLineString = (LineString) JTS.from(jtsResultlineString, GisHelper.getReferenceSystem());
-
-        assertEquals("SRID=4326;LINESTRING(1 1,0 1)", resultLineString.toString());
-
-
+        assertEquals("SRID=4326;LINESTRING(0 1,1 1)", lineString.toString());
 
     }
 
+    @Test
+    public void shortestPathFromPointToWay(){
+
+        String multiLineString =  "MULTILINESTRING((8.81653463424814 47.2233814149235,8.81654876915496 47.2233893148946)," +
+                "(8.81653463424814 47.2233814149235,8.81598105470067 47.2234210272835)," +
+                "(8.81654876915496 47.2233893148946,8.81671817654337 47.2233855437005)," +
+                "(8.81675595809367 47.2234090865688,8.81671817654337 47.2233855437005)," +
+                "(8.81533954799537 47.2233014863053,8.81569109819225 47.2232671012872)," +
+                "(8.81598105470067 47.2234210272835,8.81569109819225 47.2232671012872))";
+
+        MultiLineString multiLineStringGeom = (MultiLineString) GisHelper.convertFromWktToGeometry(multiLineString);
+
+        String positionString = "POINT(8.815975 47.223793)";
+        Point point = (Point) GisHelper.convertFromWktToGeometry(positionString);
+
+        LineString lineString = routeCalculationService.calculateShortestLineToPoint(multiLineStringGeom, point);
+
+        assertEquals("SRID=4326;LINESTRING(8.81598105470067 47.2234210272835,8.815975 47.223793)", lineString.toString());
+
+    }
+
+
+
+    ///COMMENT THIS SHIT!
+    @Test
+    public void noPathSplitNeeded(){
+
+        LineString line = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(0 1,1 1)");
+        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
+
+        assertTrue(routeCalculationService.isLineSplitNeeded(line, path));
+
+    }
+
+
+    @Test
+    public void pathSplitNeeded(){
+
+        LineString line = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(0 1,1 1)");
+        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
+
+        assertFalse(routeCalculationService.isLineSplitNeeded(line, path));
+
+    }
 
 
 }
