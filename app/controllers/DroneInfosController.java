@@ -9,10 +9,12 @@ import models.Drone;
 import models.DroneInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import play.db.jpa.JPAApi;
 
 import java.util.UUID;
 
-public class DroneInfosController {
+
+public class DroneInfosController extends MessageHandlingController{
     private static final Logger logger = LoggerFactory.getLogger(DroneInfosController.class);
 
     @Inject
@@ -24,17 +26,21 @@ public class DroneInfosController {
     @Inject
     DroneInfoMapper droneInfoMapper;
 
+    @Inject
+    JPAApi jpaApi;
+
     public void onDroneInfoReceived(UUID droneId, DroneInfoMessage droneInfoMessage) {
+        jpaApi.withTransaction(()-> {
+            DroneInfo droneInfo = droneInfoMapper.convertToDroneInfo(droneInfoMessage);
 
-        DroneInfo droneInfo = droneInfoMapper.convertToDroneInfo(droneInfoMessage);
+            Drone drone = droneDao.findById(droneId);
+            droneInfo.setDrone(drone);
 
-        Drone drone = droneDao.findById(droneId);
-        droneInfo.setDrone(drone);
+            if(drone.getCurrentMission() != null) {
+                droneInfo.setMission(drone.getCurrentMission());
+            }
 
-        if(drone.getCurrentMission() != null) {
-           droneInfo.setMission(drone.getCurrentMission());
-        }
-
-        droneInfoDao.persist(droneInfo);
+            droneInfoDao.persist(droneInfo);
+        });
     }
 }

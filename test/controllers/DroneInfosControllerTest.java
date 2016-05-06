@@ -68,10 +68,11 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
         Date older = new Date(1);
         Date newer = new Date(2);
 
-        UUID missionId = jpaApi.withTransaction((em) -> {
-            Organisation organisation = testHelper.createNewOrganisation();
-            Drone drone = createDrone(organisation);
+        Organisation organisation = testHelper.createNewOrganisation();
+        Drone detachedDrone = testHelper.createNewDrone(organisation);
 
+        UUID missionId = jpaApi.withTransaction((em) -> {
+            Drone drone = droneDao.findById(detachedDrone.getId());
             Mission mission = new Mission();
             mission.setDrone(drone);
             missionDao.persist(mission);
@@ -79,19 +80,19 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             drone.setCurrentMission(mission);
             droneDao.persist(drone);
 
-            DroneInfoMessage olderDroneInfoMessage = new DroneInfoMessage();
-
-            olderDroneInfoMessage.setClientTime(older);
-
-            DroneInfoMessage newerDroneInfoMessage = new DroneInfoMessage();
-
-            newerDroneInfoMessage.setClientTime(newer);
-
-            droneInfosController.onDroneInfoReceived(drone.getId(), olderDroneInfoMessage);
-            droneInfosController.onDroneInfoReceived(drone.getId(), newerDroneInfoMessage);
-
             return mission.getId();
         });
+
+        DroneInfoMessage olderDroneInfoMessage = new DroneInfoMessage();
+
+        olderDroneInfoMessage.setClientTime(older);
+
+        DroneInfoMessage newerDroneInfoMessage = new DroneInfoMessage();
+
+        newerDroneInfoMessage.setClientTime(newer);
+
+        droneInfosController.onDroneInfoReceived(detachedDrone.getId(), olderDroneInfoMessage);
+        droneInfosController.onDroneInfoReceived(detachedDrone.getId(), newerDroneInfoMessage);
 
         jpaApi.withTransaction(() -> {
             Mission missionFromDb = missionDao.findById(missionId);
