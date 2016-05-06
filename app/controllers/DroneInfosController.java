@@ -14,7 +14,7 @@ import play.db.jpa.JPAApi;
 import java.util.UUID;
 
 
-public class DroneInfosController extends MessageHandlingController{
+public class DroneInfosController {
     private static final Logger logger = LoggerFactory.getLogger(DroneInfosController.class);
 
     @Inject
