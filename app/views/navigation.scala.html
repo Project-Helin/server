@@ -42,6 +42,12 @@
             </a>
         </li>
 
+        <li class="@activeLink(controllers.routes.OrdersController.index())">
+            <a href="@controllers.routes.OrdersController.index()">
+                <i class="glyphicon glyphicon-shopping-cart"></i> <span>Orders</span>
+            </a>
+        </li>
+
         <li class="@activeLink(routes.MessageViewer.index())">
          <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> <span>Debug</span></a>
         </li>
