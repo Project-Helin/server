@@ -34,6 +34,10 @@ GET         /projects/:projectId/drones/                            controllers.
 POST        /projects/:projectId/drones/add                         controllers.ProjectsDronesController.addDrone(projectId : java.util.UUID)
 GET         /projects/:projectId/drones/:droneId/delete             controllers.ProjectsDronesController.delete(projectId : java.util.UUID, droneId : java.util.UUID)
 
+# Orders (all)
+GET         /orders/                                                controllers.OrdersController.index()
+GET         /orders/changeProject                                   controllers.OrdersController.changeProject()
+
 #Product
 GET         /products/                                              controllers.ProductsController.index()
 GET         /products/add                                           controllers.ProductsController.add()
