@@ -35,7 +35,7 @@ POST        /projects/:projectId/drones/add                         controllers.
 GET         /projects/:projectId/drones/:droneId/delete             controllers.ProjectsDronesController.delete(projectId : java.util.UUID, droneId : java.util.UUID)
 
 #Product
-GET         /products                                               controllers.ProductsController.index()
+GET         /products/                                              controllers.ProductsController.index()
 GET         /products/add                                           controllers.ProductsController.add()
 POST        /products/create                                        controllers.ProductsController.create()
 
@@ -44,7 +44,7 @@ POST        /products/:id/update                                    controllers.
 GET         /products/:id/delete                                    controllers.ProductsController.delete(id : java.util.UUID)
 
 #Drones
-GET         /drones                                                 controllers.DronesController.index()
+GET         /drones/                                                controllers.DronesController.index()
 GET         /drones/:id/edit                                        controllers.DronesController.edit(id : java.util.UUID)
 POST        /drones/:id/update                                      controllers.DronesController.update(id : java.util.UUID)
 GET         /drones/:id/delete                                      controllers.DronesController.delete(id : java.util.UUID)
@@ -81,7 +81,7 @@ GET         /registerDrone                                          controllers.
 
 ##Drones
 
-POST        /api/drones                                             controllers.api.DronesApiController.create()
+POST        /api/drones/                                            controllers.api.DronesApiController.create()
 
 ##Project
 GET         /api/projects/                                          controllers.api.ProjectsApiController.index()
@@ -90,3 +90,6 @@ POST        /api/projects/:projectId/update                         controllers.
 GET         /api/projects/:projectId/calculate-route                controllers.api.ProjectsApiController.calculateRoute(projectId : java.util.UUID, dronePosition : String, customerPosition : String)
 #TODO Get Project including Zones
 
+##Order
+POST        /api/orders/                                            controllers.api.OrderApiController.create()
+POST        /api/orders/:orderId/confirm                            controllers.api.OrderApiController.confirm(orderId : java.util.UUID)
