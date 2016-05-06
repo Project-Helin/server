@@ -49,6 +49,9 @@ GET         /drones/:id/edit                                        controllers.
 POST        /drones/:id/update                                      controllers.DronesController.update(id : java.util.UUID)
 GET         /drones/:id/delete                                      controllers.DronesController.delete(id : java.util.UUID)
 
+# Customer
+GET         /customers                                              controllers.CustomersController.index()
+
 #Authentication
 GET         /login                                                  controllers.UsersController.login()
 GET         /logout                                                 controllers.UsersController.logout()
