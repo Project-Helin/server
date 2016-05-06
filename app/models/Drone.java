@@ -15,7 +15,7 @@ public class Drone extends BaseEntity {
     @Column(name = "last_known_position")
     private Coordinate lastKnownPosition;
 
-    private int payload;
+    private Integer payload;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organisation_id")
@@ -36,6 +36,9 @@ public class Drone extends BaseEntity {
     @ManyToMany(mappedBy = "drones")
     private Set<Project> projects;
 
+    @Column
+    private Boolean isActive;
+
     public Coordinate getLastKnownPosition() {
         return lastKnownPosition;
     }
@@ -44,11 +47,11 @@ public class Drone extends BaseEntity {
         this.lastKnownPosition = lastKnownPosition;
     }
 
-    public int getPayload() {
+    public Integer getPayload() {
         return payload;
     }
 
-    public void setPayload(int payload) {
+    public void setPayload(Integer payload) {
         this.payload = payload;
     }
 
@@ -108,6 +111,14 @@ public class Drone extends BaseEntity {
         this.currentMission = currentMission;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
     @Transient
     public double getRemainingBatteryPercent() {
         if (droneInfos != null && !droneInfos.isEmpty()) {
@@ -117,4 +128,6 @@ public class Drone extends BaseEntity {
             return -1;
         }
     }
+
+
 }
