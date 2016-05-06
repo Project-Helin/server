@@ -36,7 +36,6 @@ GET         /projects/:projectId/drones/:droneId/delete             controllers.
 
 # Orders (all)
 GET         /orders/                                                controllers.OrdersController.index()
-GET         /orders/changeProject                                   controllers.OrdersController.changeProject()
 
 #Product
 GET         /products/                                              controllers.ProductsController.index()

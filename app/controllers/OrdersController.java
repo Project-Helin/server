@@ -24,6 +24,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Transactional
 public class OrdersController extends Controller {
 
+    private static final Logger logger = getLogger(OrdersController.class);
+
     @Inject
     private SessionHelper sessionHelper;
 
@@ -36,26 +38,13 @@ public class OrdersController extends Controller {
     @Inject
     private FormFactory formFactory;
 
-    private static final Logger logger = getLogger(OrdersController.class);
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
-
-        logger.info("hallo");
-        List<Order> orders =
-            orderDao.findByOrganisation(sessionHelper.getOrganisation(session()));
-
-        List<Project> projects = findAllProjects();
-
-        return ok(index.render(projects , orders));
-    }
-
-    @Security.Authenticated(SecurityAuthenticator.class)
-    public Result changeProject() {
         String selectedProject = getSelectedProject();
 
         boolean noProjectSelected = StringUtils.isBlank(selectedProject);
         if (noProjectSelected) {
-            return index();
+            return showAll();
         }
 
         UUID projectId = UUID.fromString(selectedProject);
@@ -64,7 +53,16 @@ public class OrdersController extends Controller {
             orderDao.findByProjectId(projectId, sessionHelper.getOrganisation(session()));
         List<Project> projects = findAllProjects();
 
-        return ok(index.render(projects, orders));
+        return ok(index.render(projects, orders, selectedProject));
+    }
+
+    private Result showAll() {
+        List<Order> orders =
+            orderDao.findByOrganisation(sessionHelper.getOrganisation(session()));
+
+        List<Project> projects = findAllProjects();
+
+        return ok(index.render(projects, orders, ""));
     }
 
     private String getSelectedProject() {
