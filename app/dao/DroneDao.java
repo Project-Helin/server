@@ -34,4 +34,21 @@ public class DroneDao extends AbstractDao<Drone> {
 
         return getSingleResultOrNull(droneTypedQuery);
     }
+
+    public Drone findMatchingPayloadAndHighestBatteryRemain(UUID projectId, int payload) {
+        TypedQuery<Drone> droneTypedQuery = jpaApi
+                .em()
+                .createQuery(
+                        "select d from drones d " +
+                                "where d.project_id = :project_id " +
+                                "and d.payload >= :payload " +
+                                "and current_mission_id = null " +
+                                "AND abs(1 - d.payload) = (select min(abs(1 - number)) from t)",
+                        Drone.class
+                )
+                .setParameter("project_id", projectId)
+                .setParameter("payload", payload);
+
+        return getSingleResultOrNull(droneTypedQuery);
+    }
 }
