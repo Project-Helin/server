@@ -4,33 +4,39 @@ import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
+import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
+import dao.ProjectsDao;
+import dao.RouteDao;
+import models.Project;
 import models.Zone;
+import models.ZoneType;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
+    @Inject
+    private RouteDao routeDao;
+
+    @Inject
+    private RouteCalculationService routeCalculationService;
+
     @Test
     public void initTest(){
+
+
         List<Waypoint> waypointList = new ArrayList<>();
 
-        Waypoint startPoint = new Waypoint();
-        Waypoint dropPoint = new Waypoint();
-
-        startPoint.setAction(Action.TAKEOFF);
-        startPoint.setPosition(new Position(8.8153890, 47.2237834));
-
-        dropPoint.setAction(Action.DROP);
-        startPoint.setPosition(new Position(8.8164874, 47.2235279));
-
-        waypointList.add(startPoint);
-        waypointList.add(dropPoint);
+        Position startPosition = new Position(8.8153890, 47.2237834);
+        Position endPosition = new Position(8.8164874, 47.2235279);
 
 
         Zone zone = new Zone();
@@ -43,13 +49,16 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
         zone.setPolygon((Polygon) geometry);
         zone.setName("testpolygon");
+        zone.setHeight(3);
+        zone.setType(ZoneType.FlightZone);
 
-        List<Zone> zoneList = new ArrayList<>();
-        zoneList.add(zone);
+        Project project = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
+
+        jpaApi.withTransaction(() ->{
+            RouteDto route = routeCalculationService.calculateRoute(startPosition, endPosition, project);
+        });
 
 
-        RouteCalculationService routeCalculationService = new RouteCalculationService();
-        RouteDto route = routeCalculationService.calculateRoute(waypointList, startPoint, zoneList);
     }
 
 

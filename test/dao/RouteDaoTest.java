@@ -13,10 +13,10 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 
-public class ProjectsDaoTest extends AbstractIntegrationTest {
+public class RouteDaoTest extends AbstractIntegrationTest {
 
     @Inject
-    private ProjectsDao projectDao;
+    private RouteDao routeDao;
 
     @Test
     public void shortestPathFromPointToWay(){
@@ -35,10 +35,10 @@ public class ProjectsDaoTest extends AbstractIntegrationTest {
 
 
         LineString shortestPath = (LineString) jpaApi.withTransaction((em) -> {
-            return projectDao.calculateShortestLineToPoint(multiLineStringGeom, point);
+            return routeDao.calculateShortestLineToPoint(multiLineStringGeom, point);
         });
 
-        assertThat(shortestPath.toString()).isEqualTo("LINESTRING(8.81598105470067 47.2234210272835,8.815975 47.223793)");
+        assertThat(shortestPath.toString()).isEqualTo("SRID=4326;LINESTRING(8.81598105470067 47.2234210272835,8.815975 47.223793)");
 
     }
 

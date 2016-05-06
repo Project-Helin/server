@@ -16,6 +16,8 @@ import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +29,17 @@ public class RouteCalculationService {
     @Inject
     private RouteDao routeDao;
 
+    private static final Logger logger = LoggerFactory.getLogger(RouteCalculationService.class);
+
+
     public RouteDto calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
                                    ch.helin.messages.dto.way.Position customerPosition,
                                    Project project) {
+
+        logger.info("State of calculateRoute dronePosition {}", dronePosition);
+        logger.info("State of calculateRoute customerPosition {}", customerPosition.toString());
+        logger.info("State of calculateRoute Project {}", project);
+
 
         List<LineString> listLineString = routeDao.calculateSkeleton(project.getId());
 
@@ -45,8 +55,6 @@ public class RouteCalculationService {
         LineString b = routeDao.calculateShortestLineToPoint(lineStrings, customerPoint);
         listLineString.add(b);
 
-
-        System.out.println(listLineString);
 
         RouteDto route = new RouteDto();
 

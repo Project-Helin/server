@@ -22,6 +22,8 @@ public class RouteDao extends AbstractDao<Route>{
         super(Route.class, "routes");
     }
 
+
+
     public List<LineString> calculateSkeleton(UUID projectId){
         Query nativeQuery = jpaApi.em().createNativeQuery(
                 "SELECT ST_asText((ST_Dump((ST_ApproximateMedialAxis(ST_UNION(polygon\\:\\:geometry))))).geom) " +
@@ -43,6 +45,8 @@ public class RouteDao extends AbstractDao<Route>{
     }
 
     public LineString calculateShortestLineToPoint(MultiLineString<Position> lineStrings, Point point) {
+        logger.info("cacluclateShortestLineToPoint {}", lineStrings);
+
         Query nativeQuery = jpaApi.em().createNativeQuery(
                 "SELECT ST_asText(ST_ShortestLine(:lineStrings, :objPosition))"
         );
