@@ -4,8 +4,11 @@ import commons.AbstractE2ETest;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -50,7 +53,6 @@ public class OrdersControllerTest extends AbstractE2ETest {
     }
 
     @Test
-    @Ignore
     public void shouldShowOrderPerProject() throws InterruptedException {
         Order order = testHelper.createNewOrder(
             testHelper.createNewProject(organisation),
@@ -58,12 +60,16 @@ public class OrdersControllerTest extends AbstractE2ETest {
         );
 
         browser.goTo(routes.OrdersController.index().url());
-        browser.click("#projectList");
-        browser.click("#project-" + order.getProject().getId().toString());
+        browser.fillSelect("#projectList").withValue(order.getProject().getId().toString());
+
+        // wait till
+        WebDriverWait wait = new WebDriverWait(browser.getDriver(), 10);
+        WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id("projectList")));
+        element.click();
 
         // verify
-        assertThat(browser.pageSource()).doesNotContain(order.getProject().getName());
-        assertThat(browser.pageSource()).doesNotContain(order.getCustomer().getDisplayName());
+        assertThat(browser.pageSource()).contains(order.getProject().getName());
+        assertThat(browser.pageSource()).contains(order.getCustomer().getDisplayName());
     }
 
 }
