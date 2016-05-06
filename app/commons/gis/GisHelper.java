@@ -16,7 +16,20 @@ import org.geolatte.geom.crs.CrsRegistry;
  * Contains common static methods related to post gis
  */
 public class GisHelper {
+
+    private static final CoordinateReferenceSystem<?> WGS84_REFERENCE_SYSTEM =
+            CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
+
+
     private GisHelper() {
+    }
+
+
+    /*
+     * Can be used to access the WGS84 reference system
+     */
+    public static CoordinateReferenceSystem<?> getReferenceSystem(){
+        return WGS84_REFERENCE_SYSTEM;
     }
 
     /*
@@ -75,10 +88,8 @@ public class GisHelper {
         if (wktString == null) {
             return null;
         }
-        CoordinateReferenceSystem<?> referenceSystem =
-                CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
 
-        return Wkt.fromWkt(wktString, referenceSystem);
+        return Wkt.fromWkt(wktString, WGS84_REFERENCE_SYSTEM);
     }
 
 }
