@@ -5,6 +5,9 @@ import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
 import dao.ProjectsDao;
@@ -12,13 +15,22 @@ import dao.RouteDao;
 import models.Project;
 import models.Zone;
 import models.ZoneType;
+import org.geolatte.geom.MultiLineString;
+import org.geolatte.geom.LineString;
+import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
+import org.geolatte.geom.crs.CoordinateReferenceSystem;
+import org.geolatte.geom.crs.CoordinateReferenceSystems;
+import org.geolatte.geom.crs.CrsRegistry;
+import org.geolatte.geom.jts.JTS;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
@@ -28,6 +40,10 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
     @Inject
     private RouteCalculationService routeCalculationService;
+
+    private CoordinateReferenceSystem<?> wgs84ReferenceSystem =
+            CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
+
 
     @Test
     public void initTest(){
@@ -61,7 +77,50 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
     }
 
+    @Test
+    public void shortestPathFromPointToLine(){
 
+        //Test to understand how it works with JTS
+
+        Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(1 1)");
+        LineString line = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(0 0, 0 2)");
+
+        com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
+        com.vividsolutions.jts.geom.LineString jtsLineString = (com.vividsolutions.jts.geom.LineString) JTS.to(line);
+
+        Coordinate[] coordinates = DistanceOp.nearestPoints(jtsPoint, jtsLineString);
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        com.vividsolutions.jts.geom.LineString jtsResultlineString = geometryFactory.createLineString(coordinates);
+
+        LineString resultLineString = (LineString) JTS.from(jtsResultlineString, wgs84ReferenceSystem);
+
+
+        assertEquals("SRID=4326;LINESTRING(1 1,0 1)", resultLineString.toString());
+
+    }
+
+    @Test
+    public void shortestPathFromPointToMultiLineString(){
+
+        Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(1 1)");
+        MultiLineString line = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
+
+        com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
+        com.vividsolutions.jts.geom.MultiLineString jtsLineString = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(line);
+
+        Coordinate[] coordinates = DistanceOp.nearestPoints(jtsPoint, jtsLineString);
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        com.vividsolutions.jts.geom.LineString jtsResultlineString = geometryFactory.createLineString(coordinates);
+
+        LineString resultLineString = (LineString) JTS.from(jtsResultlineString, GisHelper.getReferenceSystem());
+
+        assertEquals("SRID=4326;LINESTRING(1 1,0 1)", resultLineString.toString());
+
+
+
+    }
 
 
 
