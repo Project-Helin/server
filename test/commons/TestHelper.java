@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
 import models.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import play.db.jpa.JPAApi;
 
 import java.util.Date;
@@ -23,6 +24,9 @@ public class TestHelper {
     private DroneDao droneDao;
 
     @Inject
+    private OrderDao orderDao;
+
+    @Inject
     private UserDao userDao;
 
     @Inject
@@ -37,6 +41,9 @@ public class TestHelper {
     @Inject
     private DroneInfoDao droneInfoDao;
 
+    @Inject
+    private CustomerDao customerDao;
+
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
         organisation.setId(UUID.randomUUID());
@@ -48,6 +55,18 @@ public class TestHelper {
         });
 
         return organisation;
+    }
+
+    public Order createNewOrder(Project project, Customer customer) {
+        Order order = new Order();
+        order.setProject(project);
+        order.setCustomer(customer);
+
+        jpaApi.withTransaction(() -> {
+            orderDao.persist(order);
+        });
+
+        return order;
     }
 
     public Drone createNewDrone(Organisation organisation) {
@@ -216,4 +235,16 @@ public class TestHelper {
         return droneInfo;
     }
 
+    public Customer createCustomer() {
+        Customer customer = new Customer();
+        customer.setDisplayName("Testcustomer");
+        customer.setEmail("testcustomer@helin.ch");
+        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
+
+        jpaApi.withTransaction(() -> {
+            customerDao.persist(customer);
+        });
+
+        return customer;
+    }
 }

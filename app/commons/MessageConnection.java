@@ -1,10 +1,15 @@
 package commons;
 
 import com.rabbitmq.client.*;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class MessageConnection {
+
+    private static final Logger logger = getLogger(MessageConnection.class);
 
     private Channel channel;
     private Connection connection;
@@ -15,7 +20,6 @@ public class MessageConnection {
         factory.setPort(5672);
         factory.setUsername("admin");
         factory.setPassword("helin");
-
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -35,7 +39,7 @@ public class MessageConnection {
 
     public void sendMessage(String message) {
         try {
-            System.out.println("Send message " + message);
+            logger.info("Send message " + message);
             channel.basicPublish("", QueueName.SERVER_TO_DRONE.name(), null, message.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -70,6 +74,7 @@ public class MessageConnection {
                 throws IOException {
                 String message = new String(body, "UTF-8");
                 onMessage.accept(message);
+                logger.info("On message {}", message);
             }
         };
         try {

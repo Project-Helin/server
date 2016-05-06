@@ -1,0 +1,32 @@
+@import java.util
+@(allCustomers: util.List[Customer])
+
+@main("Customers") {
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>Display Name</th>
+                                <th>Email</th>
+                                <th>Token</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(customer <- allCustomers) {
+                                <tr>
+                                    <th>@customer.getDisplayName</th>
+                                    <th>@customer.getEmail</th>
+                                    <th>@customer.getToken</th>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div> <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+}

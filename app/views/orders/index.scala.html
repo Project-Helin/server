@@ -1,0 +1,57 @@
+@import java.util
+@import views.html.helpers.deleteButton
+@(projects: util.List[Project], orders: util.List[Order])
+
+@main("Orders") {
+
+    <div class="row">
+
+        <div class="col-xs-4 m-b-lg">
+
+            <form method="GET" action="@routes.OrdersController.changeProject()">
+                <select class="form-control" name="selectedProject" onchange="this.form.submit()">
+                    <option value="">All projects</option>
+                    @for(eachProject <- projects) {
+                        <option value="@eachProject.getId">@eachProject.getName</option>
+                    }
+                </select>
+            </form>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>Project</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Weight(g)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for(order <- orders) {
+                            <tr>
+                                <th>@order.getProject.getName</th>
+                                <th>@order.getCustomer.getDisplayName</th>
+                                <th>
+                                @deleteButton(
+                                    controllers.routes.ProductsController.delete(order.getId),
+                                    order.getId,
+                                    "Delete Product",
+                                    "Do you want to delete this product?"
+                                )
+                                </th>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+
+                </div> <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+}
