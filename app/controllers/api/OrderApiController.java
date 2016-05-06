@@ -2,15 +2,23 @@ package controllers.api;
 
 import com.google.inject.Inject;
 import commons.order.OrderDispatchingService;
+import dao.OrderDao;
+import models.Order;
+import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.UUID;
 
+@Transactional
 public class OrderApiController extends Controller {
 
     @Inject
     OrderDispatchingService orderDispatchingService;
+
+    @Inject
+    OrderDao orderDao;
 
     /*
     An Order with mission and rout is created,
@@ -36,14 +44,11 @@ public class OrderApiController extends Controller {
     public Result confirm(UUID orderID) {
         //Load Order
         //set Order to confirmed
+        Order order = orderDao.findById(orderID);
 
-        UUID orderId = UUID.randomUUID();
-        UUID projectId = UUID.randomUUID();
+        int countOfOrdersBeforeMe = orderDispatchingService.tryToDispatchWaitingOrders(order.getProject().getId(), order.getId());
 
-        orderDispatchingService.tryToDispatchWaitingOrders(projectId, orderId);
-
-        //return estimated deliveryTime
-        return ok();
+        return ok(Json.toJson(countOfOrdersBeforeMe));
     }
 
 }

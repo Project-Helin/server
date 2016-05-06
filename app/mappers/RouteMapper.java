@@ -20,11 +20,13 @@ public class RouteMapper {
 
         RouteDto routeDto = new RouteDto();
 
-        List<Waypoint> wayPointDtos = route.getWayPoints().stream()
-                .map(this::convertToWaypointDto)
-                .collect(Collectors.toList());
+        if (route.getWayPoints() != null) {
+            List<Waypoint> wayPointDtos = route.getWayPoints().stream()
+                    .map(this::convertToWaypointDto)
+                    .collect(Collectors.toList());
 
-        routeDto.setWayPoints(wayPointDtos);
+            routeDto.setWayPoints(wayPointDtos);
+        }
 
         return routeDto;
     }

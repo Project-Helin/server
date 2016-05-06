@@ -29,8 +29,6 @@ public class OrderDispatchingService {
 
     public int tryToDispatchWaitingOrders(UUID projectId, UUID orderId) {
 
-
-
         /*
         TODO Load all orders with state "WAITING_FOR_FREE_DRONE" from project and
         execute tryAssignDroneForThisOrder for Each Drone in Order of updated_at attribute
@@ -38,7 +36,7 @@ public class OrderDispatchingService {
          */
 
         //TODO return number of waiting orders before mine
-        return -1;
+        return 0;
 
     }
 
