@@ -24,24 +24,21 @@ public class RouteDao extends AbstractDao<Route>{
 
 
 
-    public List<LineString> calculateSkeleton(UUID projectId){
+    public MultiLineString calculateSkeleton(UUID projectId){
         Query nativeQuery = jpaApi.em().createNativeQuery(
-                "SELECT ST_asText((ST_Dump((ST_ApproximateMedialAxis(ST_UNION(polygon\\:\\:geometry))))).geom) " +
+                "SELECT ST_asText(ST_ApproximateMedialAxis(ST_UNION(polygon\\:\\:geometry))) " +
                         " FROM zones " +
                         " WHERE project_id = :projectId AND type != 'OrderZone'"
         );
         nativeQuery.setParameter("projectId", projectId);
 
 
-        List<String> wktList = nativeQuery.getResultList();
-        logger.info("singleResult=[{}]", wktList);
+        String wktString = (String) nativeQuery.getSingleResult();
+        logger.info("singleResult=[{}]", wktString);
 
-        List<LineString> lineStringList = wktList
-                .stream()
-                .map((a) -> (LineString) GisHelper.convertFromWktToGeometry(a))
-                .collect(Collectors.toList());
+        MultiLineString multiLineString = (MultiLineString) GisHelper.convertFromWktToGeometry(wktString);
 
-        return lineStringList;
+        return multiLineString;
     }
 
     public LineString calculateShortestLineToPoint(MultiLineString<Position> lineStrings, Point point) {

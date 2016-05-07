@@ -7,10 +7,16 @@ import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.LineSegment;
+import com.vividsolutions.jts.geom.util.LineStringExtracter;
+import com.vividsolutions.jts.linearref.LinearLocation;
+import com.vividsolutions.jts.linearref.LocationIndexedLine;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.triangulate.SplitSegment;
 import commons.AbstractIntegrationTest;
 import commons.dijkstra.Dijkstra;
 import commons.gis.GisHelper;
+import commons.gis.Wgs84Helper;
 import dao.ProjectsDao;
 import dao.RouteDao;
 import models.Project;
@@ -26,6 +32,8 @@ import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CoordinateReferenceSystems;
 import org.geolatte.geom.crs.CrsRegistry;
 import org.geolatte.geom.jts.JTS;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.SimpleGraph;
 import org.junit.Test;
 
 import java.util.*;
@@ -147,7 +155,6 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
     }
 
-
     @Test
     public void pathSplitNeeded(){
 
@@ -155,6 +162,68 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
 
         assertFalse(routeCalculationService.isLineSplitNeeded(line, path));
+
+    }
+
+    @Test
+    public void splitMultiLineStringBasicCase(){
+        Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 1)");
+        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
+
+        MultiLineString returnMultiLineString = routeCalculationService.splitMultiLineStringOnPoint(path, point);
+
+        assertEquals("SRID=4326;MULTILINESTRING((0 0,0 1),(0 1,0 2),(0 2,0 4))", returnMultiLineString.toString());
+    }
+
+    @Test
+    public void splitMultiLineStringWithoutEffect(){
+        Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 1)");
+        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
+
+        MultiLineString returnMultiLineString = routeCalculationService.splitMultiLineStringOnPoint(path, point);
+
+        assertEquals("SRID=4326;MULTILINESTRING((0 0,0 1),(0 1,0 2))", returnMultiLineString.toString());
+    }
+
+    @Test
+    public void splitMultiLineStringOutOffBoundsWithoutEffect(){
+        Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 5)");
+        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
+
+        MultiLineString returnMultiLineString = routeCalculationService.splitMultiLineStringOnPoint(path, point);
+
+        assertEquals("SRID=4326;MULTILINESTRING((0 0,0 1),(0 1,0 2))", returnMultiLineString.toString());
+    }
+
+    @Test
+    public void shouldCheckComperatorInDijkstra(){
+        ArrayList<LineString> helperList = new ArrayList<>();
+
+        LineString line1 = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(8.81305670365691 47.2226540354165,8.81247818470001 47.22380529011801)");
+        helperList.add(line1);
+
+        LineString line2 = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(8.81305670365691 47.2226540354165,8.81247818470001 47.22380529011801)");
+        helperList.add(line2);
+
+        LineString line3 = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(8.81305670365691 47.2226540354165,8.81396906260474 47.2226393885969)");
+        helperList.add(line3);
+
+        UndirectedGraph<org.geolatte.geom.Position, LineString> graph = new SimpleGraph<>(LineString.class);
+
+        for (LineString lineString : helperList) {
+            graph.addVertex(lineString.getStartPosition());
+            graph.addVertex(lineString.getEndPosition());
+            graph.addEdge(lineString.getStartPosition(), lineString.getEndPosition(), lineString);
+        }
+
+        //Todo Assertion
+    }
+
+
+    @Test
+    public void myTest() {
+        System.out.println(Wgs84Helper.getDistanceFromLatLonInM(8, 47, 8.0000000001, 47));
+
 
     }
 
