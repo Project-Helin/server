@@ -34,6 +34,7 @@ import org.geolatte.geom.crs.CrsRegistry;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.SimpleGraph;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
@@ -196,6 +197,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void shouldCheckComperatorInDijkstra(){
         ArrayList<LineString> helperList = new ArrayList<>();
 
@@ -217,14 +219,6 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         }
 
         //Todo Assertion
-    }
-
-
-    @Test
-    public void myTest() {
-        System.out.println(Wgs84Helper.getDistanceFromLatLonInM(8, 47, 8.0000000001, 47));
-
-
     }
 
 
