@@ -69,8 +69,8 @@ public class ProjectsApiController extends Controller {
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        ZoneHelper.assertAllConstraints(found.getZones());
-        ZoneHelper.assertThatDroneIsInLoadingZone(found.getZones(),
+        ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
+        ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
                 GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
 
         RouteDto realRoute = routeCalculationService.calculateRoute(dronePosition, customerPosition, found);

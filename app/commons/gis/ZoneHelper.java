@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class ZoneHelper {
 
-    public static void assertAllConstraints(Set<Zone> zones) throws RuntimeException{
+    public static void assertAllConstraintsOrThrowRuntimeException(Set<Zone> zones) throws RuntimeException{
         if(!assertOneLoadingZone(zones)){
             throw new RuntimeException("assertOneLoadingZone failed!");
         }
@@ -30,6 +30,12 @@ public class ZoneHelper {
         }
         if(!assertAllZonesAreConnected(zones)){
             throw new RuntimeException("assertAllZonesAreConnected failed!");
+        }
+    }
+
+    public static void asserThatDroneIsInLoadingZoneOrThrowRundTimeException(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
+        if(!assertThatDroneIsInLoadingZone(zones, dronePoint)){
+            throw new RuntimeException("asserThatDroneIsInLoadingZone failed! - Where is the drone?!");
         }
     }
 
