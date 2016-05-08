@@ -5,20 +5,23 @@ import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LinearLocation;
 import com.vividsolutions.jts.linearref.LocationIndexedLine;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
+import commons.gis.ZoneHelper;
 import dao.RouteDao;
 import javafx.geometry.Pos;
 import models.Project;
+import models.Zone;
+import models.ZoneType;
 import org.apache.commons.lang3.RandomUtils;
+import org.geolatte.geom.*;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
-import org.geolatte.geom.Position;
+import org.geolatte.geom.Polygon;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
@@ -59,10 +62,19 @@ public class RouteCalculationService {
 
 
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
-        LineString lineStringToCustomer = calculateShortestLineToPoint(skeletonMultiLine, customerPoint);
+        LineString lineStringToCustomer;
+        if(ZoneHelper.isCustomerInsideDeliveryZone(project.getZones(), customerPoint)){
+            lineStringToCustomer = calculateShortestLineToPoint(skeletonMultiLine, customerPoint);
+            rawGraph.add(lineStringToCustomer);
+            skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
+        } else{
+            Zone deliveryZone = project.getZones().stream().filter(x -> x.getType() == ZoneType.DeliveryZone).findFirst().get();
+            Point intersectionPoint = getIntersectionPointWithPolygon(deliveryZone.getPolygon(), customerPoint);
+            lineStringToCustomer = calculateShortestLineToPoint(skeletonMultiLine, intersectionPoint);
+            rawGraph.add(lineStringToCustomer);
+            skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
+        }
 
-        rawGraph.add(lineStringToCustomer);
-        skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
 
         for(int i=0; i<skeletonMultiLine.getNumGeometries(); i++){
             rawGraph.add((LineString) skeletonMultiLine.getGeometryN(i));
@@ -79,6 +91,18 @@ public class RouteCalculationService {
 
         return route;
 
+    }
+
+    private Point getIntersectionPointWithPolygon(Polygon deliveryZonePolygon, Point customerPoint) {
+        com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(customerPoint);
+        com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(deliveryZonePolygon);
+
+        Coordinate[] coordinates = DistanceOp.nearestPoints(jtsPolygon, jtsPoint);
+
+        GeometryFactory geometryFactory = new GeometryFactory();
+        com.vividsolutions.jts.geom.Point intersectionPoint = geometryFactory.createPoint(coordinates[0]);
+
+        return (Point) JTS.from(intersectionPoint, GisHelper.getReferenceSystem());
     }
 
     private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath,

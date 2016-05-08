@@ -6,6 +6,7 @@ import ch.helin.messages.dto.way.RouteDto;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.gis.ZoneHelper;
 import commons.routeCalculationService.RouteCalculationService;
 import controllers.Default;
 import controllers.SecurityAuthenticator;
@@ -67,6 +68,10 @@ public class ProjectsApiController extends Controller {
         Project found = getProject(projectID);
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
+
+        ZoneHelper.assertAllConstraints(found.getZones());
+        ZoneHelper.assertThatDroneIsInLoadingZone(found.getZones(),
+                GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
 
         RouteDto realRoute = routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
 
