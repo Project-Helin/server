@@ -47,6 +47,7 @@ public class RouteCalculationService {
         logger.info("State of calculateRoute Project {}", project);
 
 
+
         MultiLineString skeletonMultiLine = routeDao.calculateSkeleton(project.getId());
         List<LineString> rawGraph = new LinkedList<>();
 
