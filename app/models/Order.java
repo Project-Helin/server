@@ -25,7 +25,8 @@ public class Order extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private OrderState state;
 
-    // TODO list of order
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    private Set<Mission> missions;
 
     public Project getProject() {
         return project;
@@ -57,6 +58,15 @@ public class Order extends BaseEntity{
 
     public void setOrderProducts(Set<OrderProduct> orderProducts) {
         this.orderProducts = orderProducts;
+    }
+
+    public Set<Mission> getMissions() {
+        return missions;
+    }
+
+    public Order setMissions(Set<Mission> missions) {
+        this.missions = missions;
+        return this;
     }
 
     public OrderState getState() {

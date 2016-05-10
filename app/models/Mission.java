@@ -1,9 +1,7 @@
 package models;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "missions")
 public class Mission extends BaseEntity {
@@ -22,9 +20,13 @@ public class Mission extends BaseEntity {
     @OneToOne(mappedBy = "mission")
     private Route route;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_product_id")
+    private OrderProduct orderProduct;
 
     public MissionState getState() {
         return state;
@@ -58,16 +60,21 @@ public class Mission extends BaseEntity {
         this.drone = drone;
     }
 
-    public Set<OrderProduct> getOrderProducts() {
-        //TODO Load real orderProducts assigned to this mission;
-        return new HashSet<>();
-    }
-
     public Order getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public Mission setOrder(Order order) {
         this.order = order;
+        return this;
+    }
+
+    public OrderProduct getOrderProduct() {
+        return orderProduct;
+    }
+
+    public Mission setOrderProduct(OrderProduct orderProduct) {
+        this.orderProduct = orderProduct;
+        return this;
     }
 }
