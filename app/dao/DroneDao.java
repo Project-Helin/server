@@ -15,22 +15,22 @@ public class DroneDao extends AbstractDao<Drone> {
 
     public List<Drone> findByOrganisation(Organisation organisation) {
         return jpaApi
-            .em()
-            .createQuery("select d from drones d where d.organisation = :organisation", Drone.class)
-            .setParameter("organisation", organisation)
-            .getResultList();
+                .em()
+                .createQuery("select d from drones d where d.organisation = :organisation", Drone.class)
+                .setParameter("organisation", organisation)
+                .getResultList();
     }
 
     public Drone findByIdAndOrganisation(UUID droneId, Organisation organisation) {
         TypedQuery<Drone> droneTypedQuery = jpaApi
-            .em()
-            .createQuery(
-                "select d from drones d " +
-                    " where d.organisation = :organisation and d.id = :droneId",
-                Drone.class
-            )
-            .setParameter("organisation", organisation)
-            .setParameter("droneId", droneId);
+                .em()
+                .createQuery(
+                        "select d from drones d " +
+                                " where d.organisation = :organisation and d.id = :droneId",
+                        Drone.class
+                )
+                .setParameter("organisation", organisation)
+                .setParameter("droneId", droneId);
 
         return getSingleResultOrNull(droneTypedQuery);
     }
@@ -42,8 +42,9 @@ public class DroneDao extends AbstractDao<Drone> {
                         "select d from drones d " +
                                 " where d.project.id = :project_id " +
                                 " and d.payload >= :payload " +
-                                " and d.currentMission.id = null " +
-                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) ",
+                                " and d.currentMission = null " +
+                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) "
+                        ,
                         Drone.class
                 )
                 .setParameter("project_id", projectId)

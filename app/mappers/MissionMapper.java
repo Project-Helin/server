@@ -16,7 +16,7 @@ public class MissionMapper {
         MissionDto missionDto = new MissionDto();
 
         missionDto.setRouteDto(routeMapper.convertToRouteDto(mission.getRoute()));
-        missionDto.setOrderProducts(orderProductsMapper.convertToOrderProductList(mission.getOrderProducts()));
+        missionDto.setOrderProduct(orderProductsMapper.convertToOrderProductDto(mission.getOrderProduct()));
         return missionDto;
     }
 

@@ -24,7 +24,16 @@ public class TestHelper {
     private DroneDao droneDao;
 
     @Inject
+    private MissionsDao missionsDao;
+
+    @Inject
     private OrderDao orderDao;
+
+    @Inject
+    private RouteDao routeDao;
+
+    @Inject
+    private OrderProductDao orderProductDao;
 
     @Inject
     private UserDao userDao;
@@ -61,13 +70,46 @@ public class TestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
-        order.s
 
         jpaApi.withTransaction(() -> {
             orderDao.persist(order);
         });
 
         return order;
+    }
+
+    public Order createNewOrderWithThreeMissions(Project project, Customer customer) {
+        Order order = new Order();
+        order.setProject(project);
+        order.setCustomer(customer);
+
+        jpaApi.withTransaction(() -> {
+            orderDao.persist(order);
+        });
+
+        createNewMission(order);
+        createNewMission(order);
+        createNewMission(order);
+
+        return order;
+    }
+
+    public Mission createNewMission(Order order) {
+        Mission mission = new Mission();
+        mission.setOrderProduct(createNewOrderProduct());
+        mission.setOrder(order);
+
+        Route route = new Route();
+
+        jpaApi.withTransaction(() -> {
+            routeDao.persist(route);
+            missionsDao.persist(mission);
+
+            route.setMission(mission);
+            routeDao.persist(route);
+        });
+
+        return mission;
     }
 
     public Drone createNewDrone(Organisation organisation) {
@@ -156,7 +198,7 @@ public class TestHelper {
     }
 
     public Project createNewProject(Organisation organisation) {
-        // force to use zone function wiht empty zones
+        // force to use zone function with empty zones
         return createNewProject(organisation, new Zone[]{});
     }
 
@@ -235,7 +277,18 @@ public class TestHelper {
         return droneState;
     }
 
-    public DroneInfo createDroneInfo (Drone drone) {
+    public OrderProduct createNewOrderProduct() {
+        Product product = createProduct();
+
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setAmount(1);
+        orderProduct.setTotalPrice(50.0);
+        orderProduct.setProduct(product);
+        return orderProduct;
+
+    }
+
+    public DroneInfo createDroneInfo(Drone drone) {
         DroneInfo droneInfo = new DroneInfo();
 
         droneInfo.setAltitude(10);

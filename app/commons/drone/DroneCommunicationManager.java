@@ -26,7 +26,7 @@ public class DroneCommunicationManager {
         this.jpaApi = jpaApi;
         this.droneMessageDispatcher = droneMessageDispatcher;
         this.messageConverter = messageConverter;
-        jpaApi.withTransaction( () -> {
+        jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);
         });
     }

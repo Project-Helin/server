@@ -26,6 +26,7 @@ public class Order extends BaseEntity{
     private OrderState state;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OrderBy("updateAt DESC ")
     private Set<Mission> missions;
 
     public Project getProject() {

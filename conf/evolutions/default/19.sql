@@ -10,8 +10,8 @@ ALTER TABLE missions ADD
 
 # --- !Downs
 
-ALTER TABLE drones
+ALTER TABLE missions
   DROP COLUMN order_id;
 
-ALTER TABLE drones
+ALTER TABLE missions
   DROP COLUMN order_product_id;

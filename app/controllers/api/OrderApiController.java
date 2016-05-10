@@ -1,12 +1,13 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import commons.order.OrderDispatchingService;
+import commons.order.MissionDispatchingService;
+import dao.MissionsDao;
 import dao.OrderDao;
+import models.MissionState;
 import models.Order;
 import models.OrderState;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -16,10 +17,13 @@ import java.util.UUID;
 public class OrderApiController extends Controller {
 
     @Inject
-    OrderDispatchingService orderDispatchingService;
+    private MissionDispatchingService missionDispatchingService;
 
     @Inject
-    OrderDao orderDao;
+    private OrderDao orderDao;
+
+    @Inject
+    private MissionsDao missionsDao;
 
     /*
     An Order with mission and route is created,
@@ -27,13 +31,12 @@ public class OrderApiController extends Controller {
     The customer should receive an offer for
     the deliveryLocation first
      */
-    public Result create () {
+    public Result create() {
         //Create Order
         //Set State to ROUTE_SUGGESTED
-        //Create Mission
+        //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
         //Calculate Route
         //Send route to Customer
-
 
         return ok();
     }
@@ -44,13 +47,17 @@ public class OrderApiController extends Controller {
      */
     public Result confirm(UUID orderID) {
         Order order = orderDao.findById(orderID);
-        order.setState(OrderState.WAITING_FOR_FREE_DRONE);
+        order.setState(OrderState.IN_PROGRESS);
+        order.getMissions().stream().forEach(mission -> {
+            mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+            missionsDao.persist(mission);
+        });
+
         orderDao.persist(order);
 
-        orderDispatchingService.tryToDispatchWaitingOrders(order.getProject().getId(), order.getId());
-        int countOfOrdersBeforeMe = orderDispatchingService.getMyNumberInWaitingQueue(order);
+        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
-        return ok(Json.toJson(countOfOrdersBeforeMe));
+        return ok();
     }
 
 }

@@ -1,7 +1,6 @@
 package dao;
 
 import models.Mission;
-import models.Order;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -15,12 +14,12 @@ public class MissionsDao extends AbstractDao<Mission> {
 
     public List<Mission> findWaitingMissions(UUID projectId) {
 
-        TypedQuery<Order> query = jpaApi.em().createQuery(
-                "select p " +
+        TypedQuery<Mission> query = jpaApi.em().createQuery(
+                "select m " +
                         " from missions m " +
                         " where m.state = 'WAITING_FOR_FREE_DRONE' " +
                         " and m.order.project.id = :projectId " +
-                        " order by p.updateAt ASC ", Order.class);
+                        " order by m.updateAt ASC ", Mission.class);
 
         query.setParameter("projectId", projectId);
         return query.getResultList();
