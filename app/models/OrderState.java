@@ -1,0 +1,5 @@
+package models;
+
+public enum OrderState {
+    NEW, ROUTE_SUGGESTED, WAITING_FOR_FREE_DRONE, PARTIALLY_DELIVERED, FINISHED
+}

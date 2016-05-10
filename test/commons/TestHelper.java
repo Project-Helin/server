@@ -61,6 +61,7 @@ public class TestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
+        order.s
 
         jpaApi.withTransaction(() -> {
             orderDao.persist(order);
@@ -76,6 +77,22 @@ public class TestHelper {
         drone.setToken(UUID.randomUUID());
 
         drone.setOrganisation(organisation);
+
+        jpaApi.withTransaction(() -> {
+            droneDao.persist(drone);
+        });
+
+        return drone;
+    }
+
+    public Drone createNewDroneForProject(Project project) {
+        Drone drone = new Drone();
+        drone.setName("Super HSR Drone" + System.currentTimeMillis());
+        drone.setPayload(400);
+        drone.setToken(UUID.randomUUID());
+
+        drone.setOrganisation(project.getOrganisation());
+        drone.setProject(project);
 
         jpaApi.withTransaction(() -> {
             droneDao.persist(drone);

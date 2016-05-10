@@ -1,51 +1,56 @@
 package commons.order;
 
 import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
-import ch.helin.messages.dto.way.RouteDto;
 import com.google.inject.Inject;
 import commons.drone.DroneCommunicationManager;
 import dao.DroneDao;
 import dao.MissionsDao;
-import mappers.RouteMapper;
+import dao.OrderDao;
+import mappers.MissionMapper;
 import models.Drone;
 import models.Mission;
 import models.MissionState;
 import models.Order;
 
+import java.util.List;
 import java.util.UUID;
 
 public class OrderDispatchingService {
     @Inject
-    DroneCommunicationManager droneCommunicationManager;
+    private DroneCommunicationManager droneCommunicationManager;
 
     @Inject
-    DroneDao droneDao;
+    private DroneDao droneDao;
 
     @Inject
-    RouteMapper routeMapper;
+    private OrderDao orderDao;
 
     @Inject
-    MissionsDao missionsDao;
+    private MissionMapper missionMapper;
 
-    public int tryToDispatchWaitingOrders(UUID projectId, UUID orderId) {
+    @Inject
+    private MissionsDao missionsDao;
 
-        /*
-        TODO Load all orders with state "WAITING_FOR_FREE_DRONE" from project and
-        execute tryAssignDroneForThisOrder for Each Drone in Order of updated_at attribute
-        on order.
-         */
+    public void tryToDispatchWaitingOrders(UUID projectId, UUID orderId) {
 
-        //TODO return number of waiting orders before mine
-        return 0;
+        List<Order> waitingOrders = orderDao.findWaitingOrders(projectId);
+        waitingOrders.stream().forEach(this::tryAssignDroneForThisOrder);
+    }
 
+    public int getMyNumberInWaitingQueue (Order order) {
+        List<Order> waitingOrders = orderDao.findWaitingOrders(order.getProject().getId());
+
+        return waitingOrders.indexOf(orderDao.findById(order.getId()));
     }
 
 
-    public boolean tryAssignDroneForThisOrder(Order order) {
+    public boolean tryAssignDroneForThisOrder(Mission mission) {
 
-        //get this information from order
-        int minPayload = 500;
-        UUID projectId = UUID.randomUUID();
+        int minPayload = order.getOrderProducts().stream()
+                .mapToInt((o) -> o.getAmount() * o.getProduct().getWeightGramm())
+                .sum();
+
+        UUID projectId = order.getProject().getId();
 
         // find the best drone for the mission
 
@@ -60,8 +65,9 @@ public class OrderDispatchingService {
             droneDao.persist(matchingDrone);
 
             AssignMissionMessage assignMissionMessage = new AssignMissionMessage();
-            RouteDto routeDto = routeMapper.convertToRouteDto(mission.getRoute());
-            assignMissionMessage.setRouteDto(routeDto);
+
+            assignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
+
             droneCommunicationManager.sendMessageToDrone(matchingDrone.getId(), assignMissionMessage);
 
             return true;

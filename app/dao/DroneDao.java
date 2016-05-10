@@ -40,10 +40,10 @@ public class DroneDao extends AbstractDao<Drone> {
                 .em()
                 .createQuery(
                         "select d from drones d " +
-                                "where d.project_id = :project_id " +
-                                "and d.payload >= :payload " +
-                                "and current_mission_id = null " +
-                                "AND abs(1 - d.payload) = (select min(abs(1 - number)) from t)",
+                                " where d.project.id = :project_id " +
+                                " and d.payload >= :payload " +
+                                " and d.currentMission.id = null " +
+                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) ",
                         Drone.class
                 )
                 .setParameter("project_id", projectId)

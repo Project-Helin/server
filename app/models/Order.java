@@ -1,7 +1,6 @@
 package models;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import commons.gis.GisHelper;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -22,6 +21,9 @@ public class Order extends BaseEntity{
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private Set<OrderProduct> orderProducts;
+
+    @Enumerated(EnumType.STRING)
+    private OrderState state;
 
     // TODO list of order
 
@@ -55,5 +57,13 @@ public class Order extends BaseEntity{
 
     public void setOrderProducts(Set<OrderProduct> orderProducts) {
         this.orderProducts = orderProducts;
+    }
+
+    public OrderState getState() {
+        return state;
+    }
+
+    public void setState(OrderState state) {
+        this.state = state;
     }
 }
