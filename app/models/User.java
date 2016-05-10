@@ -12,11 +12,11 @@ import java.util.UUID;
 public class User extends BaseEntity {
 
     @Constraints.Required
-    @Constraints.Email
     @Column
     private String name;
 
     @Constraints.Required
+    @Constraints.Email
     @Column
     private String email;
 
