@@ -19,7 +19,7 @@ public class Order extends BaseEntity{
     @Column
     private Coordinate deliveryPosition;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
 
     @Enumerated(EnumType.STRING)

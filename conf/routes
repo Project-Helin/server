@@ -36,6 +36,8 @@ GET         /projects/:projectId/drones/:droneId/delete             controllers.
 
 # Orders (all)
 GET         /orders/                                                controllers.OrdersController.index()
+GET         /orders/:ordersId/delete                                controllers.OrdersController.delete(ordersId : java.util.UUID)
+
 
 #Product
 GET         /products/                                              controllers.ProductsController.index()
