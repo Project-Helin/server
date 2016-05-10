@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import commons.gis.GisHelper;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "orders")
 public class Order extends BaseEntity{
@@ -18,6 +19,11 @@ public class Order extends BaseEntity{
 
     @Column
     private Coordinate deliveryPosition;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    private Set<OrderProduct> orderProducts;
+
+    // TODO list of order
 
     public Project getProject() {
         return project;
@@ -41,5 +47,13 @@ public class Order extends BaseEntity{
 
     public void setDeliveryPosition(Coordinate deliveryPosition) {
         this.deliveryPosition = deliveryPosition;
+    }
+
+    public Set<OrderProduct> getOrderProducts() {
+        return orderProducts;
+    }
+
+    public void setOrderProducts(Set<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
     }
 }

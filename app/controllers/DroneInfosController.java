@@ -18,16 +18,16 @@ public class DroneInfosController {
     private static final Logger logger = LoggerFactory.getLogger(DroneInfosController.class);
 
     @Inject
-    DroneDao droneDao;
+    private DroneDao droneDao;
 
     @Inject
-    DroneInfoDao droneInfoDao;
+    private DroneInfoDao droneInfoDao;
 
     @Inject
-    DroneInfoMapper droneInfoMapper;
+    private DroneInfoMapper droneInfoMapper;
 
     @Inject
-    JPAApi jpaApi;
+    private JPAApi jpaApi;
 
     public void onDroneInfoReceived(UUID droneId, DroneInfoMessage droneInfoMessage) {
         jpaApi.withTransaction(()-> {
