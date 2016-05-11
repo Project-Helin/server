@@ -1,4 +1,4 @@
-package controllers.api;
+package dto.api;
 
 /**
  * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )

@@ -1,6 +1,5 @@
 package dto.api;
 
-import controllers.api.OrderProductApiDto;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
