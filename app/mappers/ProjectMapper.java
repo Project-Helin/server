@@ -2,8 +2,8 @@ package mappers;
 
 
 import com.google.inject.Inject;
-import controllers.api.ProjectDto;
-import controllers.api.ZoneDto;
+import dto.api.ProjectApiDto;
+import dto.api.ZoneApiDto;
 import models.Project;
 
 import java.util.List;
@@ -12,16 +12,13 @@ import java.util.stream.Collectors;
 public class ProjectMapper {
 
     @Inject
-    private ZoneMapper zoneMapper;
+    ZoneMapper zoneMapper;
 
-    public ProjectDto getProjectDto(Project project) {
-        List<ZoneDto> zoneDtos= project
-            .getZones()
-            .stream()
-            .map(zoneMapper::getZoneDto)
-            .collect(Collectors.toList());
+    public ProjectApiDto getProjectDto(Project project) {
 
-        return new ProjectDto(
+        List<ZoneApiDto> zoneDtos= project.getZones().stream().map(zoneMapper::getZoneDto).collect(Collectors.toList());
+
+        return new ProjectApiDto(
                 project.getId(),
                 project.getName(),
                 zoneDtos

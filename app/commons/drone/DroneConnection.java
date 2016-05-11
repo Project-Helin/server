@@ -86,7 +86,7 @@ public class DroneConnection {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
                     throws IOException {
                 String message = new String(body, "UTF-8");
-               droneMessageDispatcher.dispatchMessage(drone.getId(), message);
+               droneMessageDispatcher.dispatchMessageToController(drone.getId(), message);
             }
         };
 

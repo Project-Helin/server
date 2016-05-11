@@ -16,6 +16,7 @@ public class User extends BaseEntity {
     private String name;
 
     @Constraints.Required
+    @Constraints.Email
     @Column
     private String email;
 

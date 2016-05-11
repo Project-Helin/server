@@ -16,6 +16,8 @@
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Token</th>
+                                <th>Current Mission</th>
+                                <th>Battery State</th>
                                 <th>Payload</th>
                                 <th>Action</th>
                             </tr>
@@ -26,6 +28,16 @@
                                 <th>@drone.getId</th>
                                 <th>@drone.getName</th>
                                 <th>@drone.getToken</th>
+                                <th>@if(drone.getCurrentMission() != null) {drone.getCurrentMission.getState}</th>
+                                <th>@if(drone.getRemainingBatteryPercent > 0) {
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-green" role="progressbar" aria-valuenow="@drone.getRemainingBatteryPercent"
+                                        aria-valuemin="0" aria-valuemax="100" style="width: @drone.getRemainingBatteryPercent%">
+                                            @drone.getRemainingBatteryPercent %
+                                        </div>
+                                    </div>
+                                }
+                                </th>
                                 <th>@drone.getPayload</th>
                                 <th>
                                     <a href="@controllers.routes.DronesController.edit(drone.getId)"

@@ -1,4 +1,4 @@
-package controllers.api;
+package dto.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -9,7 +9,7 @@ import org.geolatte.geom.Polygon;
 
 import java.util.UUID;
 
-public class ZoneDto {
+public class ZoneApiDto {
     private UUID id;
 
     @JsonSerialize(using = JsonGeometrySerializer.class)
@@ -20,7 +20,7 @@ public class ZoneDto {
     private ZoneType type;
     private String name;
 
-    public ZoneDto(UUID id, Polygon polygon, Integer height, ZoneType type, String name) {
+    public ZoneApiDto(UUID id, Polygon polygon, Integer height, ZoneType type, String name) {
         this.id = id;
         this.polygon = polygon;
         this.height = height;
@@ -28,7 +28,7 @@ public class ZoneDto {
         this.name = name;
     }
 
-    public ZoneDto() {
+    public ZoneApiDto() {
     }
 
     public UUID getId() {

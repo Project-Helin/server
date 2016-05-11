@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
 import models.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import play.db.jpa.JPAApi;
 
 import java.util.Date;
@@ -23,6 +24,18 @@ public class TestHelper {
     private DroneDao droneDao;
 
     @Inject
+    private MissionsDao missionsDao;
+
+    @Inject
+    private OrderDao orderDao;
+
+    @Inject
+    private RouteDao routeDao;
+
+    @Inject
+    private OrderProductDao orderProductDao;
+
+    @Inject
     private UserDao userDao;
 
     @Inject
@@ -37,6 +50,9 @@ public class TestHelper {
     @Inject
     private DroneInfoDao droneInfoDao;
 
+    @Inject
+    private CustomerDao customerDao;
+
     public Organisation createNewOrganisation() {
         Organisation organisation = new Organisation();
         organisation.setId(UUID.randomUUID());
@@ -50,6 +66,52 @@ public class TestHelper {
         return organisation;
     }
 
+    public Order createNewOrder(Project project, Customer customer) {
+        Order order = new Order();
+        order.setProject(project);
+        order.setCustomer(customer);
+
+        jpaApi.withTransaction(() -> {
+            orderDao.persist(order);
+        });
+
+        return order;
+    }
+
+    public Order createNewOrderWithThreeMissions(Project project, Customer customer) {
+        Order order = new Order();
+        order.setProject(project);
+        order.setCustomer(customer);
+
+        jpaApi.withTransaction(() -> {
+            orderDao.persist(order);
+        });
+
+        createNewMission(order);
+        createNewMission(order);
+        createNewMission(order);
+
+        return order;
+    }
+
+    public Mission createNewMission(Order order) {
+        Mission mission = new Mission();
+        mission.setOrderProduct(createNewOrderProduct());
+        mission.setOrder(order);
+
+        Route route = new Route();
+
+        jpaApi.withTransaction(() -> {
+            routeDao.persist(route);
+            missionsDao.persist(mission);
+
+            route.setMission(mission);
+            routeDao.persist(route);
+        });
+
+        return mission;
+    }
+
     public Drone createNewDrone(Organisation organisation) {
         Drone drone = new Drone();
         drone.setName("Super HSR Drone" + System.currentTimeMillis());
@@ -57,6 +119,22 @@ public class TestHelper {
         drone.setToken(UUID.randomUUID());
 
         drone.setOrganisation(organisation);
+
+        jpaApi.withTransaction(() -> {
+            droneDao.persist(drone);
+        });
+
+        return drone;
+    }
+
+    public Drone createNewDroneForProject(Project project) {
+        Drone drone = new Drone();
+        drone.setName("Super HSR Drone" + System.currentTimeMillis());
+        drone.setPayload(400);
+        drone.setToken(UUID.randomUUID());
+
+        drone.setOrganisation(project.getOrganisation());
+        drone.setProject(project);
 
         jpaApi.withTransaction(() -> {
             droneDao.persist(drone);
@@ -120,7 +198,7 @@ public class TestHelper {
     }
 
     public Project createNewProject(Organisation organisation) {
-        // force to use zone function wiht empty zones
+        // force to use zone function with empty zones
         return createNewProject(organisation, new Zone[]{});
     }
 
@@ -199,7 +277,18 @@ public class TestHelper {
         return droneState;
     }
 
-    public DroneInfo createDroneInfo (Drone drone) {
+    public OrderProduct createNewOrderProduct() {
+        Product product = createProduct();
+
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setAmount(1);
+        orderProduct.setTotalPrice(50.0);
+        orderProduct.setProduct(product);
+        return orderProduct;
+
+    }
+
+    public DroneInfo createDroneInfo(Drone drone) {
         DroneInfo droneInfo = new DroneInfo();
 
         droneInfo.setAltitude(10);
@@ -216,4 +305,16 @@ public class TestHelper {
         return droneInfo;
     }
 
+    public Customer createCustomer() {
+        Customer customer = new Customer();
+        customer.setDisplayName("Testcustomer");
+        customer.setEmail("testcustomer@helin.ch");
+        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
+
+        jpaApi.withTransaction(() -> {
+            customerDao.persist(customer);
+        });
+
+        return customer;
+    }
 }
