@@ -1,27 +1,19 @@
 package commons.routeCalculationService;
 
 import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
-
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.linearref.LinearLocation;
 import com.vividsolutions.jts.linearref.LocationIndexedLine;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
 import commons.gis.ZoneHelper;
 import dao.RouteDao;
-import javafx.geometry.Pos;
 import models.Project;
 import models.Zone;
 import models.ZoneType;
-import org.apache.commons.lang3.RandomUtils;
 import org.geolatte.geom.*;
-import org.geolatte.geom.LineString;
-import org.geolatte.geom.MultiLineString;
-import org.geolatte.geom.Point;
-import org.geolatte.geom.Polygon;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
@@ -31,7 +23,9 @@ import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RouteCalculationService {
 
