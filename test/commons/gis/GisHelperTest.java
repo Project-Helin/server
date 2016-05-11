@@ -1,6 +1,7 @@
 package commons.gis;
 
 import ch.helin.messages.dto.way.Position;
+import ch.helin.messages.dto.way.Waypoint;
 import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
@@ -10,7 +11,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class GisHelperTest {
 
@@ -53,5 +58,27 @@ public class GisHelperTest {
         Point<?> point = GisHelper.createPoint(100, -150);
 
         assertThat(point.toString()).isEqualTo("SRID=4326;POINT(100 -150)");
+    }
+
+    @Test
+    public void shouldConvertPositionListToWaypointList(){
+
+        List<org.geolatte.geom.Position> positionList = new LinkedList<>();
+
+        positionList.add(GisHelper.createPoint(1,1).getPosition());
+        positionList.add(GisHelper.createPoint(2,2).getPosition());
+        positionList.add(GisHelper.createPoint(3,3).getPosition());
+        positionList.add(GisHelper.createPoint(4,4).getPosition());
+
+        List<Waypoint> waypointList = GisHelper.getWaypointListFromPositions(positionList);
+
+        assertEquals(waypointList.size(), positionList.size());
+
+        for(int i = 0; i<positionList.size(); i++){
+            assertEquals(positionList.get(i).getCoordinate(0), waypointList.get(i).getPosition().getLon(), GisHelper.getRoundoffPrecision());
+            assertEquals(positionList.get(i).getCoordinate(0), waypointList.get(i).getPosition().getLon(), GisHelper.getRoundoffPrecision());
+        }
+
+
     }
 }

@@ -42,6 +42,12 @@ libraryDependencies += "org.postgresql" % "postgresql" % "9.3-1104-jdbc41"
 libraryDependencies += "org.hibernate" % "hibernate-spatial" % "5.1.0.Final"
 
 /**
+  * Extension to do graph algorithms in Java
+  */
+libraryDependencies += "org.jgrapht" % "jgrapht-core" % "0.9.2"
+
+
+/**
   * Extension for Encryption
   */
 libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
