@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import commons.AbstractE2ETest;
 import commons.TestHelper;
 import dao.ProjectsDao;
+import dto.api.ProjectApiDto;
+import dto.api.ZoneApiDto;
 import models.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +41,9 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
         );
 
-        ProjectDto project = apiHelper.doGet(
+        ProjectApiDto project = apiHelper.doGet(
             routes.ProjectsApiController.show(newProject.getId()),
-            ProjectDto.class,
+            ProjectApiDto.class,
             browser
         );
 
@@ -50,7 +52,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         assertThat(project.getId()).isEqualTo(project.getId());
         assertThat(project.getName()).isEqualTo(project.getName());
 
-        List<ZoneDto> zones = sortedZone(project);
+        List<ZoneApiDto> zones = sortedZone(project);
         assertThat(zones).hasSize(2);
         assertThat(zones.get(0).getName()).isEqualTo("Flight zone");
         assertThat(zones.get(0).getType()).isEqualTo(ZoneType.FlightZone);
@@ -71,14 +73,14 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
         apiHelper.doPost(
             routes.ProjectsApiController.show(newProject.getId()),
-            ProjectDto.class,
+            ProjectApiDto.class,
             browser
         );
     }
 
     @Test(expected = Exception.class)
     public void shouldShowNotExistingProject() {
-        apiHelper.doGetWithJsonResponse(routes.ProjectsApiController.show(UUID.randomUUID()), ProjectDto.class);
+        apiHelper.doGetWithJsonResponse(routes.ProjectsApiController.show(UUID.randomUUID()), ProjectApiDto.class);
     }
 
     @Test
@@ -101,7 +103,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
     public void shouldUpdateProjectWithoutZones() {
         Project project = testHelper.createNewProject(currentOrganisation);
 
-        ProjectDto projectDto = new ProjectDto(project.getId(), "My Super Project", Collections.emptyList());
+        ProjectApiDto projectDto = new ProjectApiDto(project.getId(), "My Super Project", Collections.emptyList());
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
 
         List<Project> found = jpaApi.withTransaction(em -> projectsDao.findAll());
@@ -113,11 +115,11 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldAddProjectWithZones() {
-        ProjectDto projectDto = new ProjectDto();
+        ProjectApiDto projectDto = new ProjectApiDto();
         projectDto.setId(UUID.randomUUID());
         projectDto.setName("My Super Project");
         projectDto.setZones(Collections.singletonList(
-            new ZoneDto(UUID.randomUUID(), null, 10, ZoneType.LoadingZone, "My Flightzone")
+            new ZoneApiDto(UUID.randomUUID(), null, 10, ZoneType.LoadingZone, "My Flightzone")
         ));
 
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
@@ -143,7 +145,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         );
 
         Zone firstZone = newProject.getZones().iterator().next();
-        ProjectDto projectDto = mapToDto(newProject, firstZone);
+        ProjectApiDto projectDto = mapToDto(newProject, firstZone);
 
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
 
@@ -168,9 +170,9 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
 
         Zone firstZone = newProject.getZones().iterator().next();
-        ZoneDto secondNew = new ZoneDto(UUID.randomUUID(), null, 100, ZoneType.LoadingZone, "JO");
+        ZoneApiDto secondNew = new ZoneApiDto(UUID.randomUUID(), null, 100, ZoneType.LoadingZone, "JO");
 
-        ProjectDto projectDto = mapToDto(newProject, firstZone);
+        ProjectApiDto projectDto = mapToDto(newProject, firstZone);
         projectDto.setZones(Arrays.asList(zoneToDto(firstZone), secondNew));
 
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
@@ -204,7 +206,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         Zone firstZone = newProject.getZones().iterator().next();
         firstZone.setName("Jo!");
 
-        ProjectDto projectDto = mapToDto(newProject, firstZone);
+        ProjectApiDto projectDto = mapToDto(newProject, firstZone);
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
 
         jpaApi.withTransaction(() -> {
@@ -223,12 +225,12 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         });
     }
 
-    private ProjectDto mapToDto(Project newProject, Zone... zones) {
-        ProjectDto projectDto = new ProjectDto();
+    private ProjectApiDto mapToDto(Project newProject, Zone... zones) {
+        ProjectApiDto projectDto = new ProjectApiDto();
         projectDto.setId(newProject.getId());
         projectDto.setName(newProject.getName());
 
-        List<ZoneDto> collect = Arrays
+        List<ZoneApiDto> collect = Arrays
             .stream(zones)
             .map(this::zoneToDto)
             .collect(Collectors.toList());
@@ -237,8 +239,8 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
         return projectDto;
     }
 
-    private ZoneDto zoneToDto(Zone firstZone) {
-        return new ZoneDto(
+    private ZoneApiDto zoneToDto(Zone firstZone) {
+        return new ZoneApiDto(
             firstZone.getId(),
             firstZone.getPolygon(),
             firstZone.getHeight(),
@@ -254,7 +256,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
             .collect(Collectors.toList());
     }
 
-    private List<ZoneDto> sortedZone(ProjectDto project) {
+    private List<ZoneApiDto> sortedZone(ProjectApiDto project) {
         return project.getZones()
             .stream()
             .sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))

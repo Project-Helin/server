@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
 import dao.*;
+import dto.api.OrderCargoDto;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -88,9 +89,9 @@ public class OrderApiController extends Controller {
     }
 
     private Set<OrderProduct> getOrderProducts(OrderCargoDto orderCargoDto, Order order) {
-        List<ApiOrderProductDto> orderProducts = orderCargoDto.getOrderProducts();
+        List<OrderProductApiDto> orderProducts = orderCargoDto.getOrderProducts();
         HashSet<OrderProduct> products = new HashSet<>();
-        for (ApiOrderProductDto orderProduct : orderProducts) {
+        for (OrderProductApiDto orderProduct : orderProducts) {
             OrderProduct e = new OrderProduct();
             e.setAmount(orderProduct.getAmount());;
             e.setOrder(order);

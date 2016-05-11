@@ -3,6 +3,7 @@ package controllers.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import dto.api.ProjectApiDto;
 import org.openqa.selenium.Cookie;
 import play.libs.Json;
 import play.libs.ws.WSClient;
@@ -51,7 +52,7 @@ public class ApiHelper {
         }
     }
 
-    public ProjectDto doPost(Call urlRouteLink, Object bodyWhichIsSentAsJson, TestBrowser testBrowser) {
+    public ProjectApiDto doPost(Call urlRouteLink, Object bodyWhichIsSentAsJson, TestBrowser testBrowser) {
         try {
             doPostCareFree(urlRouteLink, bodyWhichIsSentAsJson, testBrowser);
         } catch (Exception e) {

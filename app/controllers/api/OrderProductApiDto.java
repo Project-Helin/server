@@ -3,7 +3,7 @@ package controllers.api;
 /**
  * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
-public class ApiOrderProductDto {
+public class OrderProductApiDto {
     private Integer amount;
     private String productId;
 

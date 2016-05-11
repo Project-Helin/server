@@ -60,7 +60,7 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
         Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
         Drone drone = testHelper.createNewDroneForProject(project);
 
-        apiHelper.doPost(routes.OrderApiController.confirm(order.getId()), Json.newObject());
+        apiHelper.doPost(OrderApiController.confirm(order.getId()), Json.newObject());
 
         jpaApi.withTransaction(() -> {
             Order loadedOrder = orderDao.findById(order.getId());

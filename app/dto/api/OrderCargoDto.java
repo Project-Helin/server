@@ -1,7 +1,6 @@
-package controllers.api;
+package dto.api;
 
-import ch.helin.messages.dto.OrderProductDto;
-import ch.helin.messages.dto.ProductDto;
+import controllers.api.OrderProductApiDto;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public class OrderCargoDto {
     private String displayName;
     private String email;
 
-    private List<ApiOrderProductDto> orderProducts;
+    private List<OrderProductApiDto> orderProducts;
 
     public String getDisplayName() {
         return displayName;
@@ -31,11 +30,11 @@ public class OrderCargoDto {
         this.email = email;
     }
 
-    public List<ApiOrderProductDto> getOrderProducts() {
+    public List<OrderProductApiDto> getOrderProducts() {
         return orderProducts;
     }
 
-    public void setOrderProducts(List<ApiOrderProductDto> orderProducts) {
+    public void setOrderProducts(List<OrderProductApiDto> orderProducts) {
         this.orderProducts = orderProducts;
     }
 

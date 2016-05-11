@@ -9,6 +9,8 @@ import commons.SessionHelper;
 import commons.gis.GisHelper;
 import controllers.SecurityAuthenticator;
 import dao.ProjectsDao;
+import dto.api.ProjectApiDto;
+import dto.api.ZoneApiDto;
 import mappers.ProjectMapper;
 import models.Organisation;
 import models.Project;
@@ -41,7 +43,7 @@ public class ProjectsApiController extends Controller {
     public Result index() {
         List<Project> projects = projectsDao.findByOrganisation(getOrganisation().getId());
 
-        List<ProjectDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
+        List<ProjectApiDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
         return ok(Json.toJson(projectDtos));
     }
 
@@ -99,8 +101,8 @@ public class ProjectsApiController extends Controller {
             project.setOrganisation(getOrganisation());
         }
 
-        ProjectDto fromRequest =
-            Json.fromJson(request().body().asJson(), ProjectDto.class);
+        ProjectApiDto fromRequest =
+            Json.fromJson(request().body().asJson(), ProjectApiDto.class);
         // set all fields
         project.setName(fromRequest.getName());
         addZonesToProject(project, fromRequest);
@@ -111,10 +113,10 @@ public class ProjectsApiController extends Controller {
 
     /**
      * This needs a special handling - because we need to check if
-     * there are already saved sones, or new ones.
+     * there are already saved zones, or new ones.
      */
     private void addZonesToProject(Project project,
-                                   ProjectDto fromRequest) {
+                                   ProjectApiDto fromRequest) {
 
         Set<Zone> zones = project.getZones();
         HashSet<Zone> previousZones = new HashSet<>(zones);
@@ -126,7 +128,7 @@ public class ProjectsApiController extends Controller {
         project.getZones().addAll(mapAll(fromRequest, project, previousZones));
     }
 
-    private List<Zone> mapAll(ProjectDto fromRequest,
+    private List<Zone> mapAll(ProjectApiDto fromRequest,
                               Project project,
                               Set<Zone> previousZones) {
 
@@ -150,7 +152,7 @@ public class ProjectsApiController extends Controller {
             }).collect(Collectors.toList());
     }
 
-    private Zone findById(Set<Zone> previousZones, ZoneDto zoneDto) {
+    private Zone findById(Set<Zone> previousZones, ZoneApiDto zoneDto) {
         return previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
     }
 
