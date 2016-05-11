@@ -1,4 +1,4 @@
-package controllers.api;
+package dto.api;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,19 +8,19 @@ import java.util.UUID;
  * We cannot pass the Project because that's is a hibernate
  * Entity ( which might contain lazy init fields )
  */
-public class ProjectDto {
+public class ProjectApiDto {
     private UUID id;
     private String name;
 
-    private List<ZoneDto> zones;
+    private List<ZoneApiDto> zones;
 
-    public ProjectDto(UUID id, String name, List<ZoneDto> zones) {
+    public ProjectApiDto(UUID id, String name, List<ZoneApiDto> zones) {
         this.id = id;
         this.name = name;
         this.zones = zones;
     }
 
-    public ProjectDto() {
+    public ProjectApiDto() {
     }
 
     public UUID getId() {
@@ -39,11 +39,11 @@ public class ProjectDto {
         this.name = name;
     }
 
-    public List<ZoneDto> getZones() {
+    public List<ZoneApiDto> getZones() {
         return zones;
     }
 
-    public void setZones(List<ZoneDto> zones) {
+    public void setZones(List<ZoneApiDto> zones) {
         this.zones = zones;
     }
 }

@@ -44,6 +44,10 @@ public class GisHelper {
         String wktWithSRID = "SRID=4326; " + wktWithoutSRID;
         Geometry<?> geometry = Wkt.fromWkt(wktWithSRID);
         Point point = (Point) geometry;
+        return createPosition(point);
+    }
+
+    public static Position createPosition(Point point) {
         Position position = new Position();
         position.setLat(point.getPosition().getCoordinate(1));
         position.setLon(point.getPosition().getCoordinate(0));

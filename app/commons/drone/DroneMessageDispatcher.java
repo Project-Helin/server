@@ -17,7 +17,7 @@ public class DroneMessageDispatcher {
     @Inject
     public DroneInfosController droneInfoController;
 
-    public void dispatchMessage (UUID droneId, String jsonMessage) {
+    public void dispatchMessageToController(UUID droneId, String jsonMessage) {
         MessageConverter messageConverter = new JsonBasedMessageConverter();
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 

@@ -18,8 +18,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class RouteDao extends AbstractDao<Route>{
     private static final Logger logger = getLogger(RouteDao.class);
 
-    public RouteDao(Class<Route> entityClass, String tableName) {
-        super(entityClass, tableName);
+    public RouteDao() {
+        super(Route.class, "routes");
     }
 
     public List<LineString> calculateSkeleton(UUID projectId){

@@ -5,7 +5,9 @@ import play.data.validation.Constraints;
 public class Login {
 
     @Constraints.Required
+    @Constraints.Email
     private String email;
+
     @Constraints.Required
     private String password;
 
