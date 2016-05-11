@@ -8,6 +8,7 @@ public class ProductMapper {
     public ProductDto convertToProductDto(Product product) {
         ProductDto productDto = new ProductDto();
 
+        productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setPrice(product.getPrice());
 
