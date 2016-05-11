@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
-public class OrderCargoDto {
+public class OrderApiDto {
     private String displayName;
     private String email;
 

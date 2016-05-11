@@ -4,8 +4,19 @@
             function ($scope, $http, $timeout) {
                 console.log("called OrdersController");
 
-                $scope.sendFakeRequest = function(){
 
+                $scope.sendConfirmRequest = function(orderId){
+                    console.log("Send confirm for id " + orderId);
+
+                    $http.post('/api/orders/' + orderId + "/confirm", {})
+                         .then(function(response){
+                             // reload current page
+                             location.reload();
+                             console.log("Succesfully confirmed");
+                         });
+                };
+
+                $scope.sendFakeRequest = function(){
                     $http.get('/api/products/').then(function(response){
 
                         var productArray = response.data;

@@ -1,15 +1,19 @@
 package controllers.api;
 
+import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
 import dao.*;
-import dto.api.OrderCargoDto;
+import dto.api.OrderApiDto;
 import dto.api.OrderProductApiDto;
+import mappers.MissionMapper;
+import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -44,6 +48,9 @@ public class OrderApiController extends Controller {
     @Inject
     private MissionsDao missionsDao;
 
+    @Inject
+    private RouteMapper routeMapper;
+
     /*
      * An Order with mission and route is created,
      * but it should not be sent to the drone.
@@ -54,44 +61,68 @@ public class OrderApiController extends Controller {
     @BodyParser.Of(BodyParser.Json.class)
     public Result create() {
         String jsonNode = request().body().asJson().toString();
-        OrderCargoDto orderCargoDto = new Gson().fromJson(jsonNode, OrderCargoDto.class);
+        OrderApiDto orderApiDto = new Gson().fromJson(jsonNode, OrderApiDto.class);
 
-        if (orderCargoDto == null) {
-            logger.info("Send wrong request back, because invalid json: {}", orderCargoDto);
+        if (orderApiDto == null) {
+            logger.info("Send wrong request back, because invalid json: {}", orderApiDto);
             return forbidden("Wrong request");
         }
 
-        //Create Order
-        Customer customer = new Customer();
-        customer.setDisplayName(orderCargoDto.getDisplayName());
-        customer.setEmail(orderCargoDto.getEmail());
+        Customer customer = createCustomer(orderApiDto);
         customerDao.persist(customer);
 
-        // TODO Fix this
-        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
-
-        Order order = new Order();
-        order.setCustomer(customer);
-
-        // TODO fix this: does customer provide project-id?
-        Project first = projectsDao.findAll().iterator().next();
-        order.setProject(first);
-
-        order.setState(OrderState.ROUTE_SUGGESTED);;
-        order.setOrderProducts(getOrderProducts(orderCargoDto, order));
+        Order order = createOrder(orderApiDto, customer);
         orderDao.persist(order);
+
+
+        Route proposedRoute = calculateRoute();
+
+        Set<OrderProduct> orderProducts = order.getOrderProducts();
+        Mission mission = new Mission();
+        mission.setOrder(order);
+        mission.setState(MissionState.NEW);
+        mission.setOrderProduct(orderProducts.iterator().next()); // TODO fix
+        mission.setRoute(proposedRoute);
 
         //Set State to ROUTE_SUGGESTED
         //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
         //Calculate Route
         //Send route to Customer
 
-        return ok();
+        RouteDto routeDto = routeMapper.convertToRouteDto(proposedRoute);
+        return ok(Json.toJson(routeDto));
     }
 
-    private Set<OrderProduct> getOrderProducts(OrderCargoDto orderCargoDto, Order order) {
+    private Route calculateRoute() {
+        return new Route();
+    }
+
+    private Order createOrder(OrderApiDto orderApiDto, Customer customer) {
+        Order order = new Order();
+        order.setCustomer(customer);
+
+        // TODO fix this: does customer provide project-id?
+        Project first = projectsDao.findAll().iterator().next();
+        order.setProject(first);
+        order.setState(OrderState.ROUTE_SUGGESTED);
+        ;
+        order.setOrderProducts(getOrderProducts(orderApiDto, order));
+        return order;
+    }
+
+    private Customer createCustomer(OrderApiDto orderApiDto) {
+        Customer customer = new Customer();
+        customer.setDisplayName(orderApiDto.getDisplayName());
+        customer.setEmail(orderApiDto.getEmail());
+        customer.setToken(RandomStringUtils.randomAlphanumeric(10));// TODO Fix this
+        return customer;
+    }
+
+    private Set<OrderProduct> getOrderProducts(OrderApiDto orderCargoDto, Order order) {
+
         List<OrderProductApiDto> orderProducts = orderCargoDto.getOrderProducts();
-        HashSet<OrderProduct> products = new HashSet<>();
+        Set<OrderProduct> products = new HashSet<>();
+
         for (OrderProductApiDto orderProduct : orderProducts) {
             OrderProduct e = new OrderProduct();
             e.setAmount(orderProduct.getAmount());;
