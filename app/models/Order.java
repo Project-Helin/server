@@ -1,7 +1,6 @@
 package models;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import commons.gis.GisHelper;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -20,10 +19,14 @@ public class Order extends BaseEntity{
     @Column
     private Coordinate deliveryPosition;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
 
+    @Enumerated(EnumType.STRING)
+    private OrderState state;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OrderBy("updateAt DESC ")
     private Set<Mission> missions;
 
     public Project getProject() {
@@ -65,5 +68,13 @@ public class Order extends BaseEntity{
     public Order setMissions(Set<Mission> missions) {
         this.missions = missions;
         return this;
+    }
+
+    public OrderState getState() {
+        return state;
+    }
+
+    public void setState(OrderState state) {
+        this.state = state;
     }
 }

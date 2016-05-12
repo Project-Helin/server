@@ -56,6 +56,16 @@ public class OrdersController extends Controller {
         return ok(index.render(projects, orders, selectedProject));
     }
 
+    public Result delete(UUID ordersId) {
+        Order found = orderDao.findById(ordersId);
+        if (found == null) {
+            return forbidden();
+        }
+
+        orderDao.delete(found);
+        return redirect(routes.OrdersController.index());
+    }
+
     private Result showAll() {
         List<Order> orders =
             orderDao.findByOrganisation(sessionHelper.getOrganisation(session()));

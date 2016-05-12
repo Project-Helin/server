@@ -8,29 +8,30 @@ import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
 import dao.DroneDao;
 import dao.MissionsDao;
-import models.Drone;
-import models.DroneInfo;
-import models.Mission;
-import models.Organisation;
+import dao.OrderDao;
+import models.*;
 import org.geolatte.geom.Point;
 import org.junit.Test;
 
 import java.util.Date;
 import java.util.UUID;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.fest.assertions.Assertions.assertThat;
+
 
 public class DroneInfosControllerTest extends AbstractIntegrationTest {
 
     @Inject
-    DroneInfosController droneInfosController;
+    private DroneInfosController droneInfosController;
 
     @Inject
-    DroneDao droneDao;
+    private DroneDao droneDao;
 
     @Inject
-    MissionsDao missionDao;
+    private MissionsDao missionDao;
+
+    @Inject
+    private OrderDao orderDao;
 
     @Test
     public void TestHandleNewDroneInfoMessage() {
@@ -55,25 +56,35 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             Drone droneFromDB = droneDao.findById(drone.getId());
             DroneInfo droneInfoFromDB = droneFromDB.getDroneInfos().stream().findFirst().get();
 
-            assertThat(droneInfoFromDB.getClientTime(), is(now));
+            assertThat(droneInfoFromDB.getClientTime().getTime()).isEqualTo(now.getTime());
 
             Point positionAsPoint = GisHelper.createPoint(position.getLat(), position.getLon());
-            assertThat(droneInfoFromDB.getPhonePosition(), is(positionAsPoint));
-            assertThat(droneInfoFromDB.getDronePosition(), is(positionAsPoint));
+            assertThat(droneInfoFromDB.getPhonePosition()).isEqualTo(positionAsPoint);
+            assertThat(droneInfoFromDB.getDronePosition()).isEqualTo(positionAsPoint);
         });
     }
 
     @Test
     public void TestHandleDroneInfoDuringMission() {
         Date older = new Date(1);
-        Date newer = new Date(2);
+        Date newer = new Date(450000000);
 
         Organisation organisation = testHelper.createNewOrganisation();
         Drone detachedDrone = testHelper.createNewDrone(organisation);
 
         UUID missionId = jpaApi.withTransaction((em) -> {
             Drone drone = droneDao.findById(detachedDrone.getId());
+
             Mission mission = new Mission();
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setAmount(1);
+            orderProduct.setTotalPrice(2.0);
+            mission.setOrderProduct(orderProduct);
+
+            Order order = new Order();
+            orderDao.persist(order);
+            mission.setOrder(order);
+
             mission.setDrone(drone);
             missionDao.persist(mission);
 
@@ -83,12 +94,11 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             return mission.getId();
         });
 
-        DroneInfoMessage olderDroneInfoMessage = new DroneInfoMessage();
 
+        DroneInfoMessage olderDroneInfoMessage = new DroneInfoMessage();
         olderDroneInfoMessage.setClientTime(older);
 
         DroneInfoMessage newerDroneInfoMessage = new DroneInfoMessage();
-
         newerDroneInfoMessage.setClientTime(newer);
 
         droneInfosController.onDroneInfoReceived(detachedDrone.getId(), olderDroneInfoMessage);
@@ -99,17 +109,8 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             DroneInfo firstDroneInfo = missionFromDb.getDroneInfos().stream().findFirst().get();
             DroneInfo secondDroneInfo = missionFromDb.getDroneInfos().stream().reduce((first, second) -> second).get();
 
-            assertThat(firstDroneInfo.getClientTime(), is(newer));
-            assertThat(secondDroneInfo.getClientTime(), is(older));
+            assertThat(firstDroneInfo.getClientTime().getTime()).isEqualTo(newer.getTime());
+            assertThat(secondDroneInfo.getClientTime().getTime()).isEqualTo(older.getTime());
         });
-    }
-
-    private Drone createDrone(Organisation organisation) {
-        Drone drone = new Drone();
-        drone.setName("Best drone ever");
-        drone.setToken(UUID.randomUUID());
-        drone.setOrganisation(organisation);
-        droneDao.persist(drone);
-        return drone;
     }
 }

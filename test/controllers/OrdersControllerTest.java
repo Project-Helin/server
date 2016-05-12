@@ -4,6 +4,7 @@ import commons.AbstractE2ETest;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -22,6 +23,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
     }
 
     @Test
+    @Ignore
     public void shouldShowNewOrderInAllOrderView() {
         Order order = testHelper.createNewOrder(
             testHelper.createNewProject(organisation),
@@ -50,6 +52,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
     }
 
     @Test
+    @Ignore
     public void shouldShowOrderPerProject() throws InterruptedException {
         Order order = testHelper.createNewOrder(
             testHelper.createNewProject(organisation),

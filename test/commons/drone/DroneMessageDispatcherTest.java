@@ -55,7 +55,7 @@ public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
         droneInfoMessage.setDroneState(droneState);
 
         String messageAsJSON = messageConverter.parseMessageToString(droneInfoMessage);
-        droneMessageDispatcher.dispatchMessage(drone.getId(), messageAsJSON);
+        droneMessageDispatcher.dispatchMessageToController(drone.getId(), messageAsJSON);
 
         verify(droneStateController, times(1)).onDroneInfoReceived(drone.getId(), droneInfoMessage);
     }

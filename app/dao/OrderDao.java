@@ -18,9 +18,9 @@ public class OrderDao extends AbstractDao<Order> {
         Objects.requireNonNull(organisation);
 
         TypedQuery<Order> query = jpaApi.em().createQuery(
-            "select p " +
-            " from orders p " +
-            " where p.project.organisation= :organisation", Order.class);
+                "select p " +
+                        " from orders p " +
+                        " where p.project.organisation = :organisation", Order.class);
         query.setParameter("organisation", organisation);
         return query.getResultList();
     }
@@ -29,10 +29,10 @@ public class OrderDao extends AbstractDao<Order> {
         Objects.requireNonNull(organisation);
 
         TypedQuery<Order> query = jpaApi.em().createQuery(
-            "select p " +
-            " from orders p " +
-            " where p.project.organisation= :organisation " +
-            " and p.project.id = :projectId ", Order.class);
+                "select p " +
+                        " from orders p " +
+                        " where p.project.organisation = :organisation " +
+                        " and p.project.id = :projectId ", Order.class);
 
         query.setParameter("organisation", organisation);
         query.setParameter("projectId", projectId);

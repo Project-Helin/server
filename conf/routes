@@ -36,6 +36,8 @@ GET         /projects/:projectId/drones/:droneId/delete             controllers.
 
 # Orders (all)
 GET         /orders/                                                controllers.OrdersController.index()
+GET         /orders/:ordersId/delete                                controllers.OrdersController.delete(ordersId : java.util.UUID)
+
 
 #Product
 GET         /products/                                              controllers.ProductsController.index()
@@ -96,3 +98,6 @@ GET         /api/projects/:projectId/calculate-route                controllers.
 ##Order
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
 POST        /api/orders/:orderId/confirm                            controllers.api.OrderApiController.confirm(orderId : java.util.UUID)
+
+## Products
+GET         /api/products/                                          controllers.api.ProductsApiController.index()

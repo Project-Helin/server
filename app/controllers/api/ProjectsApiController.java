@@ -1,24 +1,31 @@
 package controllers.api;
 
-import ch.helin.messages.dto.Action;
+
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.gis.ZoneHelper;
+import commons.routeCalculationService.RouteCalculationService;
+import controllers.Default;
 import controllers.SecurityAuthenticator;
 import dao.ProjectsDao;
+import dto.api.ProjectApiDto;
+import dto.api.ZoneApiDto;
 import mappers.ProjectMapper;
 import models.Organisation;
 import models.Project;
+import models.Route;
 import models.Zone;
+
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import javax.sound.sampled.Line;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,12 +43,15 @@ public class ProjectsApiController extends Controller {
     @Inject
     private ProjectMapper projectMapper;
 
+    @Inject
+    private RouteCalculationService routeCalculationService;
+
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         List<Project> projects = projectsDao.findByOrganisation(getOrganisation().getId());
 
-        List<ProjectDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
+        List<ProjectApiDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
         return ok(Json.toJson(projectDtos));
     }
 
@@ -61,30 +71,14 @@ public class ProjectsApiController extends Controller {
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        int wayPointCount = 20;
+        ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
+        ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
+                GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
 
-        RouteDto mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
-        return ok(Json.toJson(mockRoute));
-    }
+        RouteDto realRoute = routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
 
-    private RouteDto createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
-        RouteDto route = new RouteDto();
-        Waypoint start = new Waypoint();
-        start.setPosition(dronePosition);
-        start.setAction(Action.TAKEOFF);
-        route.getWayPoints().add(start);
+        return ok(Json.toJson(realRoute));
 
-        for(int i = 1; i < wayPointCount; i++) {
-            Waypoint waypoint = new Waypoint();
-            waypoint.setId(UUID.randomUUID());
-            double lat = customerPosition.getLat() + i * 0.0001;
-            double lon = customerPosition.getLon() + i * 0.0001;
-            int randomHeight = 5 + (int) (Math.random() * 100);
-
-            waypoint.setPosition(new Position(lat, lon, randomHeight));
-            route.getWayPoints().add(waypoint);
-        }
-        return route;
     }
 
     @Transactional
@@ -99,8 +93,8 @@ public class ProjectsApiController extends Controller {
             project.setOrganisation(getOrganisation());
         }
 
-        ProjectDto fromRequest =
-            Json.fromJson(request().body().asJson(), ProjectDto.class);
+        ProjectApiDto fromRequest =
+            Json.fromJson(request().body().asJson(), ProjectApiDto.class);
         // set all fields
         project.setName(fromRequest.getName());
         addZonesToProject(project, fromRequest);
@@ -111,10 +105,10 @@ public class ProjectsApiController extends Controller {
 
     /**
      * This needs a special handling - because we need to check if
-     * there are already saved sones, or new ones.
+     * there are already saved zones, or new ones.
      */
     private void addZonesToProject(Project project,
-                                   ProjectDto fromRequest) {
+                                   ProjectApiDto fromRequest) {
 
         Set<Zone> zones = project.getZones();
         HashSet<Zone> previousZones = new HashSet<>(zones);
@@ -126,7 +120,7 @@ public class ProjectsApiController extends Controller {
         project.getZones().addAll(mapAll(fromRequest, project, previousZones));
     }
 
-    private List<Zone> mapAll(ProjectDto fromRequest,
+    private List<Zone> mapAll(ProjectApiDto fromRequest,
                               Project project,
                               Set<Zone> previousZones) {
 
@@ -150,7 +144,7 @@ public class ProjectsApiController extends Controller {
             }).collect(Collectors.toList());
     }
 
-    private Zone findById(Set<Zone> previousZones, ZoneDto zoneDto) {
+    private Zone findById(Set<Zone> previousZones, ZoneApiDto zoneDto) {
         return previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
     }
 

@@ -3,7 +3,6 @@ package controllers;
 import commons.AbstractE2ETest;
 import models.Drone;
 import models.Organisation;
-import models.User;
 import org.junit.Before;
 import org.junit.Test;
 

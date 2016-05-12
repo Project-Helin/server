@@ -1,13 +1,21 @@
 package dao;
 
+import commons.gis.GisHelper;
 import models.Organisation;
 import models.Project;
+import org.geolatte.geom.*;
+import org.slf4j.Logger;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.UUID;
 
+
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ProjectsDao extends AbstractDao<Project> {
+    private static final Logger logger = getLogger(ProjectsDao.class);
 
     public ProjectsDao() {
         super(Project.class, "projects");
@@ -37,4 +45,5 @@ public class ProjectsDao extends AbstractDao<Project> {
 
         return getSingleResultOrNull(query);
     }
+
 }
