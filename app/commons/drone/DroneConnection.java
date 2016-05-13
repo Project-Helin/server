@@ -46,10 +46,6 @@ public class DroneConnection {
 
     }
 
-    public void closeConnection() {
-        closeConnection(connection);
-        closeChannel(channel);
-    }
 
     public void sendMessage(String message) {
         try {
@@ -66,16 +62,6 @@ public class DroneConnection {
                 connection.close();
             } catch (IOException e1) {
                 e1.printStackTrace();
-            }
-        }
-    }
-
-    private void closeChannel(Channel channel) {
-        if (channel != null && channel.isOpen()) {
-            try {
-                channel.close();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }
