@@ -2,11 +2,13 @@ package controllers.api;
 
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.TestHelper;
 import dao.ProjectsDao;
 import dto.api.ProjectApiDto;
 import dto.api.ZoneApiDto;
-import models.*;
+import models.Organisation;
+import models.Project;
+import models.Zone;
+import models.ZoneType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,9 +21,6 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Inject
     private ApiHelper apiHelper;
-
-    @Inject
-    private TestHelper testHelper;
 
     @Inject
     private ProjectsDao projectsDao;

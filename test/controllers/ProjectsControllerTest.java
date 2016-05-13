@@ -2,11 +2,9 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.TestHelper;
 import dao.ProjectsDao;
 import models.Organisation;
 import models.Project;
-import models.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,9 +15,6 @@ public class ProjectsControllerTest extends AbstractE2ETest {
 
     @Inject
     private ProjectsDao projectsDao;
-
-    @Inject
-    private TestHelper testHelper;
 
     private Organisation organisation;
 
