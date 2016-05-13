@@ -1,5 +1,6 @@
 package commons.routeCalculationService;
 
+import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.way.RouteDto;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -9,6 +10,7 @@ import com.vividsolutions.jts.linearref.LocationIndexedLine;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
 import commons.gis.ZoneHelper;
+import dao.ProjectsDao;
 import dao.RouteDao;
 import models.Project;
 import models.Zone;
@@ -32,16 +34,23 @@ public class RouteCalculationService {
     @Inject
     private RouteDao routeDao;
 
+    @Inject
+    private ProjectsDao projectsDao;
+
     private static final Logger logger = LoggerFactory.getLogger(RouteCalculationService.class);
 
+    public RouteDto calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
+        Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
+        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
+    }
 
     public RouteDto calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
                                    ch.helin.messages.dto.way.Position customerPosition,
                                    Project project) {
 
-        logger.info("State of calculateRoute dronePosition {}", dronePosition);
-        logger.info("State of calculateRoute customerPosition {}", customerPosition);
-        logger.info("State of calculateRoute Project {}", project);
+        logger.info("State of calculateRoute dronePosition {}", AssertUtils.throwExceptionIfNull(dronePosition));
+        logger.info("State of calculateRoute customerPosition {}", AssertUtils.throwExceptionIfNull(customerPosition));
+        logger.info("State of calculateRoute Project {}", AssertUtils.throwExceptionIfNull(project));
 
 
 
