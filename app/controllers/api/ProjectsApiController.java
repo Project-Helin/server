@@ -72,7 +72,8 @@ public class ProjectsApiController extends Controller {
             return ok(Json.toJson(realRoute));
         } catch (Exception e) {
             logger.info("Thrown exception: ", e);
-            return forbidden(e.getMessage());
+            String message = e.getMessage();
+            return forbidden(message != null ? message : "");
         }
     }
 
