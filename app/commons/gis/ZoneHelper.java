@@ -17,25 +17,25 @@ public class ZoneHelper {
 
     public static void assertAllConstraintsOrThrowRuntimeException(Set<Zone> zones) throws RuntimeException{
         if(!assertOneLoadingZone(zones)){
-            throw new RuntimeException("assertOneLoadingZone failed!");
+            throw new RuntimeException("There should be one loading zone.");
         }
         if(!assertMoreThanOneDeliveryZone(zones)){
-            throw new RuntimeException("assertMoreThanOneDeliveryZone failed - no delivery zone?!");
+            throw new RuntimeException("There should be more than one delivery zone.");
         }
         if(!assertOneOrderZone(zones)){
-            throw new RuntimeException("assertOneOrderZone failed!");
+            throw new RuntimeException("There should be at least on order zone.");
         }
         if(!assertAllZonesInisideOrderZone(zones)){
-            throw new RuntimeException("assertAllZonesInsideOrderZone failed!");
+            throw new RuntimeException("All zones are not inside order zone.");
         }
         if(!assertAllZonesAreConnected(zones)){
-            throw new RuntimeException("assertAllZonesAreConnected failed!");
+            throw new RuntimeException("All zones are not connected.");
         }
     }
 
     public static void asserThatDroneIsInLoadingZoneOrThrowRundTimeException(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
         if(!assertThatDroneIsInLoadingZone(zones, dronePoint)){
-            throw new RuntimeException("asserThatDroneIsInLoadingZone failed! - Where is the drone?!");
+            throw new RuntimeException("Drone should be inside the loading zone.");
         }
     }
 
@@ -54,6 +54,7 @@ public class ZoneHelper {
         return (numOfOrderZones == 1);
     }
 
+    // TODO rename this: checkXXX
     public static boolean assertAllZonesInisideOrderZone(Set<Zone> zones){
         Zone orderZone = zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).findFirst().get();
         int numOfZonesInside = (int) zones.stream()
