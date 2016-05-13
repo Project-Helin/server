@@ -4,7 +4,6 @@
             function ($scope, $http, $timeout) {
                 console.log("called OrdersController");
 
-
                 $scope.sendConfirmRequest = function(orderId){
                     console.log("Send confirm for id " + orderId);
 
@@ -30,6 +29,10 @@
                         var orderCargoDto = {
                             displayName: 'Batman',
                             email: 'batman@wayneenterprise.com',
+                            customerPosition: {
+                                lat: "8.817697763442991",
+                                lon: "47.223881796664756"
+                            },
                             orderProducts: [
                                 {
                                     productId: productId,
