@@ -124,7 +124,7 @@
                     return [
                         new ol.style.Style({
                             stroke: new ol.style.Stroke({
-                                color: 'rgba(243, 156, 18, 0.8)',
+                                color: 'rgba(119, 17, 0, 0.8)',
                                 width: 2
                             })
                         })
@@ -174,7 +174,7 @@
                     var circle = new ol.style.Circle({
                         radius: 8,
                         fill: new ol.style.Fill({
-                            color: 'rgba(243, 156, 18, 0.8)'
+                            color: 'rgba(119, 17, 0, 0.8)'
                         }),
                         stroke: null
                     });
