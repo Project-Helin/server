@@ -1,12 +1,13 @@
 package controllers.api;
 
-import ch.helin.messages.dto.Action;
+
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.gis.ZoneHelper;
+import commons.routeCalculationService.RouteCalculationService;
 import controllers.SecurityAuthenticator;
 import dao.ProjectsDao;
 import dto.api.ProjectApiDto;
@@ -15,6 +16,7 @@ import mappers.ProjectMapper;
 import models.Organisation;
 import models.Project;
 import models.Zone;
+import org.slf4j.Logger;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -27,8 +29,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ProjectsApiController extends Controller {
 
+    private static final Logger logger = getLogger(ProjectsApiController.class);
     @Inject
     private ProjectsDao projectsDao;
 
@@ -37,6 +42,9 @@ public class ProjectsApiController extends Controller {
 
     @Inject
     private ProjectMapper projectMapper;
+
+    @Inject
+    private RouteCalculationService routeCalculationService;
 
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
@@ -59,34 +67,29 @@ public class ProjectsApiController extends Controller {
 
     @Transactional
     public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
+        try {
+            RouteDto realRoute = calculateRouteOrThrowException(projectID, dronePositionWkt, customerPositionWkt);
+            return ok(Json.toJson(realRoute));
+        } catch (Exception e) {
+            logger.info("Thrown exception: ", e);
+            String message = e.getMessage();
+            return forbidden(message != null ? message : "");
+        }
+    }
+
+    private RouteDto calculateRouteOrThrowException(UUID projectID,
+                                                    String dronePositionWkt,
+                                                    String customerPositionWkt) {
+
         Project found = getProject(projectID);
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        int wayPointCount = 20;
+        ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
+        ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
+                GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
 
-        RouteDto mockRoute = createMockRoute(dronePosition, customerPosition, wayPointCount);
-        return ok(Json.toJson(mockRoute));
-    }
-
-    private RouteDto createMockRoute(Position dronePosition, Position customerPosition, int wayPointCount) {
-        RouteDto route = new RouteDto();
-        Waypoint start = new Waypoint();
-        start.setPosition(dronePosition);
-        start.setAction(Action.TAKEOFF);
-        route.getWayPoints().add(start);
-
-        for(int i = 1; i < wayPointCount; i++) {
-            Waypoint waypoint = new Waypoint();
-            waypoint.setId(UUID.randomUUID());
-            double lat = customerPosition.getLat() + i * 0.0001;
-            double lon = customerPosition.getLon() + i * 0.0001;
-            int randomHeight = 5 + (int) (Math.random() * 100);
-
-            waypoint.setPosition(new Position(lat, lon, randomHeight));
-            route.getWayPoints().add(waypoint);
-        }
-        return route;
+        return routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
     }
 
     @Transactional

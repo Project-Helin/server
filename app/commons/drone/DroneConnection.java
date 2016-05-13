@@ -3,12 +3,17 @@ package commons.drone;
 import ch.helin.messages.commons.ConnectionUtils;
 import com.rabbitmq.client.*;
 import models.Drone;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class DroneConnection {
 
-    DroneMessageDispatcher droneMessageDispatcher;
+    private static final Logger logger = getLogger(DroneConnection.class);
+
+    private DroneMessageDispatcher droneMessageDispatcher;
     private Channel channel;
 
     private Drone drone;
@@ -46,10 +51,6 @@ public class DroneConnection {
 
     }
 
-    public void closeConnection() {
-        closeConnection(connection);
-        closeChannel(channel);
-    }
 
     public void sendMessage(String message) {
         try {
@@ -64,18 +65,8 @@ public class DroneConnection {
         if (connection != null && channel.isOpen()) {
             try {
                 connection.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
-    private void closeChannel(Channel channel) {
-        if (channel != null && channel.isOpen()) {
-            try {
-                channel.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                logger.info("Failed to close connection {}", connection.toString(), e);
             }
         }
     }

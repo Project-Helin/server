@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 
 public class RouteMapper {
 
-    @Inject
-
-
     public RouteDto convertToRouteDto (Route route) {
 
         RouteDto routeDto = new RouteDto();

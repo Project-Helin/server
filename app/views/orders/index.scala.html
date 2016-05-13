@@ -12,6 +12,14 @@
     }
 }
 
+@disableIfNew(order: Order) = @{
+    if(order.getState.equals(OrderState.ROUTE_SUGGESTED)){
+        ""
+    }else{
+        "disabled"
+    }
+}
+
 @main("Orders") {
     <div class="row">
 
@@ -35,47 +43,52 @@
 
         <div class="col-xs-12">
             <div class="box">
-                    <!-- /.box-header -->
-                <div class="box-body">
-                    <table class="table table-bordered table-hover dataTable">
-                        <thead>
-                            <tr>
-                                <th>State</th>
-                                <th>Project</th>
-                                <th>Customer</th>
-                                <th>Orders Items</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @for(order <- orders) {
-                            <tr>
-                                <th>@order.getState</th>
-                                <th>@order.getProject.getName</th>
-                                <th>@order.getCustomer.getDisplayName (@order.getCustomer.getEmail)</th>
-                                <th>
-                                @for(item <- order.getOrderProducts) {
-                                    @item.getProduct.getName ( @item.getAmount )
-                                }
-                                </th>
-                                <th>
-                                @deleteButton(
-                                    controllers.routes.OrdersController.delete(order.getId),
-                                    order.getId,
-                                    "Delete Order",
-                                    "Do you want to delete this order?"
-                                )
-                                </th>
-                            </tr>
-                        }
+                <div ng-app="OrdersApp" ng-controller="OrdersController">
+                        <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                                <tr>
+                                    <th>State</th>
+                                    <th>Project</th>
+                                    <th>Customer</th>
+                                    <th>Orders Items</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @for(order <- orders) {
+                                <tr>
+                                    <th>@order.getState</th>
+                                    <th>@order.getProject.getName</th>
+                                    <th>@order.getCustomer.getDisplayName (@order.getCustomer.getEmail)</th>
+                                    <th>
+                                    @for(item <- order.getOrderProducts) {
+                                        @item.getProduct.getName ( @item.getAmount )
+                                    }
+                                    </th>
+                                    <th>
+                                        <a ng-click="sendConfirmRequest('@order.getId')"
+                                           class="btn btn-sm btn-primary @disableIfNew(order)">Confirm</a>
+
+                                        @deleteButton(
+                                            controllers.routes.OrdersController.delete(order.getId),
+                                            order.getId,
+                                            "Delete Order",
+                                            "Do you want to delete this order?"
+                                        )
+                                    </th>
+                                </tr>
+                            }
 
 
-                        </tbody>
+                            </tbody>
 
-                    </table>
+                        </table>
 
-                    <div ng-app="OrdersApp" ng-controller="OrdersController" class="m-t">
-                        <a ng-click="sendFakeRequest()" class="btn btn-primary">Send fake order</a>
+                        <div class="m-t">
+                            <a ng-click="sendFakeRequest()" class="btn btn-primary">Send fake order</a>
+                        </div>
                     </div>
                 </div> <!-- /.box-body -->
             </div>

@@ -36,6 +36,10 @@
                         $scope.data.routeData.customerPosition)
                         .then(function (route) {
                            $scope.data.routeWayPoints = route.wayPoints;
+                        }, function(error){
+                            $scope.data.routeWayPoints = [];
+                            console.log('Got error', error);
+                            toastr.error(error.data, 'Error');
                         });
                 } else {
                     toastr.error('Please click on the map to add a drone and a customer position', 'Error');

@@ -42,8 +42,6 @@
             return $http.get(this.projectUrl + id + "/calculate-route", {params: params})
                 .then(function (response) {
                     return response.data;
-                }).catch(function (error) {
-                    return error;
                 });
         };
 

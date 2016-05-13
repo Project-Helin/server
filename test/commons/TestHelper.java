@@ -6,6 +6,7 @@ import commons.gis.GisHelper;
 import dao.*;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
 import java.util.Date;
@@ -259,11 +260,15 @@ public class TestHelper {
     }
 
     public Zone createUnsavedZone(String name, ZoneType type) {
+        return createUnsavedZone(name, type, null);
+    }
+
+    public Zone createUnsavedZone(String name, ZoneType type, Polygon polygon) {
         Zone zone = new Zone();
         zone.setName(name);
         zone.setType(type);
         zone.setHeight(100);
-
+        zone.setPolygon(polygon);
         return zone;
     }
 

@@ -1,23 +1,26 @@
 package controllers.api;
 
+import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
+import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
-import dto.api.OrderCargoDto;
-import dto.api.OrderProductApiDto;
+import dto.api.OrderApiDto;
+import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -44,6 +47,16 @@ public class OrderApiController extends Controller {
     @Inject
     private MissionsDao missionsDao;
 
+    @Inject
+    private RouteDao routeDao;
+
+    @Inject
+    private RouteMapper routeMapper;
+
+    @Inject
+    private RouteCalculationService routeCalculationService;
+
+
     /*
      * An Order with mission and route is created,
      * but it should not be sent to the drone.
@@ -54,54 +67,95 @@ public class OrderApiController extends Controller {
     @BodyParser.Of(BodyParser.Json.class)
     public Result create() {
         String jsonNode = request().body().asJson().toString();
-        OrderCargoDto orderCargoDto = new Gson().fromJson(jsonNode, OrderCargoDto.class);
+        OrderApiDto orderApiDto = new Gson().fromJson(jsonNode, OrderApiDto.class);
 
-        if (orderCargoDto == null) {
-            logger.info("Send wrong request back, because invalid json: {}", orderCargoDto);
+        if (orderApiDto == null) {
+            logger.debug("Send wrong request back, because invalid json: {}", jsonNode);
             return forbidden("Wrong request");
         }
 
-        //Create Order
-        Customer customer = new Customer();
-        customer.setDisplayName(orderCargoDto.getDisplayName());
-        customer.setEmail(orderCargoDto.getEmail());
+        Customer customer = createCustomer(orderApiDto);
         customerDao.persist(customer);
 
-        // TODO Fix this
-        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
+        Order order = createOrder(orderApiDto, customer);
+        orderDao.persist(order);
 
+        Route proposedRoute = calculateRoute();
+
+        Set<OrderProduct> orderProducts = order.getOrderProducts();
+        Mission mission = new Mission();
+        mission.setOrder(order);
+        mission.setState(MissionState.NEW);
+        mission.setOrderProduct(orderProducts.iterator().next()); // TODO fix
+        mission.setRoute(proposedRoute);
+        HashSet<Mission> missions1 = new HashSet<>();
+        missions1.add(mission);
+        order.setMissions(missions1);
+
+        // mision to OrderProduct assignment
+        // one orderproduct per mission
+        // split order-products -> add more orders (
+
+        //Set State to ROUTE_SUGGESTED
+        //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
+
+        //Calculate Route
+
+        //Send route to Customer
+        RouteDto routeDto =
+            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+
+        Set<Mission> missions = order.getMissions();
+
+        for (Mission each : missions) {
+            Route route = new Route();
+            route.setMission(each);
+            route.setWayPoints(route.getWayPoints());;
+            each.setRoute(route);
+            routeDao.persist(route);
+            missionsDao.persist(each);
+        }
+
+        return ok(Json.toJson(routeDto));
+    }
+
+    private Route calculateRoute() {
+        return new Route();
+    }
+
+    private Order createOrder(OrderApiDto orderApiDto, Customer customer) {
         Order order = new Order();
         order.setCustomer(customer);
 
         // TODO fix this: does customer provide project-id?
         Project first = projectsDao.findAll().iterator().next();
         order.setProject(first);
-
-        order.setState(OrderState.ROUTE_SUGGESTED);;
-        order.setOrderProducts(getOrderProducts(orderCargoDto, order));
-        orderDao.persist(order);
-
-        //Set State to ROUTE_SUGGESTED
-        //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
-        //Calculate Route
-        //Send route to Customer
-
-        return ok();
+        order.setState(OrderState.ROUTE_SUGGESTED);
+        ;
+        order.setOrderProducts(getOrderProducts(orderApiDto, order));
+        return order;
     }
 
-    private Set<OrderProduct> getOrderProducts(OrderCargoDto orderCargoDto, Order order) {
-        List<OrderProductApiDto> orderProducts = orderCargoDto.getOrderProducts();
-        HashSet<OrderProduct> products = new HashSet<>();
-        for (OrderProductApiDto orderProduct : orderProducts) {
-            OrderProduct e = new OrderProduct();
-            e.setAmount(orderProduct.getAmount());;
-            e.setOrder(order);
-            Product byId = productsDao.findById(UUID.fromString(orderProduct.getProductId()));
-            e.setProduct(byId);
-            e.setTotalPrice(byId.getPrice() * orderProduct.getAmount());
-            products.add(e);
-        }
-        return products;
+    private Customer createCustomer(OrderApiDto orderApiDto) {
+        Customer customer = new Customer();
+        customer.setDisplayName(orderApiDto.getDisplayName());
+        customer.setEmail(orderApiDto.getEmail());
+        customer.setToken(RandomStringUtils.randomAlphanumeric(10));// TODO Fix this
+        return customer;
+    }
+
+    private Set<OrderProduct> getOrderProducts(OrderApiDto orderApiDto, Order newOrder) {
+        return orderApiDto.getOrderProducts().stream().map((each) -> {
+            Product product = productsDao.findById(UUID.fromString(each.getProductId()));
+
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setAmount(each.getAmount());
+            orderProduct.setOrder(newOrder);
+            orderProduct.setProduct(product);
+            orderProduct.setTotalPrice(product.getPrice() * each.getAmount());
+
+            return orderProduct;
+        }).collect(Collectors.toSet());
     }
 
     /*

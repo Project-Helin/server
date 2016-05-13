@@ -4,8 +4,18 @@
             function ($scope, $http, $timeout) {
                 console.log("called OrdersController");
 
-                $scope.sendFakeRequest = function(){
+                $scope.sendConfirmRequest = function(orderId){
+                    console.log("Send confirm for id " + orderId);
 
+                    $http.post('/api/orders/' + orderId + "/confirm", {})
+                         .then(function(response){
+                             // reload current page
+                             location.reload();
+                             console.log("Succesfully confirmed");
+                         });
+                };
+
+                $scope.sendFakeRequest = function(){
                     $http.get('/api/products/').then(function(response){
 
                         var productArray = response.data;
@@ -19,6 +29,10 @@
                         var orderCargoDto = {
                             displayName: 'Batman',
                             email: 'batman@wayneenterprise.com',
+                            customerPosition: {
+                                lat: "8.817697763442991",
+                                lon: "47.223881796664756"
+                            },
                             orderProducts: [
                                 {
                                     productId: productId,
