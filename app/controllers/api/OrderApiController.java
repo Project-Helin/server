@@ -1,13 +1,11 @@
 package controllers.api;
 
-import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
-import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -17,9 +15,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -51,9 +47,6 @@ public class OrderApiController extends Controller {
     private RouteDao routeDao;
 
     @Inject
-    private RouteMapper routeMapper;
-
-    @Inject
     private RouteCalculationService routeCalculationService;
 
 
@@ -74,7 +67,7 @@ public class OrderApiController extends Controller {
             return forbidden("Wrong request");
         }
 
-        Customer customer = createCustomer(orderApiDto);
+        Customer customer = createConsumer(orderApiDto);
         customerDao.persist(customer);
 
         Order order = createOrder(orderApiDto, customer);
@@ -102,7 +95,7 @@ public class OrderApiController extends Controller {
         //Calculate Route
 
         //Send route to Customer
-        RouteDto routeDto =
+        Route routeDto =
             routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
 
         Set<Mission> missions = order.getMissions();
@@ -110,8 +103,20 @@ public class OrderApiController extends Controller {
         for (Mission each : missions) {
             Route route = new Route();
             route.setMission(each);
-            route.setWayPoints(route.getWayPoints());;
             each.setRoute(route);
+
+            List<WayPoint> w = new ArrayList<>();
+//            for (Waypoint eachW : routeDto.getWayPoints()) {
+//                WayPoint wayPoint = new WayPoint();
+//                wayPoint.setRoute(route);
+//                Point point = GisHelper.createPoint(eachW.getPosition().getLon(), eachW.getPosition().getLat());
+//                wayPoint.setPosition(point);
+//                wayPoint.setOrderNumber(w.size());
+//                wayPoint.setAction(Action.FLY);
+//                w.add(wayPoint);
+//            }
+            route.setWayPoints(w);
+
             routeDao.persist(route);
             missionsDao.persist(each);
         }
@@ -136,11 +141,13 @@ public class OrderApiController extends Controller {
         return order;
     }
 
-    private Customer createCustomer(OrderApiDto orderApiDto) {
+    private Customer createConsumer(OrderApiDto orderApiDto) {
         Customer customer = new Customer();
         customer.setDisplayName(orderApiDto.getDisplayName());
         customer.setEmail(orderApiDto.getEmail());
-        customer.setToken(RandomStringUtils.randomAlphanumeric(10));// TODO Fix this
+
+        // TODO Fix this token should come from Google ( to identify the user )
+        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
         return customer;
     }
 

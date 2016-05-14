@@ -25,7 +25,7 @@ public class Order extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private OrderState state;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     @OrderBy("updateAt DESC ")
     private Set<Mission> missions;
 
