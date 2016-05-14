@@ -48,6 +48,12 @@
             </a>
         </li>
 
+        <li class="@activeLink(controllers.routes.MissionController.index())">
+            <a href="@controllers.routes.MissionController.index()">
+                <i class="glyphicon glyphicon-send"></i> <span>Missions</span>
+            </a>
+        </li>
+
         <li class="@activeLink(routes.MessageViewer.index())">
          <a href="@routes.MessageViewer.index()"><i class="glyphicon glyphicon-inbox"></i> <span>Debug</span></a>
         </li>

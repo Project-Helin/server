@@ -54,6 +54,10 @@ GET         /drones/:id/edit                                        controllers.
 POST        /drones/:id/update                                      controllers.DronesController.update(id : java.util.UUID)
 GET         /drones/:id/delete                                      controllers.DronesController.delete(id : java.util.UUID)
 
+# Mission
+GET         /missions/                                              controllers.MissionController.index()
+GET         /missions/:missionId/show                               controllers.MissionController.show(missionId : java.util.UUID)
+
 # Customer
 GET         /customers                                              controllers.CustomersController.index()
 

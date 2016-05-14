@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import dao.MissionsDao;
 import mappers.MissionMapper;
 import models.Mission;
+import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -22,6 +23,7 @@ public class MissionApiController extends Controller {
     @Inject
     private MissionMapper missionMapper;
 
+    @Transactional
     public Result show(UUID missionId) {
         Mission mission = missionsDao.findById(missionId);
         if (mission == null) {

@@ -1,0 +1,34 @@
+@import java.util
+@import views.html.helpers.deleteButton
+@(missions: util.List[Mission])
+
+@main("Missions") {
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                    <!-- /.box-header -->
+                <div class="box-body">
+                    <table class="table table-bordered table-hover dataTable">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(mission <- missions) {
+                                <tr>
+                                <th>@mission.getState</th>
+                                <th>
+                                    <a href="@controllers.routes.MissionController.show(mission.getId)" class="btn btn-info btn-sm" role="button">Show</a>
+                                </th>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div> <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+}
