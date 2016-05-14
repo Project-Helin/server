@@ -6,7 +6,6 @@ package dto.api;
 public class OrderProductApiDto {
     private Integer amount;
     private String productId;
-    private String projectId;
 
     public Integer getAmount() {
         return amount;
@@ -23,15 +22,6 @@ public class OrderProductApiDto {
 
     public OrderProductApiDto setProductId(String productId) {
         this.productId = productId;
-        return this;
-    }
-
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public OrderProductApiDto setProjectId(String projectId) {
-        this.projectId = projectId;
         return this;
     }
 }

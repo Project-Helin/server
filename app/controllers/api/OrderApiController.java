@@ -1,5 +1,6 @@
 package controllers.api;
 
+import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -7,6 +8,7 @@ import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
+import dto.api.OrderProductApiDto;
 import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,7 +19,10 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -49,11 +54,7 @@ public class OrderApiController extends Controller {
     private MissionsDao missionsDao;
 
     @Inject
-    private RouteDao routeDao;
-
-    @Inject
     private RouteCalculationService routeCalculationService;
-
 
     /*
      * An Order with mission and route is created,
@@ -72,41 +73,13 @@ public class OrderApiController extends Controller {
             return forbidden("Wrong request");
         }
 
-        Customer customer = createConsumer(orderApiDto);
-        customerDao.persist(customer);
+        Customer customer = saveCustomer(orderApiDto);
+        Order order = saveOrder(orderApiDto, customer);
 
-        Order order = createOrder(orderApiDto, customer);
+        Route route = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+
+        addMissionsToOrder(order, route);
         orderDao.persist(order);
-
-        Route proposedRoute = calculateRoute();
-
-        Set<OrderProduct> orderProducts = order.getOrderProducts();
-        Mission mission = new Mission();
-        mission.setOrder(order);
-        mission.setState(MissionState.NEW);
-        mission.setOrderProduct(orderProducts.iterator().next()); // TODO fix
-        mission.setRoute(proposedRoute);
-        HashSet<Mission> missions1 = new HashSet<>();
-        missions1.add(mission);
-        order.setMissions(missions1);
-
-        // mision to OrderProduct assignment
-        // one orderproduct per mission
-        // split order-products -> add more orders (
-
-        //Set State to ROUTE_SUGGESTED
-        //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
-
-        //Calculate Route
-
-        //Send route to Customer
-        Route route =
-            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
-
-        route.setMission(mission);
-        mission.setRoute(route);
-
-        missionsDao.persist(mission);
 
         RouteDto routeDto = routeMapper.convertToRouteDto(route);
         return ok(Json.toJson(routeDto));
@@ -121,45 +94,95 @@ public class OrderApiController extends Controller {
         }
     }
 
-    private Route calculateRoute() {
-        return new Route();
-    }
-
-    private Order createOrder(OrderApiDto orderApiDto, Customer customer) {
-        Order order = new Order();
-        order.setCustomer(customer);
-
-        // TODO fix this: does customer provide project-id?
-        Project first = projectsDao.findAll().iterator().next();
-        order.setProject(first);
-        order.setState(OrderState.ROUTE_SUGGESTED);
-        ;
-        order.setOrderProducts(getOrderProducts(orderApiDto, order));
-        return order;
-    }
-
-    private Customer createConsumer(OrderApiDto orderApiDto) {
+    private Customer saveCustomer(OrderApiDto orderApiDto) {
         Customer customer = new Customer();
         customer.setDisplayName(orderApiDto.getDisplayName());
         customer.setEmail(orderApiDto.getEmail());
 
-        // TODO Fix this token should come from Google ( to identify the user )
+        // TODO fix this -> see HEL 54
         customer.setToken(RandomStringUtils.randomAlphanumeric(10));
+        customerDao.persist(customer);
+
         return customer;
     }
 
+    private Order saveOrder(OrderApiDto orderApiDto, Customer customer) {
+        Project project =
+            projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
+        AssertUtils.throwExceptionIfNull(project, "Project not found");
+
+        Order order = new Order();
+        order.setCustomer(customer);
+        order.setProject(project);
+        order.setState(OrderState.ROUTE_SUGGESTED);
+        order.setOrderProducts(getOrderProducts(orderApiDto, order));
+
+        orderDao.persist(order);
+        return order;
+    }
+
+    private void addMissionsToOrder(Order order, Route route) {
+        Set<Mission> createdMissions =
+            order.getOrderProducts()
+                .stream()
+                .map((orderProduct) -> {
+                    Mission mission = new Mission();
+                    mission.setOrder(order);
+                    mission.setState(MissionState.NEW);
+                    mission.setOrderProduct(orderProduct);
+                    mission.setRoute(route);
+
+                    route.setMission(mission);
+                    mission.setRoute(route);
+                    return mission;
+                })
+                .collect(Collectors.toSet());
+
+        order.setMissions(createdMissions);
+    }
+
     private Set<OrderProduct> getOrderProducts(OrderApiDto orderApiDto, Order newOrder) {
-        return orderApiDto.getOrderProducts().stream().map((each) -> {
-            Product product = productsDao.findById(UUID.fromString(each.getProductId()));
+        HashSet<OrderProduct> orderProducts = new HashSet<>();
+        List<OrderProductApiDto> orderProductDtos = orderApiDto.getOrderProducts();
 
-            OrderProduct orderProduct = new OrderProduct();
-            orderProduct.setAmount(each.getAmount());
-            orderProduct.setOrder(newOrder);
-            orderProduct.setProduct(product);
-            orderProduct.setTotalPrice(product.getPrice() * each.getAmount());
+        for (OrderProductApiDto orderedProduct : orderProductDtos) {
+            Product product = productsDao.findById(UUID.fromString(orderedProduct.getProductId()));
+            AssertUtils.throwExceptionIfNull(product, "Product not found");
 
-            return orderProduct;
-        }).collect(Collectors.toSet());
+            Integer orderedAmount = orderedProduct.getAmount();
+            boolean orderedAmountFitsOnOneDrone = orderedAmount < product.getMaxItemPerDrone();
+            if (orderedAmountFitsOnOneDrone) {
+                orderProducts.add(createOrderProduct(newOrder, product, orderedAmount));
+            } else {
+
+                // we need to split the order
+                int neededOrderProducts = orderedAmount / product.getMaxItemPerDrone();
+                for (int i = 0; i < neededOrderProducts; i++) {
+                    orderProducts.add(createOrderProduct(newOrder, product, product.getMaxItemPerDrone()));
+                }
+
+                // for the remaining items
+                int remaining = orderedAmount % product.getMaxItemPerDrone();
+                boolean thereAreRestItems = remaining != 0;
+                if (thereAreRestItems) {
+                    orderProducts.add(createOrderProduct(newOrder, product, remaining));
+                }
+            }
+        }
+
+        return orderProducts;
+    }
+
+    private OrderProduct createOrderProduct(Order newOrder,
+                                            Product product,
+                                            Integer amount) {
+
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setAmount(amount);
+        orderProduct.setOrder(newOrder);
+        orderProduct.setProduct(product);
+        orderProduct.setTotalPrice(product.getPrice() * amount);
+        return orderProduct;
     }
 
     /*

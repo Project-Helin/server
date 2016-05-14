@@ -4,7 +4,6 @@ import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity(name = "products")
 public class Product extends BaseEntity{
@@ -27,6 +26,9 @@ public class Product extends BaseEntity{
 
     @ManyToMany(mappedBy = "products")
     private Set<Project> projects;
+
+    @Column
+    private Integer maxItemPerDrone;
 
     public String getName() {
         return name;
@@ -66,5 +68,14 @@ public class Product extends BaseEntity{
 
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    public Integer getMaxItemPerDrone() {
+        return maxItemPerDrone;
+    }
+
+    public Product setMaxItemPerDrone(Integer maxItemPerDrone) {
+        this.maxItemPerDrone = maxItemPerDrone;
+        return this;
     }
 }

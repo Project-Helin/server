@@ -12,6 +12,7 @@ public class OrderApiDto {
     private String displayName;
     private String email;
     private Position customerPosition;
+    private String projectId;
 
     private List<OrderProductApiDto> orderProducts;
 
@@ -48,6 +49,15 @@ public class OrderApiDto {
 
     public OrderApiDto setCustomerPosition(Position customerPosition) {
         this.customerPosition = customerPosition;
+        return this;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public OrderApiDto setProjectId(String projectId) {
+        this.projectId = projectId;
         return this;
     }
 

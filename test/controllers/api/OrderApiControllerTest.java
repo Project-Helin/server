@@ -6,29 +6,22 @@ import com.google.inject.Inject;
 import commons.AbstractWebServiceIntegrationTest;
 import commons.ImprovedTestHelper;
 import commons.drone.DroneCommunicationManager;
-import commons.gis.GisHelper;
 import dao.OrderDao;
 import dao.ProjectsDao;
 import dto.api.OrderApiDto;
 import dto.api.OrderProductApiDto;
 import mappers.MissionMapper;
-import mappers.OrderProductsMapper;
 import models.*;
 import org.junit.Test;
 import play.Application;
-import play.db.jpa.Transactional;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.Json;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static play.inject.Bindings.bind;
 
 
@@ -69,21 +62,8 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
     @Test
     public void shouldCreateNewOrderForOneProduct() {
         OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
-
             Organisation organisation = testHelper.createNewOrganisation();
-            Project project = testHelper.createNewProject(
-                organisation,
-                testHelper.createUnsavedZone(
-                    "Loading Zone",
-                    ZoneType.LoadingZone,
-                    testHelper.createSamplePolygon()
-                ),
-                testHelper.createUnsavedZone(
-                    "Delivery Zone",
-                    ZoneType.DeliveryZone,
-                    testHelper.createSamplePolygon()
-                )
-            );
+            Project project = testHelper.createNewProjectWithTwoZones(organisation);
             Product product = testHelper.createProduct(organisation);
             projectsDao.persist(project);
 
@@ -91,11 +71,11 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
                 .setCustomerPosition(new Position(10.03, 30.200))
                 .setDisplayName("Batman")
                 .setEmail("batman@wayneenterprise.com")
+                .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
-                        .setProjectId(project.getIdAsString())
                         .setProductId(product.getIdAsString())
-                        .setAmount(10)
+                        .setAmount(1)
                 ));
         });
 
@@ -108,15 +88,13 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             List<Order> all = orderDao.findAll();
             assertThat(all).hasSize(1);
 
-            Order firstOrder = all.get(0);
-
             // should save the customer
-            Customer customer = firstOrder.getCustomer();
+            Customer customer = all.get(0).getCustomer();
             assertThat(customer.getDisplayName()).isEqualTo("Batman");
             assertThat(customer.getEmail()).isEqualTo("batman@wayneenterprise.com");
 
             // should has one mission
-            Set<Mission> missions = firstOrder.getMissions();
+            Set<Mission> missions = getFirstMissionSortedByAmount(all);
             assertThat(missions).hasSize(1);
 
             Mission first = missions.iterator().next();
@@ -127,6 +105,151 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
 
             assertThat(first.getRoute()).isNotNull();
             assertThat(first.getRoute().getWayPoints()).isNotEmpty();
+        });
+    }
+
+    @Test
+    public void shouldNotSplitBecauseOrderAmountIsSmallerThanMaxAmount() {
+        OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
+
+            int maxItemsPerDrone = 5;
+            Organisation organisation = testHelper.createNewOrganisation();
+            Project project = testHelper.createNewProjectWithTwoZones(organisation);
+            Product product = testHelper.createProduct(organisation, maxItemsPerDrone);
+            projectsDao.persist(project);
+
+            return new OrderApiDto()
+                .setCustomerPosition(new Position(10.03, 30.200))
+                .setDisplayName("Batman")
+                .setEmail("batman@wayneenterprise.com")
+                .setProjectId(project.getIdAsString())
+                .setOrderProducts(Arrays.asList(
+                    new OrderProductApiDto()
+                        .setProductId(product.getIdAsString())
+                        .setAmount(3) // <= we order 3 items
+                ));
+        });
+
+        // do request
+        apiHelper.doPost(routes.OrderApiController.create(), orderToSent);
+
+        jpaApi.withTransaction(() -> {
+            // verify
+            List<Order> all = orderDao.findAll();
+            assertThat(all).hasSize(1);
+
+            // should has one mission
+            Set<Mission> missions = getFirstMissionSortedByAmount(all);
+            assertThat(missions).hasSize(1);
+
+            Mission first = missions.iterator().next();
+            assertThat(first.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
+        });
+    }
+
+
+    @Test
+    public void shouldSplitOrderIntoTwoExactMissions() {
+        OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
+
+            int maxItemsPerDrone = 5;
+            Organisation organisation = testHelper.createNewOrganisation();
+            Project project = testHelper.createNewProjectWithTwoZones(organisation);
+            Product product = testHelper.createProduct(organisation, maxItemsPerDrone);
+            projectsDao.persist(project);
+
+            return new OrderApiDto()
+                .setCustomerPosition(new Position(10.03, 30.200))
+                .setDisplayName("Batman")
+                .setEmail("batman@wayneenterprise.com")
+                .setProjectId(project.getIdAsString())
+                .setOrderProducts(Arrays.asList(
+                    new OrderProductApiDto()
+                        .setProductId(product.getIdAsString())
+                        .setAmount(10) // <= we order 10 items
+                ));
+        });
+
+        // do request
+        apiHelper.doPost(routes.OrderApiController.create(), orderToSent);
+
+        jpaApi.withTransaction(() -> {
+            // verify
+            List<Order> all = orderDao.findAll();
+            assertThat(all).hasSize(1);
+
+            Order firstOrder = all.get(0);
+
+            // should has one mission
+            Set<Mission> missions = firstOrder.getMissions();
+            assertThat(missions).hasSize(2);
+
+            Iterator<Mission> iterator = missions.iterator();
+
+            Mission first = iterator.next();
+            assertThat(first.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(first.getOrderProduct().getAmount()).isEqualTo(5);
+
+            Mission second = iterator.next();
+            assertThat(second.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
+        });
+    }
+
+    @Test
+    public void shouldSplitOrderIntoThreeExactMissionsNotEven() {
+        OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
+
+            int maxItemsPerDrone = 5;
+            Organisation organisation = testHelper.createNewOrganisation();
+            Project project = testHelper.createNewProjectWithTwoZones(organisation);
+            Product product = testHelper.createProduct(organisation, maxItemsPerDrone);
+            projectsDao.persist(project);
+
+            return new OrderApiDto()
+                .setCustomerPosition(new Position(10.03, 30.200))
+                .setDisplayName("Batman")
+                .setEmail("batman@wayneenterprise.com")
+                .setProjectId(project.getIdAsString())
+                .setOrderProducts(Arrays.asList(
+                    new OrderProductApiDto()
+                        .setProductId(product.getIdAsString())
+                        .setAmount(13) // <= we order 13 items
+                ));
+        });
+
+        // do request
+        apiHelper.doPost(routes.OrderApiController.create(), orderToSent);
+
+        jpaApi.withTransaction(() -> {
+            // verify
+            List<Order> all = orderDao.findAll();
+            assertThat(all).hasSize(1);
+
+            // should has one mission
+            Set<Mission> missions = getFirstMissionSortedByAmount(all);
+            assertThat(missions).hasSize(3);
+
+            Iterator<Mission> iterator = missions.iterator();
+
+            Mission first = iterator.next();
+            assertThat(first.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(first.getOrderProduct().getAmount()).isEqualTo(5);
+
+            Mission second = iterator.next();
+            assertThat(second.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
+
+            Mission third = iterator.next();
+            assertThat(third.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(third.getOrderProduct().getAmount()).isEqualTo(3);
         });
     }
 
@@ -167,8 +290,14 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
 
             verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone[0].getId(), expectedMessage);
         });
-
     }
 
 
+    private Set<Mission> getFirstMissionSortedByAmount(List<Order> all) {
+        return all.get(0)
+            .getMissions()
+            .stream()
+            .sorted(Comparator.comparing((e) -> e.getOrderProduct().getAmount()))
+            .collect(Collectors.toSet());
+    }
 }

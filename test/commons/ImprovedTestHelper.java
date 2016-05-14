@@ -170,10 +170,15 @@ public class ImprovedTestHelper {
     }
 
     public Product createProduct(Organisation newOrganisation) {
+        return createProduct(newOrganisation, 1);
+    }
+
+    public Product createProduct(Organisation newOrganisation, int maxItemPerDrone) {
         Product product = new Product();
         product.setName("This is a product");
         product.setPrice(10d);
         product.setWeightGramm(100);
+        product.setMaxItemPerDrone(maxItemPerDrone);
 
         product.setOrganisation(newOrganisation);
 
@@ -202,6 +207,22 @@ public class ImprovedTestHelper {
 
 
         return project;
+    }
+
+    public Project createNewProjectWithTwoZones(Organisation organisation) {
+        return createNewProject(
+            organisation,
+            createUnsavedZone(
+                "Loading Zone",
+                ZoneType.LoadingZone,
+                createSamplePolygon()
+            ),
+            createUnsavedZone(
+                "Delivery Zone",
+                ZoneType.DeliveryZone,
+                createSamplePolygon()
+            )
+        );
     }
 
     public Project createNewProject(Organisation organisation, Zone... zones) {
