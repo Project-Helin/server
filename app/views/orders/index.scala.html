@@ -71,6 +71,8 @@
                                         <a ng-click="sendConfirmRequest('@order.getId')"
                                            class="btn btn-sm btn-primary @disableIfNew(order)">Confirm</a>
 
+                                        <a href="@controllers.routes.MissionController.showForOrder(order.getId)"
+                                            class="btn btn-info btn-sm" role="button">Missions</a>
 
                                         @deleteButton(
                                             controllers.routes.OrdersController.delete(order.getId),

@@ -56,6 +56,7 @@ GET         /drones/:id/delete                                      controllers.
 
 # Mission
 GET         /missions/                                              controllers.MissionController.index()
+GET         /missions/:orderId/showForOrder                         controllers.MissionController.showForOrder(orderId : java.util.UUID)
 GET         /missions/:missionId/show                               controllers.MissionController.show(missionId : java.util.UUID)
 
 # Customer
