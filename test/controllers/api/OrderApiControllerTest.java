@@ -22,6 +22,8 @@ import play.libs.Json;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -40,9 +42,6 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
 
     @Inject
     private MissionMapper missionMapper;
-
-    @Inject
-    private OrderProductsMapper orderProductsMapper;
 
     @Inject
     private ProjectsDao projectsDao;
@@ -67,13 +66,13 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             .build();
     }
 
-
     @Test
     public void shouldCreateNewOrderForOneProduct() {
         OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
-            Organisation organisation;
+
+            Organisation organisation = testHelper.createNewOrganisation();
             Project project = testHelper.createNewProject(
-                organisation = testHelper.createNewOrganisation(),
+                organisation,
                 testHelper.createUnsavedZone(
                     "Loading Zone",
                     ZoneType.LoadingZone,
@@ -88,7 +87,7 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             Product product = testHelper.createProduct(organisation);
             projectsDao.persist(project);
 
-            OrderApiDto orderApiDto = new OrderApiDto()
+            return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
                 .setDisplayName("Batman")
                 .setEmail("batman@wayneenterprise.com")
@@ -98,21 +97,50 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
                         .setProductId(product.getIdAsString())
                         .setAmount(10)
                 ));
-
-            return orderApiDto;
         });
 
+        // do request
         apiHelper.doPost(routes.OrderApiController.create(), orderToSent);
-    }
 
+        jpaApi.withTransaction(() -> {
+
+            // verify
+            List<Order> all = orderDao.findAll();
+            assertThat(all).hasSize(1);
+
+            Order firstOrder = all.get(0);
+
+            // should save the customer
+            Customer customer = firstOrder.getCustomer();
+            assertThat(customer.getDisplayName()).isEqualTo("Batman");
+            assertThat(customer.getEmail()).isEqualTo("batman@wayneenterprise.com");
+
+            // should has one mission
+            Set<Mission> missions = firstOrder.getMissions();
+            assertThat(missions).hasSize(1);
+
+            Mission first = missions.iterator().next();
+            assertThat(first.getOrderProduct().getProduct().getIdAsString())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+            assertThat(first.getOrderProduct().getAmount())
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getAmount());
+
+            assertThat(first.getRoute()).isNotNull();
+            assertThat(first.getRoute().getWayPoints()).isNotEmpty();
+        });
+    }
 
     @Test
     public void confirmOrderTest() {
+        final Drone[] drone = new Drone[1];
 
-        Customer customer = testHelper.createCustomer();
-        Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
-        Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
-        Drone drone = testHelper.createNewDroneForProject(project);
+        Order order = jpaApi.withTransaction((em) -> {
+            Customer customer = testHelper.createCustomer();
+            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
+            drone[0] = testHelper.createNewDroneForProject(project);
+
+            return testHelper.createNewOrderWithThreeMissions(project, customer);
+        });
 
         apiHelper.doPost(routes.OrderApiController.confirm(order.getId()), Json.newObject());
 
@@ -130,14 +158,14 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             assertThat(secondMission.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
             assertThat(thirdMission.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
 
-            assertThat(firstMission.getDrone()).isEqualTo(drone);
+            assertThat(firstMission.getDrone()).isEqualTo(drone[0]);
             assertThat(secondMission.getDrone()).isNull();
             assertThat(thirdMission.getDrone()).isNull();
 
             AssignMissionMessage expectedMessage = new AssignMissionMessage();
             expectedMessage.setMission(missionMapper.convertToMissionDto(firstMission));
 
-            verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone.getId(), expectedMessage);
+            verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone[0].getId(), expectedMessage);
         });
 
     }

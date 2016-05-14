@@ -1,27 +1,15 @@
 package commons.routeCalculationService;
 
-import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.geom.util.LineStringExtracter;
-import com.vividsolutions.jts.linearref.LinearLocation;
-import com.vividsolutions.jts.linearref.LocationIndexedLine;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
-import com.vividsolutions.jts.triangulate.SplitSegment;
 import commons.AbstractIntegrationTest;
-import commons.dijkstra.Dijkstra;
 import commons.gis.GisHelper;
-import commons.gis.Wgs84Helper;
-import dao.ProjectsDao;
 import dao.RouteDao;
 import models.*;
-import org.geolatte.geom.*;
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
@@ -35,12 +23,11 @@ import org.jgrapht.graph.SimpleGraph;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
@@ -233,7 +220,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         positionList.add(GisHelper.createPoint(3,3).getPosition());
         positionList.add(GisHelper.createPoint(4,4).getPosition());
 
-        List<WayPoint> waypointList = routeCalculationService.getWaypointListFromPositions(positionList);
+        List<WayPoint> waypointList = routeCalculationService.getWaypointListFromPositions(positionList, null);
 
         assertEquals(waypointList.size(), positionList.size());
 

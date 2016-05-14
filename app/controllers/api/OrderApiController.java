@@ -1,11 +1,13 @@
 package controllers.api;
 
+import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
+import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -30,6 +32,9 @@ public class OrderApiController extends Controller {
 
     @Inject
     private OrderDao orderDao;
+
+    @Inject
+    private RouteMapper routeMapper;
 
     @Inject
     private CustomerDao customerDao;
@@ -95,37 +100,15 @@ public class OrderApiController extends Controller {
         //Calculate Route
 
         //Send route to Customer
-        Route routeDto =
+        Route route =
             routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
 
-        Set<Mission> missions = order.getMissions();
+        route.setMission(mission);
+        mission.setRoute(route);
 
-        for (Mission each : missions) {
-            Route route = new Route();
-            route.setMission(each);
-            each.setRoute(route);
+        missionsDao.persist(mission);
 
-            List<WayPoint> w = new ArrayList<>();
-//            for (Waypoint eachW : routeDto.getWayPoints()) {
-//                WayPoint wayPoint = new WayPoint();
-//                wayPoint.setRoute(route);
-//                Point point = GisHelper.createPoint(eachW.getPosition().getLon(), eachW.getPosition().getLat());
-//                wayPoint.setPosition(point);
-//                wayPoint.setOrderNumber(w.size());
-//                wayPoint.setAction(Action.FLY);
-//                w.add(wayPoint);
-//            }
-            route.setWayPoints(w);
-
-            routeDao.persist(route);
-            missionsDao.persist(each);
-        }
-
-        // TODO get rid of this
-        if (routeDto == null) {
-            return ok();
-        }
-
+        RouteDto routeDto = routeMapper.convertToRouteDto(route);
         return ok(Json.toJson(routeDto));
     }
 
@@ -133,7 +116,7 @@ public class OrderApiController extends Controller {
         try {
             return new Gson().fromJson(rawJson, OrderApiDto.class);
         } catch (Exception e) {
-            logger.warn("Failed to parse json {}", rawJson);
+            logger.warn("Failed to parse json {}", rawJson, e);
             return null;
         }
     }

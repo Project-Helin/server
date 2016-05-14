@@ -1,8 +1,7 @@
 package commons.routeCalculationService;
 
 import ch.helin.messages.commons.AssertUtils;
-import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
+import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
@@ -100,7 +99,7 @@ public class RouteCalculationService {
         logger.info(resultFromDijkstra.toString());;
 
         Route route = new Route();
-        route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra));
+        route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra, route));
 
         return route;
 
@@ -237,7 +236,7 @@ public class RouteCalculationService {
     }
 
 
-    public List<WayPoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){
+    public List<WayPoint> getWaypointListFromPositions(List<Position> positionList, Route route){
         List<WayPoint> returnWaypointList = new LinkedList<>();
 
         for (org.geolatte.geom.Position position : positionList) {
@@ -247,6 +246,9 @@ public class RouteCalculationService {
 
             WayPoint waypoint = new WayPoint();
             waypoint.setPosition(GisHelper.createPoint(lon, lat));
+            waypoint.setAction(Action.FLY);
+            waypoint.setOrderNumber(returnWaypointList.size());
+            waypoint.setRoute(route);
             returnWaypointList.add(waypoint);
         }
 
