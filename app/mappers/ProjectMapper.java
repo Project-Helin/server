@@ -12,16 +12,20 @@ import java.util.stream.Collectors;
 public class ProjectMapper {
 
     @Inject
-    ZoneMapper zoneMapper;
+    private ZoneMapper zoneMapper;
 
     public ProjectApiDto getProjectDto(Project project) {
 
-        List<ZoneApiDto> zoneDtos= project.getZones().stream().map(zoneMapper::getZoneDto).collect(Collectors.toList());
+        List<ZoneApiDto> zoneDtos =
+            project.getZones()
+                .stream()
+                .map(zoneMapper::getZoneDto)
+                .collect(Collectors.toList());
 
         return new ProjectApiDto(
-                project.getId(),
-                project.getName(),
-                zoneDtos
+            project.getId(),
+            project.getName(),
+            zoneDtos
         );
     }
 

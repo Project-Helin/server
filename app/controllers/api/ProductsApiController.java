@@ -1,10 +1,12 @@
 package controllers.api;
 
-import ch.helin.messages.dto.ProductDto;
 import com.google.inject.Inject;
+import commons.SessionHelper;
 import dao.ProductsDao;
-import mappers.ProductMapper;
+import dao.ProjectsDao;
+import dto.api.ProductApiDto;
 import models.Product;
+import models.Project;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -22,16 +24,29 @@ public class ProductsApiController extends Controller {
     private ProductsDao productsDao;
 
     @Inject
-    private ProductMapper productMapper;
+    private ProjectsDao projectsDao;
+
+    @Inject
+    private SessionHelper sessionHelper;
 
     @Transactional
     public Result index() {
         List<Product> products = productsDao.findAll();
 
-        List<ProductDto> productDtos =
+        List<Project> projects =
+            projectsDao.findByOrganisation(sessionHelper.getOrganisation(session()).getId());
+
+        List<ProductApiDto> productDtos =
             products
                 .stream()
-                .map(productMapper::convertToProductDto)
+                .map(product -> {
+                    ProductApiDto productApiDto = new ProductApiDto();
+                    productApiDto.setName(product.getName());
+                    productApiDto.setId(product.getIdAsString());
+                    productApiDto.setPrice(product.getPrice());
+                    productApiDto.setProject(projects.iterator().next().getIdAsString()); // TODO discuss this!
+                    return productApiDto;
+                })
                 .collect(Collectors.toList());
         return ok(Json.toJson(productDtos));
     }
