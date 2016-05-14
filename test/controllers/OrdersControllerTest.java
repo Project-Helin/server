@@ -13,9 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class OrdersControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;

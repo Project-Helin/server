@@ -12,9 +12,6 @@ import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-/**
- * Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class OrganisationsDaoTest extends AbstractE2ETest {
 
     @Inject
