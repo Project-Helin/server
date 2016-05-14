@@ -35,7 +35,7 @@ public class AssertPolygonTest {
          * ####
          */
         String polygonString = "POLYGON((-1 -1, -1 0, 1 0, 1 1, 0 1, 0 -1, -1 -1))";
-        Polygon invalidPolygon = (Polygon) GisHelper.convertFromWktToGeometry(polygonString);
+        Polygon invalidPolygon = GisHelper.convertFromWktToGeometry(polygonString);
 
         assertFalse(AssertPolygon.isPolygonValid(invalidPolygon));
 

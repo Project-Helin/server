@@ -6,7 +6,6 @@ import commons.gis.GisHelper;
 import dao.*;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
 import java.util.Date;
@@ -16,7 +15,7 @@ import java.util.UUID;
 /**
  * This class provides helper methods to create sample entities.
  */
-public class TestHelper {
+public class ImprovedTestHelper {
 
     @Inject
     private OrganisationsDao organisationsDao;
@@ -60,9 +59,7 @@ public class TestHelper {
         organisation.setToken(UUID.randomUUID().toString().substring(0, 5));
         organisation.setName("Super HSR " + System.currentTimeMillis());
 
-        jpaApi.withTransaction(() -> {
-            organisationsDao.persist(organisation);
-        });
+        organisationsDao.persist(organisation);
 
         return organisation;
     }
@@ -72,9 +69,7 @@ public class TestHelper {
         order.setProject(project);
         order.setCustomer(customer);
 
-        jpaApi.withTransaction(() -> {
-            orderDao.persist(order);
-        });
+        orderDao.persist(order);
 
         return order;
     }
@@ -84,9 +79,7 @@ public class TestHelper {
         order.setProject(project);
         order.setCustomer(customer);
 
-        jpaApi.withTransaction(() -> {
-            orderDao.persist(order);
-        });
+        orderDao.persist(order);
 
         createNewMission(order);
         createNewMission(order);
@@ -102,13 +95,11 @@ public class TestHelper {
 
         Route route = new Route();
 
-        jpaApi.withTransaction(() -> {
-            routeDao.persist(route);
-            missionsDao.persist(mission);
+        routeDao.persist(route);
+        missionsDao.persist(mission);
 
-            route.setMission(mission);
-            routeDao.persist(route);
-        });
+        route.setMission(mission);
+        routeDao.persist(route);
 
         return mission;
     }
@@ -121,9 +112,7 @@ public class TestHelper {
 
         drone.setOrganisation(organisation);
 
-        jpaApi.withTransaction(() -> {
-            droneDao.persist(drone);
-        });
+        droneDao.persist(drone);
 
         return drone;
     }
@@ -137,10 +126,7 @@ public class TestHelper {
         drone.setOrganisation(project.getOrganisation());
         drone.setProject(project);
 
-        jpaApi.withTransaction(() -> {
-            droneDao.persist(drone);
-        });
-
+        droneDao.persist(drone);
         return drone;
     }
 
@@ -151,9 +137,7 @@ public class TestHelper {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-        jpaApi.withTransaction(() -> {
-            userDao.persist(user);
-        });
+        userDao.persist(user);
 
         return user;
     }
@@ -169,14 +153,12 @@ public class TestHelper {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-        jpaApi.withTransaction(() -> {
-            userDao.persist(user);
-            organisation.getAdministrators().add(user);
-            jpaApi.em().merge(organisation);
-            jpaApi.em().flush();
-            jpaApi.em().refresh(user);
-            user.getOrganisations().size();
-        });
+        userDao.persist(user);
+        organisation.getAdministrators().add(user);
+        jpaApi.em().merge(organisation);
+        jpaApi.em().flush();
+        jpaApi.em().refresh(user);
+        user.getOrganisations().size();
 
         return user;
     }
@@ -194,7 +176,7 @@ public class TestHelper {
 
         product.setOrganisation(newOrganisation);
 
-        jpaApi.withTransaction(() -> productsDao.persist(product));
+        productsDao.persist(product);
         return product;
     }
 
@@ -214,10 +196,9 @@ public class TestHelper {
             project.getDrones().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
+
 
         return project;
     }
@@ -234,10 +215,8 @@ public class TestHelper {
             project.getZones().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
 
         return project;
     }
@@ -251,24 +230,18 @@ public class TestHelper {
             project.getProducts().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
 
         return project;
     }
 
     public Zone createUnsavedZone(String name, ZoneType type) {
-        return createUnsavedZone(name, type, null);
-    }
-
-    public Zone createUnsavedZone(String name, ZoneType type, Polygon polygon) {
         Zone zone = new Zone();
         zone.setName(name);
         zone.setType(type);
         zone.setHeight(100);
-        zone.setPolygon(polygon);
+
         return zone;
     }
 
@@ -316,9 +289,9 @@ public class TestHelper {
         customer.setEmail("testcustomer@helin.ch");
         customer.setToken(RandomStringUtils.randomAlphanumeric(10));
 
-        jpaApi.withTransaction(() -> {
-            customerDao.persist(customer);
-        });
+
+        customerDao.persist(customer);
+
 
         return customer;
     }

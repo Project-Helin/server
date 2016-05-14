@@ -86,7 +86,7 @@ public class GisHelper {
      * @param wkbString - a WellKnownBinary String
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */
-
+    @Deprecated // don't use this -> use WKT instead!
     public static Geometry convertFromWkbToGeometry(String wkbString) {
         if (wkbString == null) {
             return null;
@@ -101,13 +101,12 @@ public class GisHelper {
      * @param wktString - a WellKnownBinary String
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */
-
-    public static Geometry convertFromWktToGeometry(String wktString) {
+    public static <D extends Geometry<?>> D convertFromWktToGeometry(String wktString) {
         if (wktString == null) {
             return null;
         }
 
-        return Wkt.fromWkt(wktString, WGS84_REFERENCE_SYSTEM);
+        return (D) Wkt.fromWkt(wktString, WGS84_REFERENCE_SYSTEM);
     }
 
     public static List<Waypoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){

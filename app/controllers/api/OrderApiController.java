@@ -4,10 +4,9 @@ import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.order.MissionDispatchingService;
+import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
-import dto.api.OrderProductApiDto;
-import mappers.MissionMapper;
 import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -19,9 +18,9 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -49,7 +48,14 @@ public class OrderApiController extends Controller {
     private MissionsDao missionsDao;
 
     @Inject
+    private RouteDao routeDao;
+
+    @Inject
     private RouteMapper routeMapper;
+
+    @Inject
+    private RouteCalculationService routeCalculationService;
+
 
     /*
      * An Order with mission and route is created,
@@ -64,7 +70,7 @@ public class OrderApiController extends Controller {
         OrderApiDto orderApiDto = new Gson().fromJson(jsonNode, OrderApiDto.class);
 
         if (orderApiDto == null) {
-            logger.info("Send wrong request back, because invalid json: {}", orderApiDto);
+            logger.debug("Send wrong request back, because invalid json: {}", jsonNode);
             return forbidden("Wrong request");
         }
 
@@ -74,7 +80,6 @@ public class OrderApiController extends Controller {
         Order order = createOrder(orderApiDto, customer);
         orderDao.persist(order);
 
-
         Route proposedRoute = calculateRoute();
 
         Set<OrderProduct> orderProducts = order.getOrderProducts();
@@ -83,13 +88,34 @@ public class OrderApiController extends Controller {
         mission.setState(MissionState.NEW);
         mission.setOrderProduct(orderProducts.iterator().next()); // TODO fix
         mission.setRoute(proposedRoute);
+        HashSet<Mission> missions1 = new HashSet<>();
+        missions1.add(mission);
+        order.setMissions(missions1);
+
+        // mision to OrderProduct assignment
+        // one orderproduct per mission
+        // split order-products -> add more orders (
 
         //Set State to ROUTE_SUGGESTED
         //Split order in Missions based on maxamount on product and on highest payload of a drone in project.
-        //Calculate Route
-        //Send route to Customer
 
-        RouteDto routeDto = routeMapper.convertToRouteDto(proposedRoute);
+        //Calculate Route
+
+        //Send route to Customer
+        RouteDto routeDto =
+            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+
+        Set<Mission> missions = order.getMissions();
+
+        for (Mission each : missions) {
+            Route route = new Route();
+            route.setMission(each);
+            route.setWayPoints(route.getWayPoints());;
+            each.setRoute(route);
+            routeDao.persist(route);
+            missionsDao.persist(each);
+        }
+
         return ok(Json.toJson(routeDto));
     }
 
@@ -118,21 +144,18 @@ public class OrderApiController extends Controller {
         return customer;
     }
 
-    private Set<OrderProduct> getOrderProducts(OrderApiDto orderCargoDto, Order order) {
+    private Set<OrderProduct> getOrderProducts(OrderApiDto orderApiDto, Order newOrder) {
+        return orderApiDto.getOrderProducts().stream().map((each) -> {
+            Product product = productsDao.findById(UUID.fromString(each.getProductId()));
 
-        List<OrderProductApiDto> orderProducts = orderCargoDto.getOrderProducts();
-        Set<OrderProduct> products = new HashSet<>();
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setAmount(each.getAmount());
+            orderProduct.setOrder(newOrder);
+            orderProduct.setProduct(product);
+            orderProduct.setTotalPrice(product.getPrice() * each.getAmount());
 
-        for (OrderProductApiDto orderProduct : orderProducts) {
-            OrderProduct e = new OrderProduct();
-            e.setAmount(orderProduct.getAmount());;
-            e.setOrder(order);
-            Product byId = productsDao.findById(UUID.fromString(orderProduct.getProductId()));
-            e.setProduct(byId);
-            e.setTotalPrice(byId.getPrice() * orderProduct.getAmount());
-            products.add(e);
-        }
-        return products;
+            return orderProduct;
+        }).collect(Collectors.toSet());
     }
 
     /*
