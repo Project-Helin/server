@@ -60,25 +60,4 @@ public class GisHelperTest {
         assertThat(point.toString()).isEqualTo("SRID=4326;POINT(100 -150)");
     }
 
-    @Test
-    public void shouldConvertPositionListToWaypointList(){
-
-        List<org.geolatte.geom.Position> positionList = new LinkedList<>();
-
-        positionList.add(GisHelper.createPoint(1,1).getPosition());
-        positionList.add(GisHelper.createPoint(2,2).getPosition());
-        positionList.add(GisHelper.createPoint(3,3).getPosition());
-        positionList.add(GisHelper.createPoint(4,4).getPosition());
-
-        List<Waypoint> waypointList = GisHelper.getWaypointListFromPositions(positionList);
-
-        assertEquals(waypointList.size(), positionList.size());
-
-        for(int i = 0; i<positionList.size(); i++){
-            assertEquals(positionList.get(i).getCoordinate(0), waypointList.get(i).getPosition().getLon(), GisHelper.getRoundoffPrecision());
-            assertEquals(positionList.get(i).getCoordinate(0), waypointList.get(i).getPosition().getLon(), GisHelper.getRoundoffPrecision());
-        }
-
-
-    }
 }

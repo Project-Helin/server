@@ -2,6 +2,7 @@ package commons.routeCalculationService;
 
 import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.way.RouteDto;
+import ch.helin.messages.dto.way.Waypoint;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
@@ -10,10 +11,7 @@ import commons.gis.GisHelper;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
-import models.Project;
-import models.Route;
-import models.Zone;
-import models.ZoneType;
+import models.*;
 import org.geolatte.geom.*;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
@@ -29,10 +27,7 @@ import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RouteCalculationService {
 
@@ -47,12 +42,10 @@ public class RouteCalculationService {
     public Route calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
         Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
 
-        // TODO fix this
-        calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
-        return null;
+        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
     }
 
-    public RouteDto calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
+    public Route calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
                                    ch.helin.messages.dto.way.Position customerPosition,
                                    Project project) {
 
@@ -94,13 +87,6 @@ public class RouteCalculationService {
         logger.debug("Customer-to-skeleton: {}", lineStringToCustomer);
         logger.debug("Skeleton after split: {}", skeletonMultiLine);
 
-//        logger.info("Before cleaning: {}", GisHelper.toWktStringWithoutSrid(skeletonMultiLine));
-
-//        com.vividsolutions.jts.geom.Geometry clean = DouglasPeuckerLineSimplifier.simplify(JTS.to(skeletonMultiLine), 0.001);
-//        MultiLineString cleaned = (MultiLineString) JTS.from(clean, GisHelper.getReferenceSystem());
-
-//        logger.info("After cleaning:  {}", GisHelper.toWktStringWithoutSrid(skeletonMultiLine));
-
         for(int i=0; i<skeletonMultiLine.getNumGeometries(); i++){
             rawGraph.add((LineString) skeletonMultiLine.getGeometryN(i));
         }
@@ -109,8 +95,8 @@ public class RouteCalculationService {
                 getResultFromDijkstra(rawGraph, lineStringToDrone.getEndPosition(), lineStringToCustomer.getEndPosition());
         logger.info(resultFromDijkstra.toString());;
 
-        RouteDto route = new RouteDto();
-        route.setWayPoints(GisHelper.getWaypointListFromPositions(resultFromDijkstra));
+        Route route = new Route();
+        route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra));
 
         return route;
 
@@ -244,6 +230,23 @@ public class RouteCalculationService {
     private boolean isPointOnVertex(com.vividsolutions.jts.geom.Point jtsPoint, com.vividsolutions.jts.geom.MultiLineString jtsMultiLineString){
         Coordinate[] coordinates = jtsMultiLineString.getCoordinates();
         return Arrays.asList(coordinates).contains(jtsPoint.getCoordinate());
+    }
+
+
+    public List<WayPoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){
+        List<WayPoint> returnWaypointList = new LinkedList<>();
+
+        for (org.geolatte.geom.Position position : positionList) {
+            org.geolatte.geom.Position p  = position;
+            double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
+            double lat = p.getCoordinate(1);
+
+            WayPoint waypoint = new WayPoint();
+            waypoint.setPosition(GisHelper.createPoint(lon, lat));
+            returnWaypointList.add(waypoint);
+        }
+
+        return returnWaypointList;
     }
 
 

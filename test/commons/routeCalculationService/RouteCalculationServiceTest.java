@@ -19,9 +19,7 @@ import commons.gis.GisHelper;
 import commons.gis.Wgs84Helper;
 import dao.ProjectsDao;
 import dao.RouteDao;
-import models.Project;
-import models.Zone;
-import models.ZoneType;
+import models.*;
 import org.geolatte.geom.*;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.LineString;
@@ -86,7 +84,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         Project project = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
 
         jpaApi.withTransaction(() ->{
-            RouteDto route = routeCalculationService.calculateRoute(startPosition, endPosition, project);
+            Route route = routeCalculationService.calculateRoute(startPosition, endPosition, project);
         });
 
 
@@ -223,6 +221,28 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         // Check, that the 2 same entries are treted as one.
         int size = graph.vertexSet().size();
         assertEquals(3, size);
+    }
+
+    @Test
+    public void shouldConvertPositionListToWaypointList(){
+
+        List<org.geolatte.geom.Position> positionList = new LinkedList<>();
+
+        positionList.add(GisHelper.createPoint(1,1).getPosition());
+        positionList.add(GisHelper.createPoint(2,2).getPosition());
+        positionList.add(GisHelper.createPoint(3,3).getPosition());
+        positionList.add(GisHelper.createPoint(4,4).getPosition());
+
+        List<WayPoint> waypointList = routeCalculationService.getWaypointListFromPositions(positionList);
+
+        assertEquals(waypointList.size(), positionList.size());
+
+        for(int i = 0; i<positionList.size(); i++){
+            assertEquals(positionList.get(i).getCoordinate(0), waypointList.get(i).getPosition().getPosition().getCoordinate(0), GisHelper.getRoundoffPrecision());
+            assertEquals(positionList.get(i).getCoordinate(1), waypointList.get(i).getPosition().getPosition().getCoordinate(1), GisHelper.getRoundoffPrecision());
+        }
+
+
     }
 
 

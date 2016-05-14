@@ -102,21 +102,22 @@ public class OrderApiController extends Controller {
         //Calculate Route
 
         //Send route to Customer
-        RouteDto routeDto =
-            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
-
-        Set<Mission> missions = order.getMissions();
-
-        for (Mission each : missions) {
-            Route route = new Route();
-            route.setMission(each);
-            route.setWayPoints(route.getWayPoints());;
-            each.setRoute(route);
-            routeDao.persist(route);
-            missionsDao.persist(each);
-        }
-
-        return ok(Json.toJson(routeDto));
+//        Route route =
+//            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+//
+//        Set<Mission> missions = order.getMissions();
+//
+//        for (Mission each : missions) {
+//            Route route = new Route();
+//            route.setMission(each);
+//            route.setWayPoints(route.getWayPoints());;
+//            each.setRoute(route);
+//            routeDao.persist(route);
+//            missionsDao.persist(each);
+//        }
+//
+//        return ok(Json.toJson(routeDto));
+        return null;
     }
 
     private Route calculateRoute() {
