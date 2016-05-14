@@ -233,7 +233,7 @@ public class RouteCalculationService {
     }
 
 
-    public static List<WayPoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){
+    public List<WayPoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){
         List<WayPoint> returnWaypointList = new LinkedList<>();
 
         for (org.geolatte.geom.Position position : positionList) {
