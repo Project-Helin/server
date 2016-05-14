@@ -13,8 +13,10 @@ import dao.ProjectsDao;
 import dto.api.ProjectApiDto;
 import dto.api.ZoneApiDto;
 import mappers.ProjectMapper;
+import mappers.RouteMapper;
 import models.Organisation;
 import models.Project;
+import models.Route;
 import models.Zone;
 import org.slf4j.Logger;
 import play.db.jpa.Transactional;
@@ -46,6 +48,9 @@ public class ProjectsApiController extends Controller {
     @Inject
     private RouteCalculationService routeCalculationService;
 
+    @Inject
+    private RouteMapper routeMapper;
+
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
@@ -68,8 +73,9 @@ public class ProjectsApiController extends Controller {
     @Transactional
     public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
         try {
-            RouteDto realRoute = calculateRouteOrThrowException(projectID, dronePositionWkt, customerPositionWkt);
-            return ok(Json.toJson(realRoute));
+            Route realRoute = calculateRouteOrThrowException(projectID, dronePositionWkt, customerPositionWkt);
+            RouteDto routeDto = routeMapper.convertToRouteDto(realRoute);
+            return ok(Json.toJson(routeDto));
         } catch (Exception e) {
             logger.info("Thrown exception: ", e);
             String message = e.getMessage();
@@ -77,9 +83,9 @@ public class ProjectsApiController extends Controller {
         }
     }
 
-    private RouteDto calculateRouteOrThrowException(UUID projectID,
-                                                    String dronePositionWkt,
-                                                    String customerPositionWkt) {
+    private Route calculateRouteOrThrowException(UUID projectID,
+                                                 String dronePositionWkt,
+                                                 String customerPositionWkt) {
 
         Project found = getProject(projectID);
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);

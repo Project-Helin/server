@@ -20,6 +20,7 @@ import commons.gis.Wgs84Helper;
 import dao.ProjectsDao;
 import dao.RouteDao;
 import models.Project;
+import models.Route;
 import models.Zone;
 import models.ZoneType;
 import org.geolatte.geom.*;
@@ -86,7 +87,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         Project project = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
 
         jpaApi.withTransaction(() ->{
-            RouteDto route = routeCalculationService.calculateRoute(startPosition, endPosition, project);
+            Route route = routeCalculationService.calculateRoute(startPosition, endPosition, project);
         });
 
 
