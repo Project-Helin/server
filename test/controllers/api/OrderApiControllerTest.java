@@ -94,10 +94,10 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             assertThat(customer.getEmail()).isEqualTo("batman@wayneenterprise.com");
 
             // should has one mission
-            Set<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(all);
             assertThat(missions).hasSize(1);
 
-            Mission first = missions.iterator().next();
+            Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
             assertThat(first.getOrderProduct().getAmount())
@@ -139,10 +139,10 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             assertThat(all).hasSize(1);
 
             // should has one mission
-            Set<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(all);
             assertThat(missions).hasSize(1);
 
-            Mission first = missions.iterator().next();
+            Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
             assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
@@ -231,25 +231,23 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
             assertThat(all).hasSize(1);
 
             // should has one mission
-            Set<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(all);
             assertThat(missions).hasSize(3);
 
-            Iterator<Mission> iterator = missions.iterator();
-
-            Mission first = iterator.next();
+            Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
-            assertThat(first.getOrderProduct().getAmount()).isEqualTo(5);
+            assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
 
-            Mission second = iterator.next();
+            Mission second = missions.get(1);
             assertThat(second.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
             assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
 
-            Mission third = iterator.next();
+            Mission third = missions.get(2);
             assertThat(third.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
-            assertThat(third.getOrderProduct().getAmount()).isEqualTo(3);
+            assertThat(third.getOrderProduct().getAmount()).isEqualTo(5);
         });
     }
 
@@ -293,11 +291,11 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
     }
 
 
-    private Set<Mission> getFirstMissionSortedByAmount(List<Order> all) {
+    private List<Mission> getFirstMissionSortedByAmount(List<Order> all) {
         return all.get(0)
             .getMissions()
             .stream()
             .sorted(Comparator.comparing((e) -> e.getOrderProduct().getAmount()))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
     }
 }
