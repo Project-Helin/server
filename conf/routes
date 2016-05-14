@@ -101,3 +101,6 @@ POST        /api/orders/:orderId/confirm                            controllers.
 
 ## Products
 GET         /api/products/                                          controllers.api.ProductsApiController.index()
+
+# Mission
+GET         /api/mission/:missionId/show                            controllers.api.MissionApiController.show(missionId : java.util.UUID)

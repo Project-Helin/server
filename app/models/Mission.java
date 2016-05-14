@@ -17,7 +17,7 @@ public class Mission extends BaseEntity {
     @JoinColumn(name = "drone_id")
     private Drone drone;
 
-    @OneToOne(mappedBy = "mission")
+    @OneToOne(mappedBy = "mission", cascade = CascadeType.ALL)
     private Route route;
 
     @ManyToOne(fetch = FetchType.LAZY)
