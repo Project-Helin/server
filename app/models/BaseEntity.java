@@ -31,6 +31,10 @@ public class BaseEntity {
         return id;
     }
 
+    public String getIdAsString() {
+        return id.toString();
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }

@@ -75,6 +75,8 @@ public class GisHelper {
     }
 
     public static Position createPosition(Point point) {
+        AssertUtils.throwExceptionIfNull(point);
+
         Position position = new Position();
         position.setLat(point.getPosition().getCoordinate(1));
         position.setLon(point.getPosition().getCoordinate(0));

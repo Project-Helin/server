@@ -1,18 +1,26 @@
 package controllers.api;
 
 import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
+import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.AbstractWebServiceIntegrationTest;
+import commons.ImprovedTestHelper;
 import commons.drone.DroneCommunicationManager;
+import commons.gis.GisHelper;
 import dao.OrderDao;
+import dao.ProjectsDao;
+import dto.api.OrderApiDto;
+import dto.api.OrderProductApiDto;
 import mappers.MissionMapper;
 import mappers.OrderProductsMapper;
 import models.*;
 import org.junit.Test;
 import play.Application;
+import play.db.jpa.Transactional;
 import play.inject.guice.GuiceApplicationBuilder;
 import play.libs.Json;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -36,6 +44,12 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
     @Inject
     private OrderProductsMapper orderProductsMapper;
 
+    @Inject
+    private ProjectsDao projectsDao;
+
+    @Inject
+    private ImprovedTestHelper testHelper;
+
     private DroneCommunicationManager droneCommunicationManager;
 
 
@@ -45,13 +59,53 @@ public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
         this.droneCommunicationManager = mock(DroneCommunicationManager.class);
 
         return new GuiceApplicationBuilder()
-                .configure("driver", "org.postgresql.Driver")
-                .configure("url", "jdbc:postgresql://localhost:5455/test")
-                .configure("username", "test")
-                .configure("password", "test")
-                .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
-                .build();
+            .configure("driver", "org.postgresql.Driver")
+            .configure("url", "jdbc:postgresql://localhost:5455/test")
+            .configure("username", "test")
+            .configure("password", "test")
+            .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
+            .build();
     }
+
+
+    @Test
+    public void shouldCreateNewOrderForOneProduct() {
+        OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
+            Organisation organisation;
+            Project project = testHelper.createNewProject(
+                organisation = testHelper.createNewOrganisation(),
+                testHelper.createUnsavedZone(
+                    "Loading Zone",
+                    ZoneType.LoadingZone,
+                    testHelper.createSamplePolygon()
+                ),
+                testHelper.createUnsavedZone(
+                    "Delivery Zone",
+                    ZoneType.DeliveryZone,
+                    testHelper.createSamplePolygon()
+                )
+            );
+            Product product = testHelper.createProduct(organisation);
+            projectsDao.persist(project);
+
+            OrderApiDto orderApiDto = new OrderApiDto()
+                .setCustomerPosition(new Position(10.03, 30.200))
+                .setDisplayName("Batman")
+                .setEmail("batman@wayneenterprise.com")
+                .setOrderProducts(Arrays.asList(
+                    new OrderProductApiDto()
+                        .setProjectId(project.getIdAsString())
+                        .setProductId(product.getIdAsString())
+                        .setAmount(10)
+                ));
+
+            return orderApiDto;
+        });
+
+        apiHelper.doPost(routes.OrderApiController.create(), orderToSent);
+    }
+
+
     @Test
     public void confirmOrderTest() {
 

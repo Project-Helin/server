@@ -51,7 +51,7 @@ public class ProjectsDao extends AbstractDao<Project> {
         Query nativeQuery = jpaApi.em().createNativeQuery(
             "SELECT ST_asText(ST_PointOnSurface(polygon\\:\\:geometry)\\:\\:geometry)" +
             " FROM zones z " +
-            " WHERE z.project_id = :projectId and z.type = :zoneType "
+            " WHERE z.project_id = :projectId and z.type = :zoneType and z.polygon is not NULL "
         );
         nativeQuery.setParameter("projectId", projectId);
         nativeQuery.setParameter("zoneType", ZoneType.LoadingZone.name());
@@ -67,7 +67,7 @@ public class ProjectsDao extends AbstractDao<Project> {
             throw new RuntimeException("More than one loading zone found");
         }else {
             logger.debug("Project: {}", projectId);
-            throw new RuntimeException("No loading zone found.");
+            throw new RuntimeException("No loading zone found with polygon defined.");
         }
     }
 }

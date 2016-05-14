@@ -60,7 +60,7 @@ public class OrderApiController extends Controller {
     @BodyParser.Of(BodyParser.Json.class)
     public Result create() {
         String jsonNode = request().body().asJson().toString();
-        OrderApiDto orderApiDto = new Gson().fromJson(jsonNode, OrderApiDto.class);
+        OrderApiDto orderApiDto = parseJsonOrNull(jsonNode);
 
         if (orderApiDto == null) {
             logger.debug("Send wrong request back, because invalid json: {}", jsonNode);
@@ -121,7 +121,21 @@ public class OrderApiController extends Controller {
             missionsDao.persist(each);
         }
 
+        // TODO get rid of this
+        if (routeDto == null) {
+            return ok();
+        }
+
         return ok(Json.toJson(routeDto));
+    }
+
+    private OrderApiDto parseJsonOrNull(String rawJson) {
+        try {
+            return new Gson().fromJson(rawJson, OrderApiDto.class);
+        } catch (Exception e) {
+            logger.warn("Failed to parse json {}", rawJson);
+            return null;
+        }
     }
 
     private Route calculateRoute() {

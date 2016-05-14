@@ -1,10 +1,7 @@
 package models;
 
 import javax.persistence.*;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity(name = "projects")
 public class Project extends BaseEntity {
@@ -50,6 +47,17 @@ public class Project extends BaseEntity {
 
     public void setZones(Set<Zone> zones) {
         this.zones = zones;
+        for (Zone each : zones) {
+            each.setProject(this);
+        }
+    }
+
+    public void setZones(Zone... zones) {
+        this.zones = new HashSet<>();
+        for (Zone each : zones) {
+            each.setProject(this);
+            this.zones.add(each);
+        }
     }
 
     public Set<Zone> getZones() {

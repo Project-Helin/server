@@ -29,10 +29,7 @@ import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RouteCalculationService {
 
@@ -46,6 +43,7 @@ public class RouteCalculationService {
 
     public Route calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
         Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
+        AssertUtils.throwExceptionIfNull(pointOnPolygon, "Point on polygon could not be calculated.");
 
         // TODO fix this
         calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
@@ -84,7 +82,10 @@ public class RouteCalculationService {
             rawGraph.add(lineStringToCustomer);
             skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
         } else{
-            Zone deliveryZone = project.getZones().stream().filter(x -> x.getType() == ZoneType.DeliveryZone).findFirst().get();
+
+            Optional<Zone> maybeZone = project.getZones().stream().filter(x -> x.getType() == ZoneType.DeliveryZone).findFirst();
+            Zone deliveryZone = maybeZone.orElseThrow(()-> new RuntimeException("No delivery zone found!"));
+
             Point intersectionPoint = getIntersectionPointWithPolygon(deliveryZone.getPolygon(), customerPoint);
             lineStringToCustomer = calculateShortestLineToPoint(skeletonMultiLine, intersectionPoint);
             rawGraph.add(lineStringToCustomer);

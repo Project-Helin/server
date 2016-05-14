@@ -19,36 +19,40 @@ public class OrderApiDto {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public OrderApiDto setDisplayName(String displayName) {
         this.displayName = displayName;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public OrderApiDto setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public List<OrderProductApiDto> getOrderProducts() {
         return orderProducts;
     }
 
-    public void setOrderProducts(List<OrderProductApiDto> orderProducts) {
+    public OrderApiDto setOrderProducts(List<OrderProductApiDto> orderProducts) {
         this.orderProducts = orderProducts;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).toString();
+        return this;
     }
 
     public Position getCustomerPosition() {
         return customerPosition;
     }
 
-    public void setCustomerPosition(Position customerPosition) {
+    public OrderApiDto setCustomerPosition(Position customerPosition) {
         this.customerPosition = customerPosition;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).toString();
     }
 }
