@@ -3,6 +3,7 @@ package commons.gis;
 import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.Waypoint;
+import models.WayPoint;
 import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
@@ -109,23 +110,6 @@ public class GisHelper {
         }
 
         return (D) Wkt.fromWkt(wktString, WGS84_REFERENCE_SYSTEM);
-    }
-
-    public static List<Waypoint> getWaypointListFromPositions(List<org.geolatte.geom.Position> positionList){
-        List<Waypoint> returnWaypointList = new LinkedList<Waypoint>();
-
-        for (org.geolatte.geom.Position position : positionList) {
-            org.geolatte.geom.Position p  = position;
-            double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
-            double lat = p.getCoordinate(1);
-
-            Waypoint waypoint = new Waypoint();
-            waypoint.setId(UUID.randomUUID());
-            waypoint.setPosition(new ch.helin.messages.dto.way.Position(lat, lon, 0));
-            returnWaypointList.add(waypoint);
-        }
-
-        return returnWaypointList;
     }
 
 }
