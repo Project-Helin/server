@@ -30,8 +30,8 @@
                             displayName: 'Batman',
                             email: 'batman@wayneenterprise.com',
                             customerPosition: {
-                                lat: "8.817697763442991",
-                                lon: "47.223881796664756"
+                                lon: "8.816533684730528",
+                                lat: "47.223951016778614"
                             },
                             orderProducts: [
                                 {

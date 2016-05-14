@@ -3,9 +3,10 @@
         return {
             restrict: 'E',
             scope: {
-                projectId: '@'
+                projectId: '@',
+                missionId: '@'
             },
-            templateUrl: 'assets/javascripts/route-debugger/route-debugger.tmpl.html',
+            templateUrl: '/assets/javascripts/route-debugger/route-debugger.tmpl.html',
             controller: 'RouteDebuggerCtrl'
         };
     });

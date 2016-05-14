@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import commons.SessionHelper;
 import dao.OrderDao;
 import dao.ProjectsDao;
+import models.Mission;
 import models.Order;
 import models.Project;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.orders.index;
+import views.html.orders.showRoute;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,6 +66,16 @@ public class OrdersController extends Controller {
 
         orderDao.delete(found);
         return redirect(routes.OrdersController.index());
+    }
+
+    public Result showRoute(UUID ordersId) {
+        Order found = orderDao.findById(ordersId);
+        if (found == null) {
+            return forbidden();
+        }
+
+        Mission first = found.getMissions().iterator().next();
+        return ok(showRoute.render(found.getProject().getId().toString(), first.getId().toString()));
     }
 
     private Result showAll() {

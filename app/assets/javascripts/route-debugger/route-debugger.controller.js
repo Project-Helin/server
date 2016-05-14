@@ -25,6 +25,17 @@
                         }
                     }
                 });
+
+                if($scope.missionId){
+                    ProjectsService.getRoute($scope.missionId).then(function (route) {
+                        $scope.data.routeWayPoints = route.wayPoints;
+                    }, function(error){
+                        $scope.data.routeWayPoints = [];
+                        console.log('Got error', error);
+                        toastr.error(error.data, 'Error');
+                    });
+
+                }
             }
             
             $scope.calculateRoute = function () {
