@@ -36,7 +36,7 @@ public class RouteDao extends AbstractDao<Route>{
         String wktString = (String) nativeQuery.getSingleResult();
         logger.info("singleResult=[{}]", wktString);
 
-        MultiLineString multiLineString = (MultiLineString) GisHelper.convertFromWktToGeometry(wktString);
+        MultiLineString multiLineString = GisHelper.convertFromWktToGeometry(wktString);
 
         return multiLineString;
     }
@@ -51,7 +51,7 @@ public class RouteDao extends AbstractDao<Route>{
         nativeQuery.setParameter("objPosition", point);
 
         String resultString = (String) nativeQuery.getSingleResult();
-        LineString resultLineString = (LineString) GisHelper.convertFromWktToGeometry(resultString);
+        LineString resultLineString = GisHelper.convertFromWktToGeometry(resultString);
 
         logger.info("calculateShortestLineToPoint=[{}]", resultLineString);
 
