@@ -4,8 +4,12 @@ import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
@@ -27,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RouteCalculationService {
 
@@ -101,8 +107,19 @@ public class RouteCalculationService {
         Route route = new Route();
         route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra, route));
 
+        Route returnRoute = new Route();
+        returnRoute = calculateHeightForFlightPath(route, project.getZones());
+
+
         return route;
 
+    }
+
+    private Route calculateHeightForFlightPath(Route route, Set<Zone> zones) {
+        UnoverlappingFlyableZoneList unoverlappingZoneList = new UnoverlappingFlyableZoneList(zones);
+        unoverlappingZoneList.debugZoneList();
+
+        return null;
     }
 
     private Point getIntersectionPointWithPolygon(Polygon deliveryZonePolygon, Point customerPoint) {
@@ -254,6 +271,7 @@ public class RouteCalculationService {
 
         return returnWaypointList;
     }
+
 
 
 
