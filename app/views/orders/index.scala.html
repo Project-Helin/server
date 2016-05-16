@@ -74,6 +74,9 @@
                                         <a href="@controllers.routes.MissionController.showForOrder(order.getId)"
                                             class="btn btn-info btn-sm" role="button">Missions</a>
 
+                                        <a href="@controllers.routes.OrdersController.show(order.getId)"
+                                        class="btn btn-info btn-sm" role="button">Show</a>
+
                                         @deleteButton(
                                             controllers.routes.OrdersController.delete(order.getId),
                                             order.getId,

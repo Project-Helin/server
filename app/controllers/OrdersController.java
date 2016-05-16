@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import commons.SessionHelper;
 import dao.OrderDao;
 import dao.ProjectsDao;
-import models.Mission;
 import models.Order;
 import models.Project;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +15,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 import views.html.orders.index;
+import views.html.orders.show;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +39,7 @@ public class OrdersController extends Controller {
     @Inject
     private FormFactory formFactory;
 
+
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         String selectedProject = getSelectedProject();
@@ -55,6 +56,17 @@ public class OrdersController extends Controller {
         List<Project> projects = findAllProjects();
 
         return ok(index.render(projects, orders, selectedProject));
+    }
+
+    public Result show(UUID orderId) {
+
+        Order order = orderDao.findById(orderId);
+
+        if (order.getProject().getOrganisation() != sessionHelper.getOrganisation(session())) {
+            return forbidden();
+        } else {
+            return ok(show.render(orderId));
+        }
     }
 
     public Result delete(UUID ordersId) {
