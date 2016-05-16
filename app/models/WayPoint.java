@@ -7,7 +7,6 @@ import javax.persistence.*;
 
 @Entity(name = "way_points")
 public class WayPoint extends BaseEntity{
-
     private int orderNumber;
     private Point position;
 
@@ -70,5 +69,17 @@ public class WayPoint extends BaseEntity{
 
     public void setFixpoint(boolean fixpoint) {
         this.fixpoint = fixpoint;
+    }
+
+    @Override
+    public String toString() {
+        return "WayPoint{" +
+                "orderNumber=" + orderNumber +
+                ", position=" + position +
+                ", height=" + height +
+                ", fixpoint=" + fixpoint +
+                ", action=" + action +
+                ", route=" + route +
+                '}';
     }
 }

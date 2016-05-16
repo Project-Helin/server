@@ -1,15 +1,17 @@
 package commons.routeCalculationService;
 
 
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
+import models.WayPoint;
 import models.Zone;
 import models.ZoneType;
-import org.geolatte.geom.LineString;
-import org.geolatte.geom.Polygon;
+import org.geolatte.geom.*;
 import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,7 @@ public class UnoverlappingFlyableZoneList {
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
 
             com.vividsolutions.jts.geom.Polygon subtractedZonePolygon = (com.vividsolutions.jts.geom.Polygon) (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
-            zone.setPolygon((Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
+            zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
         }
     }
 
@@ -60,19 +62,68 @@ public class UnoverlappingFlyableZoneList {
         }
     }
 
-    public LineString cutLineStringOnPolygonBorder(LineString lineString){
+    public org.geolatte.geom.LineString cutLineStringOnPolygonBorder(org.geolatte.geom.LineString lineString){
+        logger.debug("Input to cutLineStringOnPolygonBorder geometry {}", lineString.toString());
         com.vividsolutions.jts.geom.LineString jtsLineString = (com.vividsolutions.jts.geom.LineString) JTS.to(lineString);
 
-        List<Geometry> collect = zoneList.stream().map(x -> JTS.to(x.getPolygon())).collect(Collectors.toList());
+        Coordinate[] coordinates = jtsLineString.getCoordinates();
 
+        List<Coordinate> returnLineStringCoordinates = new ArrayList<>();
+        returnLineStringCoordinates.add(coordinates[0]); //add this point, because it is never part of a line...
 
+        for(int i=0; i<coordinates.length-1; i++){
+            GeometryFactory geometryFactory = new GeometryFactory();
+            com.vividsolutions.jts.geom.LineString lineStringSegment = geometryFactory.createLineString(new Coordinate[]{coordinates[i], coordinates[i + 1]});
 
-        com.vividsolutions.jts.geom.Polygon[] polygons = collect.toArray(new com.vividsolutions.jts.geom.Polygon[]{});
-        GeometryFactory gFactory = new GeometryFactory();
-        MultiPolygon multiPolygonOfUnoverlappedZones = gFactory.createMultiPolygon(polygons);
+            for (UnoverlappingZone zone : zoneList) {
+                com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
+                com.vividsolutions.jts.geom.LineString exteriorRing = currentPolygon.getExteriorRing();
+                if(exteriorRing.intersects(lineStringSegment)){
+                    logger.debug("FUCK YEAH! INTERSECTION!");
+                    Point intersectionPoint = (Point) exteriorRing.intersection(lineStringSegment);
 
-        com.vividsolutions.jts.geom.LineString intersectionLine = (com.vividsolutions.jts.geom.LineString) jtsLineString.intersection(multiPolygonOfUnoverlappedZones);
+                    returnLineStringCoordinates.add(intersectionPoint.getCoordinate());
+                    logger.debug("Intersection Coordinate is {}", intersectionPoint.getCoordinate());
+                }
+            }
+            returnLineStringCoordinates.add(coordinates[i+1]);
+        }
 
-        return (LineString) JTS.from(intersectionLine, GisHelper.getReferenceSystem());
+        List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
+
+        GeometryFactory returnLineStringFactory = new GeometryFactory();
+        Coordinate[] returnCoordinates = returnLineStringCoordinates.toArray(new Coordinate[]{});
+        com.vividsolutions.jts.geom.LineString returnLineString = returnLineStringFactory.createLineString(returnCoordinates);
+
+        logger.debug("Output to cutLineStringOnPolygonBorder geometry {}", returnLineString.toString());
+        //com.vividsolutions.jts.geom.LineString intersectionLine = (com.vividsolutions.jts.geom.LineString) jtsLineString.intersection(multiPolygonOfUnoverlappedZones);
+
+        return (org.geolatte.geom.LineString) JTS.from(returnLineString, GisHelper.getReferenceSystem());
+    }
+
+    public List<WayPoint> assignHeightForPositions(List<Position> positionList) {
+
+        List<WayPoint> listWayPoints = new ArrayList<>();
+
+        for (Position position : positionList) {
+
+            org.geolatte.geom.Point point = GisHelper.createPoint(position.getCoordinate(0), position.getCoordinate(1));
+            Point jtsPoint = (Point) JTS.to(point);
+
+            for (UnoverlappingZone zone : zoneList) {
+                com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
+
+                if(currentPolygon.contains(jtsPoint)){
+                    WayPoint wp = new WayPoint();
+                    wp.setHeight(zone.getHeight());
+                    wp.setPosition(point);
+
+                    listWayPoints.add(wp);
+                }
+            }
+        }
+
+        return listWayPoints;
+
     }
 }

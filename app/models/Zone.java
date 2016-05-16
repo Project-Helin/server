@@ -64,4 +64,15 @@ public class Zone extends BaseEntity{
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Zone{" +
+                "name='" + name + '\'' +
+                ", polygon=" + polygon +
+                ", height=" + height +
+                ", type=" + type +
+                ", project=" + project +
+                '}';
+    }
 }

@@ -26,6 +26,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.Pseudograph;
 import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,22 +105,37 @@ public class RouteCalculationService {
                 getResultFromDijkstra(rawGraph, lineStringToDrone.getEndPosition(), lineStringToCustomer.getEndPosition());
         logger.info(resultFromDijkstra.toString());;
 
+        LineString lineStringFromPositions = getLineStringFromPositions(resultFromDijkstra);
+
+
+
         Route route = new Route();
-        route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra, route));
+        //route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra, route));
 
-        Route returnRoute = new Route();
-        returnRoute = calculateHeightForFlightPath(route, project.getZones());
-
+        List<WayPoint> wayPoints = calculateHeightForFlightPath(route, project.getZones(), lineStringFromPositions);
+        route.setWayPoints(wayPoints);
 
         return route;
 
     }
 
-    private Route calculateHeightForFlightPath(Route route, Set<Zone> zones) {
+    private List<WayPoint> calculateHeightForFlightPath(Route route, Set<Zone> zones, LineString lineString) {
         UnoverlappingFlyableZoneList unoverlappingZoneList = new UnoverlappingFlyableZoneList(zones);
         unoverlappingZoneList.debugZoneList();
+        LineString lineString1 = unoverlappingZoneList.cutLineStringOnPolygonBorder(lineString);
 
-        return null;
+        List<Position> positionList = new ArrayList<>();
+
+        PositionSequence positions = lineString1.getPositions();
+        for(int i = 0; i<positions.size(); i++){
+            positionList.add(positions.getPositionN(i));
+        }
+
+        List<WayPoint> wayPoints = unoverlappingZoneList.assignHeightForPositions(positionList);
+
+        logger.debug("List waypoints with Height {}", wayPoints.toString());
+
+        return wayPoints;
     }
 
     private Point getIntersectionPointWithPolygon(Polygon deliveryZonePolygon, Point customerPoint) {
@@ -138,7 +154,7 @@ public class RouteCalculationService {
                                                                    org.geolatte.geom.Position dronePosition,
                                                                    org.geolatte.geom.Position customerPosition){
 
-        UndirectedGraph<Position, LineString> graph = new SimpleGraph<>(LineString.class);
+        Pseudograph<Position, LineString> graph = new Pseudograph<>(LineString.class);
 
         for (LineString lineString : allPossiblePath) {
             graph.addVertex(lineString.getStartPosition());
@@ -270,6 +286,24 @@ public class RouteCalculationService {
         }
 
         return returnWaypointList;
+    }
+
+
+    public LineString getLineStringFromPositions(List<Position> positionList){
+        List<Coordinate> coordinateList = new ArrayList<>();
+
+        for (org.geolatte.geom.Position position : positionList) {
+            org.geolatte.geom.Position p  = position;
+            double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
+            double lat = p.getCoordinate(1);
+
+            Coordinate coordinate = new Coordinate(lon, lat);
+            coordinateList.add(new Coordinate(lon, lat));
+        }
+
+        GeometryFactory gf = new GeometryFactory();
+        com.vividsolutions.jts.geom.LineString lineString = gf.createLineString(coordinateList.toArray(new Coordinate[]{}));
+        return (LineString) JTS.from(lineString, GisHelper.getReferenceSystem());
     }
 
 
