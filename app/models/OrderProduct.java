@@ -6,7 +6,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity(name = "orders_products")
-public class OrderProduct extends BaseEntity{
+public class OrderProduct extends BaseEntity {
 
     @JoinColumn(name = "order_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -18,6 +18,16 @@ public class OrderProduct extends BaseEntity{
 
     private Integer amount;
     private Double totalPrice;
+
+    public OrderProduct() {
+    }
+
+    public OrderProduct(Order order, Product product, Integer amount) {
+        this.product = product;
+        this.order = order;
+        this.amount = amount;
+        this.totalPrice = amount * product.getPrice();
+    }
 
     public Order getOrder() {
         return order;

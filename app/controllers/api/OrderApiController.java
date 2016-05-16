@@ -73,7 +73,9 @@ public class OrderApiController extends Controller {
             return forbidden("Wrong request");
         }
 
+        //TODO should not be here, the customer should only be loaded
         Customer customer = saveCustomer(orderApiDto);
+
         Order order = saveOrder(orderApiDto, customer);
 
         Route route = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
@@ -83,6 +85,28 @@ public class OrderApiController extends Controller {
 
         RouteDto routeDto = routeMapper.convertToRouteDto(route);
         return ok(Json.toJson(routeDto));
+    }
+
+    /*
+    * An existing Order is set as confirmed
+    * and the mission is sent to drone
+    */
+    public Result confirm(UUID orderID) {
+        Order order = orderDao.findById(orderID);
+        if (order == null) {
+            return forbidden("Order not found");
+        }
+
+        order.setState(OrderState.IN_PROGRESS);
+        order.getMissions().stream().forEach(mission -> {
+            mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+            missionsDao.persist(mission);
+        });
+        orderDao.persist(order);
+
+        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
+
+        return ok();
     }
 
     private OrderApiDto parseJsonOrNull(String rawJson) {
@@ -108,14 +132,15 @@ public class OrderApiController extends Controller {
 
     private Order saveOrder(OrderApiDto orderApiDto, Customer customer) {
         Project project =
-            projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
+                projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
         AssertUtils.throwExceptionIfNull(project, "Project not found");
 
         Order order = new Order();
         order.setCustomer(customer);
         order.setProject(project);
         order.setState(OrderState.ROUTE_SUGGESTED);
-        order.setOrderProducts(getOrderProducts(orderApiDto, order));
+        Set<OrderProduct> splitOrderProducts = splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(order, orderApiDto.getOrderProducts());
+        order.setOrderProducts(splitOrderProducts);
 
         orderDao.persist(order);
         return order;
@@ -123,27 +148,26 @@ public class OrderApiController extends Controller {
 
     private void addMissionsToOrder(Order order, Route route) {
         Set<Mission> createdMissions =
-            order.getOrderProducts()
-                .stream()
-                .map((orderProduct) -> {
-                    Mission mission = new Mission();
-                    mission.setOrder(order);
-                    mission.setState(MissionState.NEW);
-                    mission.setOrderProduct(orderProduct);
-                    mission.setRoute(route);
+                order.getOrderProducts()
+                        .stream()
+                        .map((orderProduct) -> {
+                            Mission mission = new Mission();
+                            mission.setOrder(order);
+                            mission.setState(MissionState.NEW);
+                            mission.setOrderProduct(orderProduct);
+                            mission.setRoute(route);
 
-                    route.setMission(mission);
-                    mission.setRoute(route);
-                    return mission;
-                })
-                .collect(Collectors.toSet());
+                            route.setMission(mission);
+                            mission.setRoute(route);
+                            return mission;
+                        })
+                        .collect(Collectors.toSet());
 
         order.setMissions(createdMissions);
     }
 
-    private Set<OrderProduct> getOrderProducts(OrderApiDto orderApiDto, Order newOrder) {
+    private Set<OrderProduct> splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(Order newOrder, List<OrderProductApiDto> orderProductDtos) {
         HashSet<OrderProduct> orderProducts = new HashSet<>();
-        List<OrderProductApiDto> orderProductDtos = orderApiDto.getOrderProducts();
 
         for (OrderProductApiDto orderedProduct : orderProductDtos) {
             Product product = productsDao.findById(UUID.fromString(orderedProduct.getProductId()));
@@ -152,59 +176,27 @@ public class OrderApiController extends Controller {
             Integer orderedAmount = orderedProduct.getAmount();
             boolean orderedAmountFitsOnOneDrone = orderedAmount < product.getMaxItemPerDrone();
             if (orderedAmountFitsOnOneDrone) {
-                orderProducts.add(createOrderProduct(newOrder, product, orderedAmount));
-            } else {
 
+                orderProducts.add(new OrderProduct(newOrder, product, orderedAmount));
+            } else {
                 // we need to split the order
                 int neededOrderProducts = orderedAmount / product.getMaxItemPerDrone();
                 for (int i = 0; i < neededOrderProducts; i++) {
-                    orderProducts.add(createOrderProduct(newOrder, product, product.getMaxItemPerDrone()));
+
+                    orderProducts.add(new OrderProduct(newOrder, product, product.getMaxItemPerDrone()));
                 }
 
                 // for the remaining items
                 int remaining = orderedAmount % product.getMaxItemPerDrone();
                 boolean thereAreRestItems = remaining != 0;
                 if (thereAreRestItems) {
-                    orderProducts.add(createOrderProduct(newOrder, product, remaining));
+
+                    orderProducts.add(new OrderProduct(newOrder, product, remaining));
                 }
             }
         }
 
         return orderProducts;
-    }
-
-    private OrderProduct createOrderProduct(Order newOrder,
-                                            Product product,
-                                            Integer amount) {
-
-        OrderProduct orderProduct = new OrderProduct();
-        orderProduct.setAmount(amount);
-        orderProduct.setOrder(newOrder);
-        orderProduct.setProduct(product);
-        orderProduct.setTotalPrice(product.getPrice() * amount);
-        return orderProduct;
-    }
-
-    /*
-     * An existing Order is set as confirmed
-     * and the mission is sent to drone
-     */
-    public Result confirm(UUID orderID) {
-        Order order = orderDao.findById(orderID);
-        if (order == null) {
-            return forbidden("Order not found");
-        }
-
-        order.setState(OrderState.IN_PROGRESS);
-        order.getMissions().stream().forEach(mission -> {
-            mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
-            missionsDao.persist(mission);
-        });
-        orderDao.persist(order);
-
-        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
-
-        return ok();
     }
 
 }
