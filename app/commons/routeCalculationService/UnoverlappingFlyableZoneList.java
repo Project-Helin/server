@@ -2,6 +2,8 @@ package commons.routeCalculationService;
 
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
 import models.Zone;
@@ -59,6 +61,18 @@ public class UnoverlappingFlyableZoneList {
     }
 
     public LineString cutLineStringOnPolygonBorder(LineString lineString){
-        return null;
+        com.vividsolutions.jts.geom.LineString jtsLineString = (com.vividsolutions.jts.geom.LineString) JTS.to(lineString);
+
+        List<Geometry> collect = zoneList.stream().map(x -> JTS.to(x.getPolygon())).collect(Collectors.toList());
+
+
+
+        com.vividsolutions.jts.geom.Polygon[] polygons = collect.toArray(new com.vividsolutions.jts.geom.Polygon[]{});
+        GeometryFactory gFactory = new GeometryFactory();
+        MultiPolygon multiPolygonOfUnoverlappedZones = gFactory.createMultiPolygon(polygons);
+
+        com.vividsolutions.jts.geom.LineString intersectionLine = (com.vividsolutions.jts.geom.LineString) jtsLineString.intersection(multiPolygonOfUnoverlappedZones);
+
+        return (LineString) JTS.from(intersectionLine, GisHelper.getReferenceSystem());
     }
 }
