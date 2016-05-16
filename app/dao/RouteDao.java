@@ -2,10 +2,7 @@ package dao;
 
 import commons.gis.GisHelper;
 import models.Route;
-import org.geolatte.geom.LineString;
-import org.geolatte.geom.MultiLineString;
-import org.geolatte.geom.Point;
-import org.geolatte.geom.Position;
+import org.geolatte.geom.*;
 import org.slf4j.Logger;
 
 import javax.persistence.Query;
@@ -39,6 +36,20 @@ public class RouteDao extends AbstractDao<Route>{
         MultiLineString multiLineString = GisHelper.convertFromWktToGeometry(wktString);
 
         return multiLineString;
+    }
+
+    public Geometry snapToGrid(Geometry inputGeometry) {
+        Query nativeQuery = jpaApi.em().createNativeQuery(
+                "SELECT ST_asText(ST_snapToGrid(:inputGeometry, 0.0000000001))"
+        );
+        nativeQuery.setParameter("inputGeometry", inputGeometry);
+
+        String wktString = (String) nativeQuery.getSingleResult();
+        logger.info("singleResult=[{}]", wktString);
+
+        Geometry returnGeometry = GisHelper.convertFromWktToGeometry(wktString);
+
+        return returnGeometry;
     }
 
     public LineString calculateShortestLineToPoint(MultiLineString<Position> lineStrings, Point point) {

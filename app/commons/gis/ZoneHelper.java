@@ -94,8 +94,14 @@ public class ZoneHelper {
     }
 
     public static boolean isCustomerInsideDeliveryZone(Set<Zone> zones, org.geolatte.geom.Point customerPoint){
-        return false;
+        int numberOfDeliveryZonesThatContainCustomer =
+                (int) zones.stream()
+                        .filter(x -> x.getType() == ZoneType.DeliveryZone)
+                        .map(x -> JTS.to(x.getPolygon()).contains(JTS.to(customerPoint)))
+                        .filter(x -> x == Boolean.TRUE)
+                        .count();
 
+        return numberOfDeliveryZonesThatContainCustomer > 0;
     }
 
 }

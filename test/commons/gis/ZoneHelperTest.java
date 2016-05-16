@@ -2,6 +2,7 @@ package commons.gis;
 
 import models.Zone;
 import models.ZoneType;
+import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
 
@@ -321,5 +322,44 @@ public class ZoneHelperTest{
         assertFalse(ZoneHelper.assertAllZonesInisideOrderZone(zoneSet));
 
     }
+
+    @Test
+    public void pointShouldBeInSingleDeliveryZone(){
+        Set<Zone> zoneSet = new HashSet<>();
+
+        Zone zone1 = new Zone();
+        zone1.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON((8.81732141599059 47.223743356166," +
+                                                                                "8.81741797551513 47.2239583031011," +
+                                                                                "8.81779884919524 47.2237797879112," +
+                                                                                "8.81750917062163 47.2236449903287," +
+                                                                                "8.81732141599059 47.223743356166))"));
+        zone1.setType(ZoneType.DeliveryZone);
+        zoneSet.add(zone1);
+
+        Point customerPoint = GisHelper.createPoint(8.81749314556619, 47.2238690455062);
+
+        assertTrue(ZoneHelper.isCustomerInsideDeliveryZone(zoneSet, customerPoint));
+
+    }
+
+    @Test
+    public void pointShouldBeOutsideDeliveryZone(){
+        Set<Zone> zoneSet = new HashSet<>();
+
+        Zone zone1 = new Zone();
+        zone1.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON((8.81732141599059 47.223743356166," +
+                "8.81741797551513 47.2239583031011," +
+                "8.81779884919524 47.2237797879112," +
+                "8.81750917062163 47.2236449903287," +
+                "8.81732141599059 47.223743356166))"));
+        zone1.setType(ZoneType.DeliveryZone);
+        zoneSet.add(zone1);
+
+        Point customerPoint = GisHelper.createPoint(9.81749314556619, 47.2238690455062);
+
+        assertFalse(ZoneHelper.isCustomerInsideDeliveryZone(zoneSet, customerPoint));
+
+    }
+
 
 }

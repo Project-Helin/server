@@ -49,7 +49,7 @@ public class ProjectsDao extends AbstractDao<Project> {
 
     public Point findPointOnLoadingZone(UUID projectId) {
         Query nativeQuery = jpaApi.em().createNativeQuery(
-            "SELECT ST_asText(ST_PointOnSurface(polygon\\:\\:geometry)\\:\\:geometry)" +
+            "SELECT ST_asText(ST_PointOnSurface(polygon\\:\\:geometry))" +
             " FROM zones z " +
             " WHERE z.project_id = :projectId and z.type = :zoneType and z.polygon is not NULL "
         );

@@ -27,6 +27,8 @@ public class DroneMessageDispatcher {
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 
         switch(message.getPayloadType()) {
+            //Todo: Added ConfirmMessage
+
             case DroneInfo:
                 DroneInfoMessage droneInfoMessage = (DroneInfoMessage) message;
                 droneInfoController.onDroneInfoReceived(droneId, droneInfoMessage);

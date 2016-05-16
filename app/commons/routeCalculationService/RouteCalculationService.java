@@ -1,5 +1,6 @@
 package commons.routeCalculationService;
 
+import ch.helin.messages.dto.way.*;
 import ch.helin.messages.commons.AssertUtils;
 import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
@@ -11,11 +12,13 @@ import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
+import commons.gis.GraphHelper;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
 import models.*;
 import org.geolatte.geom.*;
+import org.geolatte.geom.Position;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
@@ -28,11 +31,17 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.Pseudograph;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RouteCalculationService {
@@ -71,6 +80,7 @@ public class RouteCalculationService {
 
         org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
         LineString lineStringToDrone = calculateShortestLineToPoint(skeletonMultiLine, dronePoint);
+        logger.info("lineStringToDrone", lineStringToDrone.toString());
         logger.debug("Drone-to-Skeleton: {}", GisHelper.toWktStringWithoutSrid(lineStringToDrone));
 
         rawGraph.add(lineStringToDrone);
@@ -85,20 +95,25 @@ public class RouteCalculationService {
             skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
         } else{
 
-            Optional<Zone> maybeZone = project.getZones().stream().filter(x -> x.getType() == ZoneType.DeliveryZone).findFirst();
-            Zone deliveryZone = maybeZone.orElseThrow(()-> new RuntimeException("No delivery zone found!"));
+            List<Polygon> polygonList = project.
+                    getZones().stream()
+                    .filter(x -> x.getType() == ZoneType.DeliveryZone)
+                    .map(x -> x.getPolygon())
+                    .collect(Collectors.toList());
 
-            Point intersectionPoint = getIntersectionPointWithPolygon(deliveryZone.getPolygon(), customerPoint);
+            Point intersectionPoint = getIntersectionPointWithDeliveryPoint(polygonList, customerPoint);
             lineStringToCustomer = calculateShortestLineToPoint(skeletonMultiLine, intersectionPoint);
             rawGraph.add(lineStringToCustomer);
             skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
         }
+        logger.info("lineStringToCustomer", lineStringToCustomer.toString());
 
         logger.debug("Customer-to-skeleton: {}", lineStringToCustomer);
         logger.debug("Skeleton after split: {}", skeletonMultiLine);
 
-        for(int i=0; i<skeletonMultiLine.getNumGeometries(); i++){
-            rawGraph.add((LineString) skeletonMultiLine.getGeometryN(i));
+        MultiLineString snappedSkeletonMultiLineString = (MultiLineString) routeDao.snapToGrid(skeletonMultiLine);
+        for(int i=0; i<snappedSkeletonMultiLineString.getNumGeometries(); i++){
+            rawGraph.add((LineString) snappedSkeletonMultiLineString.getGeometryN(i));
         }
 
         List<Position> resultFromDijkstra =
@@ -210,10 +225,10 @@ public class RouteCalculationService {
 
     }
 
-    public MultiLineString splitMultiLineStringOnPoint(MultiLineString  skeleton, Point point){
+    public MultiLineString splitMultiLineStringOnPoint(MultiLineString  path, Point point){
 
         com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
-        com.vividsolutions.jts.geom.MultiLineString jtsMultiLine = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(skeleton);
+        com.vividsolutions.jts.geom.MultiLineString jtsMultiLine = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(path);
 
         LinkedList<com.vividsolutions.jts.geom.LineString> lineStrings = new LinkedList<>();
         for(int i=0; i< jtsMultiLine.getNumGeometries(); i++){
@@ -222,12 +237,18 @@ public class RouteCalculationService {
                     (com.vividsolutions.jts.geom.LineString) jtsMultiLine.getGeometryN(i);
 
             if(jtsPoint.isWithinDistance(currentLineSting, GisHelper.getRoundoffPrecision()) && !isPointOnVertex(jtsPoint, jtsMultiLine)){
-                logger.info("SPLIT ON: {} ", GisHelper.toWktStringWithoutSrid(point));
-                com.vividsolutions.jts.geom.Point start = currentLineSting.getStartPoint();
-                com.vividsolutions.jts.geom.Point end = currentLineSting.getEndPoint();
+                System.out.println("SPLIT ON: " + GisHelper.toWktStringWithoutSrid(point));
+                // Split current line if point is on and not on point
+                LocationIndexedLine locationIndexLine = new LocationIndexedLine(currentLineSting);
+                LinearLocation locationOnLine = locationIndexLine.indexOf(jtsPoint.getCoordinate());
 
-                lineStrings.add(toLineString(start, jtsPoint));
-                lineStrings.add(toLineString(jtsPoint, end));
+                com.vividsolutions.jts.geom.LineString lineStringToPoint =
+                        (com.vividsolutions.jts.geom.LineString) locationIndexLine.extractLine(locationIndexLine.getStartIndex(), locationOnLine);
+                com.vividsolutions.jts.geom.LineString lineStringFromPoint =
+                        (com.vividsolutions.jts.geom.LineString) locationIndexLine.extractLine(locationOnLine, locationIndexLine.getEndIndex());
+
+                lineStrings.add(lineStringToPoint);
+                lineStrings.add(lineStringFromPoint);
 
             } else{
                 lineStrings.add(currentLineSting);
