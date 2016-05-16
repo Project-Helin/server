@@ -48,10 +48,6 @@ public class UnoverlappingFlyableZoneList {
         return zoneList;
     }
 
-    public void setZoneList(ArrayList<UnoverlappingZone> zoneList) {
-        this.zoneList = zoneList;
-    }
-
     private com.vividsolutions.jts.geom.Polygon convertZoneToPolygon(UnoverlappingZone zone) {
         return (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
     }

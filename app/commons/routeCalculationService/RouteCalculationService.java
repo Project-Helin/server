@@ -269,24 +269,24 @@ public class RouteCalculationService {
     }
 
 
-    public List<WayPoint> getWaypointListFromPositions(List<Position> positionList, Route route){
-        List<WayPoint> returnWaypointList = new LinkedList<>();
-
-        for (org.geolatte.geom.Position position : positionList) {
-            org.geolatte.geom.Position p  = position;
-            double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
-            double lat = p.getCoordinate(1);
-
-            WayPoint waypoint = new WayPoint();
-            waypoint.setPosition(GisHelper.createPoint(lon, lat));
-            waypoint.setAction(Action.FLY);
-            waypoint.setOrderNumber(returnWaypointList.size());
-            waypoint.setRoute(route);
-            returnWaypointList.add(waypoint);
-        }
-
-        return returnWaypointList;
-    }
+//    public List<WayPoint> getWaypointListFromPositions(List<Position> positionList, Route route){
+//        List<WayPoint> returnWaypointList = new LinkedList<>();
+//
+//        for (org.geolatte.geom.Position position : positionList) {
+//            org.geolatte.geom.Position p  = position;
+//            double lon = p.getCoordinate(0); // <<-- this 0 sucks, but is the x component
+//            double lat = p.getCoordinate(1);
+//
+//            WayPoint waypoint = new WayPoint();
+//            waypoint.setPosition(GisHelper.createPoint(lon, lat));
+//            waypoint.setAction(Action.FLY);
+//            waypoint.setOrderNumber(returnWaypointList.size());
+//            waypoint.setRoute(route);
+//            returnWaypointList.add(waypoint);
+//        }
+//
+//        return returnWaypointList;
+//    }
 
 
     public LineString getLineStringFromPositions(List<Position> positionList){
