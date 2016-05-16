@@ -1,6 +1,6 @@
 (function () {
-    angular.module('RouteDebugger').controller('RouteDebuggerCtrl', ['$scope', '$http', 'RouteDebuggerService', 'ProjectsService', '$timeout',
-        function ($scope, HelperService, $http, ProjectsService) {
+    angular.module('RouteDebugger').controller('RouteDebuggerCtrl', ['$scope', 'ProjectsService',
+        function ($scope, ProjectsService) {
 
             function initialize() {
                 $scope.data = {

@@ -103,7 +103,9 @@ GET         /api/projects/:projectId/calculate-route                controllers.
 
 ##Order
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
+GET         /api/orders/:orderId                                    controllers.api.OrderApiController.show(orderId : java.util.UUID)
 POST        /api/orders/:orderId/confirm                            controllers.api.OrderApiController.confirm(orderId : java.util.UUID)
+
 
 ## Products
 GET         /api/products/                                          controllers.api.ProductsApiController.index()

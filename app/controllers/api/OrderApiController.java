@@ -1,14 +1,19 @@
 package controllers.api;
 
 import ch.helin.messages.commons.AssertUtils;
+import ch.helin.messages.dto.OrderDto;
+import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
+import commons.SessionHelper;
+import commons.gis.GisHelper;
 import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
 import dto.api.OrderProductApiDto;
+import mappers.OrderMapper;
 import mappers.RouteMapper;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -42,6 +47,9 @@ public class OrderApiController extends Controller {
     private RouteMapper routeMapper;
 
     @Inject
+    private OrderMapper orderMapper;
+
+    @Inject
     private CustomerDao customerDao;
 
     @Inject
@@ -54,7 +62,23 @@ public class OrderApiController extends Controller {
     private MissionsDao missionsDao;
 
     @Inject
+    private SessionHelper sessionHelper;
+
+    @Inject
     private RouteCalculationService routeCalculationService;
+
+    public Result show(UUID orderId) {
+
+        Order order = orderDao.findById(orderId);
+
+        if (order.getProject().getOrganisation() != sessionHelper.getOrganisation(session())) {
+            return forbidden();
+        } else {
+            OrderDto orderDto = orderMapper.convertToOrderDto(order);
+            return ok(Json.toJson(orderDto));
+        }
+    }
+
 
     /*
      * An Order with mission and route is created,
@@ -62,7 +86,6 @@ public class OrderApiController extends Controller {
      * The customer should receive an offer for
      * the deliveryLocation first
      */
-    @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result create() {
         String jsonNode = request().body().asJson().toString();
@@ -137,6 +160,8 @@ public class OrderApiController extends Controller {
 
         Order order = new Order();
         order.setCustomer(customer);
+        Position customerPosition = orderApiDto.getCustomerPosition();
+        order.setDeliveryPosition(GisHelper.createPoint(customerPosition.getLat(), customerPosition.getLon()));
         order.setProject(project);
         order.setState(OrderState.ROUTE_SUGGESTED);
         Set<OrderProduct> splitOrderProducts = splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(order, orderApiDto.getOrderProducts());

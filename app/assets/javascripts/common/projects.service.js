@@ -1,10 +1,10 @@
 (function () {
     angular.module('common').service('ProjectsService', ['$http', function ($http) {
 
-        this.projectUrl = "/api/projects/";
+        this.orderUrl = "/api/projects/";
 
         this.loadProjects = function () {
-            return $http.get(this.projectUrl)
+            return $http.get(this.orderUrl)
                 .then(function (response) {
                     return response.data;
                 }).catch(function (error) {
@@ -13,7 +13,7 @@
         };
         
         this.loadProject = function (id) {
-            return $http.get(this.projectUrl + id)
+            return $http.get(this.orderUrl + id)
                 .then(function (response) {
                     return response.data;
                 }).catch(function (error) {
@@ -23,7 +23,7 @@
         };
 
         this.saveProject = function (project) {
-            return $http.post(this.projectUrl + project.id + '/update', project)
+            return $http.post(this.orderUrl + project.id + '/update', project)
                 .then(function (response) {
                     return response.data;
                 })
@@ -39,7 +39,7 @@
                 customerPosition: customerPosition
             };
 
-            return $http.get(this.projectUrl + id + "/calculate-route", {params: params})
+            return $http.get(this.orderUrl + id + "/calculate-route", {params: params})
                 .then(function (response) {
                     return response.data;
                 });

@@ -1,6 +1,6 @@
 package models;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.geolatte.geom.Point;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,7 +17,7 @@ public class Order extends BaseEntity{
     private Customer customer;
 
     @Column
-    private Coordinate deliveryPosition;
+    private Point deliveryPosition;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
@@ -45,14 +45,6 @@ public class Order extends BaseEntity{
         this.customer = customer;
     }
 
-    public Coordinate getDeliveryPosition() {
-        return deliveryPosition;
-    }
-
-    public void setDeliveryPosition(Coordinate deliveryPosition) {
-        this.deliveryPosition = deliveryPosition;
-    }
-
     public Set<OrderProduct> getOrderProducts() {
         return orderProducts;
     }
@@ -76,5 +68,13 @@ public class Order extends BaseEntity{
 
     public void setState(OrderState state) {
         this.state = state;
+    }
+
+    public Point getDeliveryPosition() {
+        return deliveryPosition;
+    }
+
+    public void setDeliveryPosition(Point deliveryPosition) {
+        this.deliveryPosition = deliveryPosition;
     }
 }
