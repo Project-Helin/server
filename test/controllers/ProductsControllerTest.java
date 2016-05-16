@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
+import commons.ImprovedTestHelper;
 import dao.ProductsDao;
 import models.Organisation;
 import models.Product;
@@ -20,6 +21,9 @@ public class ProductsControllerTest extends AbstractE2ETest {
     @Inject
     private ProductsDao productsDao;
 
+    @Inject
+    private ImprovedTestHelper testHelper;
+
     private Organisation currentOrganisation;
 
     @Before
@@ -29,7 +33,9 @@ public class ProductsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowNewProduct() {
-        Product newProduct = testHelper.createProduct(currentOrganisation);
+        Product newProduct = jpaApi.withTransaction(em -> {
+            return testHelper.createProduct(currentOrganisation, 99);
+        });
 
         browser.goTo(routes.ProductsController.index().url());
 
@@ -38,11 +44,14 @@ public class ProductsControllerTest extends AbstractE2ETest {
         assertThat(browser.pageSource()).contains(newProduct.getName());
         assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getPrice()));
         assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getWeightGramm()));
+        assertThat(browser.pageSource()).contains(String.valueOf(newProduct.getMaxItemPerDrone()));
     }
 
     @Test
     public void shouldRemoveProduct() {
-        Product product = testHelper.createProduct(currentOrganisation);
+        Product product = jpaApi.withTransaction(em -> {
+            return testHelper.createProduct(currentOrganisation);
+        });
 
         // go to table
         browser.goTo(routes.ProductsController.index().url());
@@ -68,6 +77,7 @@ public class ProductsControllerTest extends AbstractE2ETest {
         browser.fill(withId("Name")).with("Kaboom");
         browser.fill(withId("Price")).with("100");
         browser.fill(withId("weightGramm")).with("300");
+        browser.fill(withId("maxItemPerDrone")).with("99");
         browser.click("#save");
 
         // verify
@@ -78,11 +88,14 @@ public class ProductsControllerTest extends AbstractE2ETest {
         assertThat(all.get(0).getName()).isEqualTo("Kaboom");
         assertThat(all.get(0).getPrice()).isEqualTo(100);
         assertThat(all.get(0).getWeightGramm()).isEqualTo(300);
+        assertThat(all.get(0).getMaxItemPerDrone()).isEqualTo(99);
     }
 
     @Test
     public void shouldUpdateProduct() {
-        Product product = testHelper.createProduct(currentOrganisation);
+        Product product = jpaApi.withTransaction(em -> {
+            return testHelper.createProduct(currentOrganisation);
+        });
         browser.goTo(routes.ProductsController.index().url());
 
         // go to edit
@@ -90,6 +103,7 @@ public class ProductsControllerTest extends AbstractE2ETest {
 
         // save it
         browser.fill(withId("Name")).with("HolaHola");
+        browser.fill(withId("maxItemPerDrone")).with("123");
         browser.click("#save");
 
         // verify
@@ -98,5 +112,6 @@ public class ProductsControllerTest extends AbstractE2ETest {
         });
         assertThat(all).hasSize(1);
         assertThat(all.get(0).getName()).isEqualTo("HolaHola");
+        assertThat(all.get(0).getMaxItemPerDrone()).isEqualTo(123);
     }
 }
