@@ -1,7 +1,8 @@
 <div class="col-xs-3">
     <h3> MissionList </h3>
-
-    {{data.order}}
+    <ul>
+        <li ng-repeat="mission in data.order.missions">{{mission.orderProducts.product.name}}</li>
+    </ul>
 </div>
 
 <div class="col-xs-9">

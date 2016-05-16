@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static play.inject.Bindings.bind;
 
 
-public class OrderApiControllerTest extends AbstractWebServiceIntegrationTest {
+public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegrationTest {
 
     @Inject
     private ApiHelper apiHelper;

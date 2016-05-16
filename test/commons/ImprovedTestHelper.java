@@ -6,6 +6,7 @@ import commons.gis.GisHelper;
 import dao.*;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
@@ -79,6 +80,7 @@ public class ImprovedTestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
+        order.setDeliveryPosition(new Point(44.0, 8.0));
 
         orderDao.persist(order);
 

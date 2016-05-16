@@ -49,7 +49,7 @@ public abstract class AbstractE2ETest extends WithBrowser {
          * from the original Guice Injector. So we need to get the 'real' Guice injector to do that.
          */
         com.google.inject.Injector guiceInjector =
-            playInjector.instanceOf(com.google.inject.Injector.class);
+                playInjector.instanceOf(com.google.inject.Injector.class);
         guiceInjector.injectMembers(this);
 
         logger.info("Apply Evolutions");
@@ -92,7 +92,7 @@ public abstract class AbstractE2ETest extends WithBrowser {
      */
     protected void waitAndClick(String id) {
         WebDriverWait wait = new WebDriverWait(browser.getDriver(), 60);
-        WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id(id)));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
         element.click();
     }
 
@@ -112,6 +112,7 @@ public abstract class AbstractE2ETest extends WithBrowser {
 
     /**
      * Create new user and do login as that user.
+     *
      * @return the organisation where the user was created
      */
     protected Organisation doLogin() {
