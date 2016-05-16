@@ -74,8 +74,8 @@ public class Product extends BaseEntity{
         return maxItemPerDrone;
     }
 
-    public Product setMaxItemPerDrone(Integer maxItemPerDrone) {
+    public void setMaxItemPerDrone(Integer maxItemPerDrone) {
         this.maxItemPerDrone = maxItemPerDrone;
-        return this;
     }
+
 }

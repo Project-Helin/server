@@ -15,6 +15,10 @@ public class ModelHelper extends BeanUtilsBean {
         super.copyProperty(dest, name, value);
     }
 
+    /**
+     * Be aware, that all setter in destination class must have void as return value.
+     * So no fluent-setter allowed.
+     */
     public static void updateAttributes(Object destination, Object source) {
         try {
             new ModelHelper().copyProperties(destination, source);
