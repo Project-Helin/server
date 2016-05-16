@@ -41,23 +41,4 @@ public class RouteDao extends AbstractDao<Route>{
         return multiLineString;
     }
 
-    public LineString calculateShortestLineToPoint(MultiLineString<Position> lineStrings, Point point) {
-        logger.info("cacluclateShortestLineToPoint {}", lineStrings);
-
-        Query nativeQuery = jpaApi.em().createNativeQuery(
-                "SELECT ST_asText(ST_ShortestLine(:lineStrings, :objPosition))"
-        );
-        nativeQuery.setParameter("lineStrings", lineStrings);
-        nativeQuery.setParameter("objPosition", point);
-
-        String resultString = (String) nativeQuery.getSingleResult();
-        LineString resultLineString = GisHelper.convertFromWktToGeometry(resultString);
-
-        logger.info("calculateShortestLineToPoint=[{}]", resultLineString);
-
-        return resultLineString;
-
-    }
-
-
 }
