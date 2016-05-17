@@ -14,6 +14,7 @@ import java.util.UUID;
 @Singleton
 public class DroneCommunicationManager {
 
+    @Inject
     private DroneMessageDispatcher droneMessageDispatcher;
 
     @Inject
@@ -22,8 +23,7 @@ public class DroneCommunicationManager {
     private HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
 
     @Inject
-    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi, DroneMessageDispatcher droneMessageDispatcher) {
-        this.droneMessageDispatcher = droneMessageDispatcher;
+    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi) {
         jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);
         });

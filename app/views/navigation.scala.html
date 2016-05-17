@@ -20,10 +20,6 @@
         <li class="@activeLink(controllers.routes.OrganisationsUsersController.index())">
             <a href="@controllers.routes.OrganisationsUsersController.index()" ><i class="glyphicon glyphicon-user"></i> <span>Administrators</span></a>
         </li>
-
-        <li class="@activeLink(controllers.routes.Application.routeDebugger(""))">
-            <a href="@controllers.routes.Application.routeDebugger("")" ><i class="glyphicon glyphicon-send"></i> <span>Test your Projects</span></a>
-        </li>
     }
 
     @if(session.get(commons.SessionKey.USER_ID.name) != null) {
@@ -45,12 +41,6 @@
         <li class="@activeLink(controllers.routes.OrdersController.index())">
             <a href="@controllers.routes.OrdersController.index()">
                 <i class="glyphicon glyphicon-shopping-cart"></i> <span>Orders</span>
-            </a>
-        </li>
-
-        <li class="@activeLink(controllers.routes.MissionController.index())">
-            <a href="@controllers.routes.MissionController.index()">
-                <i class="glyphicon glyphicon-send"></i> <span>Missions</span>
             </a>
         </li>
 

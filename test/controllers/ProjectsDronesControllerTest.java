@@ -68,8 +68,8 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
             Project found = projectsDao.findById(project.getId());
             assertThat(found.getDrones()).hasSize(1);
 
-            Drone first = found.getDrones().iterator().next();
-            assertThat(first.getName()).isEqualTo(droneToAdd.getName());
+            Drone firstDrone = found.getDrones().iterator().next();
+            assertThat(firstDrone.getName()).isEqualTo(droneToAdd.getName());
         });
     }
 

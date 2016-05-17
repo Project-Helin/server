@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
-import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
@@ -36,9 +35,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class OrderApiController extends Controller {
 
     private static final Logger logger = getLogger(OrderApiController.class);
-
-    @Inject
-    private MissionDispatchingService missionDispatchingService;
 
     @Inject
     private OrderDao orderDao;
@@ -127,7 +123,7 @@ public class OrderApiController extends Controller {
         });
         orderDao.persist(order);
 
-        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
+//        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
         return ok();
     }
