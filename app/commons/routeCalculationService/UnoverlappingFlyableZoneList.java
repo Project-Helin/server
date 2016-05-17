@@ -1,17 +1,17 @@
 package commons.routeCalculationService;
 
 
-import com.vividsolutions.jts.geom.*;
+import ch.helin.messages.dto.Action;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
 import models.WayPoint;
 import models.Zone;
 import models.ZoneType;
-import org.geolatte.geom.*;
+import org.geolatte.geom.Position;
 import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +113,8 @@ public class UnoverlappingFlyableZoneList {
                     WayPoint wp = new WayPoint();
                     wp.setHeight(zone.getHeight());
                     wp.setPosition(point);
+                    wp.setAction(Action.FLY);
+                    wp.setOrderNumber(listWayPoints.size());
 
                     listWayPoints.add(wp);
                 }
