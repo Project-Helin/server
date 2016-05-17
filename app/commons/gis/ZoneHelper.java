@@ -73,19 +73,13 @@ public class ZoneHelper {
 
         List<Polygon> polygonList = zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
-                .map(x -> convertZoneToPolygon(x))
+                .map(x -> convertZoneToJtsPolygon(x))
                 .collect(Collectors.toList());
 
         Geometry unionedPolygons = CascadedPolygonUnion.union(polygonList);
 
         return unionedPolygons.getGeometryType().equals("Polygon");
     }
-
-
-    private static Polygon convertZoneToPolygon(Zone x) {
-        return (Polygon) JTS.to(x.getPolygon());
-    }
-
 
     public static boolean assertThatDroneIsInLoadingZone(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
         Zone loadingZone = zones.stream().filter(x -> x.getType() == ZoneType.LoadingZone).findFirst().get();
@@ -102,6 +96,10 @@ public class ZoneHelper {
                         .count();
 
         return numberOfDeliveryZonesThatContainCustomer > 0;
+    }
+
+    public static Polygon convertZoneToJtsPolygon(Zone x) {
+        return (Polygon) JTS.to(x.getPolygon());
     }
 
 }

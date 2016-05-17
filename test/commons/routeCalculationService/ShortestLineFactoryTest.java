@@ -1,6 +1,7 @@
 package commons.routeCalculationService;
 
 import commons.gis.GisHelper;
+import commons.gis.ShortestLineFactory;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;

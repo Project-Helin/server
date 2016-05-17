@@ -1,17 +1,17 @@
 package commons.routeCalculationService;
 
 import ch.helin.messages.commons.AssertUtils;
-import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
-import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
 import commons.gis.GraphHelper;
+import commons.gis.ShortestLineFactory;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
@@ -19,19 +19,18 @@ import models.*;
 import org.geolatte.geom.*;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
+
 import org.geolatte.geom.Point;
-import org.geolatte.geom.Polygon;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
-import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.Pseudograph;
-import org.jgrapht.graph.SimpleGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -92,13 +91,17 @@ public class RouteCalculationService {
             skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
         } else{
 
-            List<Polygon> polygonList = project.
+            List<com.vividsolutions.jts.geom.Polygon> polygonList = project.
                     getZones().stream()
                     .filter(x -> x.getType() == ZoneType.DeliveryZone)
-                    .map(x -> x.getPolygon())
+                    .map(x -> ZoneHelper.convertZoneToJtsPolygon(x))
                     .collect(Collectors.toList());
 
-            Point intersectionPoint = getIntersectionPointWithPolygon(deliveryZone.getPolygon(), customerPoint);
+            GeometryFactory polygonFactory = new GeometryFactory();
+            MultiPolygon deliveryZonePolygons = polygonFactory.createMultiPolygon(polygonList.toArray(new com.vividsolutions.jts.geom.Polygon[]{}));
+            org.geolatte.geom.MultiPolygon zoneMultiPolygon = (org.geolatte.geom.MultiPolygon) JTS.from(deliveryZonePolygons, GisHelper.getReferenceSystem());
+
+            Point intersectionPoint = getIntersectionPointWithPolygon(zoneMultiPolygon, customerPoint);
             lineStringToCustomer = slFactory.calculateShortestLineToPoint(skeletonMultiLine, intersectionPoint);
             rawGraph.add(lineStringToCustomer);
             skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
@@ -107,9 +110,8 @@ public class RouteCalculationService {
         logger.debug("Customer-to-skeleton: {}", lineStringToCustomer);
         logger.debug("Skeleton after split: {}", skeletonMultiLine);
 
-        MultiLineString snappedSkeletonMultiLineString = (MultiLineString) routeDao.snapToGrid(skeletonMultiLine);
-        for(int i=0; i<snappedSkeletonMultiLineString.getNumGeometries(); i++){
-            rawGraph.add((LineString) snappedSkeletonMultiLineString.getGeometryN(i));
+        for(int i=0; i<skeletonMultiLine.getNumGeometries(); i++){
+            rawGraph.add((LineString) skeletonMultiLine.getGeometryN(i));
         }
 
         List<Position> resultFromDijkstra =
@@ -118,11 +120,7 @@ public class RouteCalculationService {
 
         LineString lineStringFromPositions = getLineStringFromPositions(resultFromDijkstra);
 
-
-
         Route route = new Route();
-        //route.setWayPoints(getWaypointListFromPositions(resultFromDijkstra, route));
-
         List<WayPoint> wayPoints = calculateHeightForFlightPath(route, project.getZones(), lineStringFromPositions);
         route.setWayPoints(wayPoints);
 
@@ -149,7 +147,7 @@ public class RouteCalculationService {
         return wayPoints;
     }
 
-    private Point getIntersectionPointWithPolygon(Polygon deliveryZonePolygon, Point customerPoint) {
+    private org.geolatte.geom.Point getIntersectionPointWithPolygon(org.geolatte.geom.MultiPolygon deliveryZonePolygon, org.geolatte.geom.Point customerPoint) {
         com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(customerPoint);
         com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(deliveryZonePolygon);
 
@@ -158,7 +156,7 @@ public class RouteCalculationService {
         GeometryFactory geometryFactory = new GeometryFactory();
         com.vividsolutions.jts.geom.Point intersectionPoint = geometryFactory.createPoint(coordinates[0]);
 
-        return (Point) JTS.from(intersectionPoint, GisHelper.getReferenceSystem());
+        return (org.geolatte.geom.Point) JTS.from(intersectionPoint, GisHelper.getReferenceSystem());
     }
 
     private List<org.geolatte.geom.Position> getResultFromDijkstra(List<LineString> allPossiblePath,
@@ -209,10 +207,10 @@ public class RouteCalculationService {
 
     }
 
-    public MultiLineString splitMultiLineStringOnPoint(MultiLineString  path, Point point){
+    public MultiLineString splitMultiLineStringOnPoint(MultiLineString  skeleton, Point point){
 
         com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(point);
-        com.vividsolutions.jts.geom.MultiLineString jtsMultiLine = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(path);
+        com.vividsolutions.jts.geom.MultiLineString jtsMultiLine = (com.vividsolutions.jts.geom.MultiLineString) JTS.to(skeleton);
 
         LinkedList<com.vividsolutions.jts.geom.LineString> lineStrings = new LinkedList<>();
         for(int i=0; i< jtsMultiLine.getNumGeometries(); i++){
@@ -223,16 +221,12 @@ public class RouteCalculationService {
             if(jtsPoint.isWithinDistance(currentLineSting, GisHelper.getRoundoffPrecision()) && !isPointOnVertex(jtsPoint, jtsMultiLine)){
                 System.out.println("SPLIT ON: " + GisHelper.toWktStringWithoutSrid(point));
                 // Split current line if point is on and not on point
-                LocationIndexedLine locationIndexLine = new LocationIndexedLine(currentLineSting);
-                LinearLocation locationOnLine = locationIndexLine.indexOf(jtsPoint.getCoordinate());
+                logger.info("SPLIT ON: {} ", GisHelper.toWktStringWithoutSrid(point));
+                com.vividsolutions.jts.geom.Point start = currentLineSting.getStartPoint();
+                com.vividsolutions.jts.geom.Point end = currentLineSting.getEndPoint();
 
-                com.vividsolutions.jts.geom.LineString lineStringToPoint =
-                        (com.vividsolutions.jts.geom.LineString) locationIndexLine.extractLine(locationIndexLine.getStartIndex(), locationOnLine);
-                com.vividsolutions.jts.geom.LineString lineStringFromPoint =
-                        (com.vividsolutions.jts.geom.LineString) locationIndexLine.extractLine(locationOnLine, locationIndexLine.getEndIndex());
-
-                lineStrings.add(lineStringToPoint);
-                lineStrings.add(lineStringFromPoint);
+                lineStrings.add(toLineString(start, jtsPoint));
+                lineStrings.add(toLineString(jtsPoint, end));
 
             } else{
                 lineStrings.add(currentLineSting);
