@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.SessionHelper;
 import commons.gis.GisHelper;
+import commons.order.MissionDispatchingService;
 import commons.routeCalculationService.RouteCalculationService;
 import dao.*;
 import dto.api.OrderApiDto;
@@ -59,6 +60,9 @@ public class OrderApiController extends Controller {
 
     @Inject
     private SessionHelper sessionHelper;
+
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
 
     @Inject
     private RouteCalculationService routeCalculationService;
@@ -123,7 +127,7 @@ public class OrderApiController extends Controller {
         });
         orderDao.persist(order);
 
-//        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
+       missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
         return ok();
     }

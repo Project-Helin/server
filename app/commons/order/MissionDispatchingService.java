@@ -2,6 +2,7 @@ package commons.order;
 
 import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import commons.drone.DroneCommunicationManager;
 import dao.DroneDao;
 import dao.MissionsDao;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 public class MissionDispatchingService {
     @Inject
-    private DroneCommunicationManager droneCommunicationManager;
+    private Provider<DroneCommunicationManager> droneCommunicationManagerProvider;
 
     @Inject
     private DroneDao droneDao;
@@ -53,7 +54,7 @@ public class MissionDispatchingService {
             AssignMissionMessage assignMissionMessage = new AssignMissionMessage();
             assignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
 
-            droneCommunicationManager.sendMessageToDrone(matchingDrone.getId(), assignMissionMessage);
+            droneCommunicationManagerProvider.get().sendMessageToDrone(matchingDrone.getId(), assignMissionMessage);
 
             return true;
         } else {

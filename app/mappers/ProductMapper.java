@@ -11,6 +11,7 @@ public class ProductMapper {
         productDto.setId(product.getId());
         productDto.setName(product.getName());
         productDto.setPrice(product.getPrice());
+        productDto.setWeightGramm(product.getWeightGramm());
 
         return productDto;
     }

@@ -6,6 +6,7 @@ import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;
 import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import controllers.DroneInfosController;
 import controllers.MissionController;
 import org.slf4j.Logger;
@@ -16,11 +17,14 @@ import java.util.UUID;
 public class DroneMessageDispatcher {
     private static final Logger logger = LoggerFactory.getLogger(DroneMessageDispatcher.class);
 
-    @Inject
-    public DroneInfosController droneInfoController;
+    //only use providers for controller-injection in order to avoid
+    //circular dependencies, which point back to DroneCommunicationManager
 
     @Inject
-    private MissionController missionController;
+    public Provider<DroneInfosController> droneInfosControllerProvider;
+
+    @Inject
+    private Provider<MissionController> missionControllerProvider;
 
     public void dispatchMessageToController(UUID droneId, String jsonMessage) {
         MessageConverter messageConverter = new JsonBasedMessageConverter();
@@ -31,11 +35,11 @@ public class DroneMessageDispatcher {
 
             case DroneInfo:
                 DroneInfoMessage droneInfoMessage = (DroneInfoMessage) message;
-                droneInfoController.onDroneInfoReceived(droneId, droneInfoMessage);
+                droneInfosControllerProvider.get().onDroneInfoReceived(droneId, droneInfoMessage);
                 break;
             case ConfirmMission:
                 ConfirmMissionMessage missionMessage = (ConfirmMissionMessage) message;
-                missionController.onConfirmMissionMessageReceived(droneId, missionMessage);
+                missionControllerProvider.get().onConfirmMissionMessageReceived(droneId, missionMessage);
 
         }
     }

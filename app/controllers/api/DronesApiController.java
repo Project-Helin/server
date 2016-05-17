@@ -3,6 +3,7 @@ package controllers.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import commons.drone.DroneCommunicationManager;
+import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import dao.OrganisationsDao;
 import mappers.DroneMapper;
@@ -23,6 +24,9 @@ public class DronesApiController extends Controller {
 
     @Inject
     private OrganisationsDao organisationsDao;
+
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
 
     @Inject
     private DroneMapper droneMapper;
@@ -58,6 +62,8 @@ public class DronesApiController extends Controller {
             droneDao.persist(drone);
 
             droneCommunicationManager.addDrone(drone);
+
+            drone.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
 
             return ok(Json.toJson(droneMapper.getDroneDto(drone)));
         }

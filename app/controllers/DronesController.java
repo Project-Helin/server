@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Inject;
 import commons.ModelHelper;
 import commons.SessionHelper;
+import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import models.Drone;
 import models.Organisation;
@@ -31,6 +32,9 @@ public class DronesController extends Controller {
 
     @Inject
     private SessionHelper sessionHelper;
+
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
 
     private static final Logger logger = LoggerFactory.getLogger(DronesController.class);
 
@@ -82,6 +86,8 @@ public class DronesController extends Controller {
             }
             droneDao.persist(found);
             flash("success", "Saved successfully");
+
+            found.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
 
             return redirect(routes.DronesController.index());
         }
