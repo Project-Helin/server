@@ -11,6 +11,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 resolvers += (
   "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
   )
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 libraryDependencies ++= Seq(
   javaJpa,
@@ -53,6 +54,10 @@ libraryDependencies += "org.jgrapht" % "jgrapht-core" % "0.9.2"
 libraryDependencies += "org.mindrot" % "jbcrypt" % "0.3m"
 
 libraryDependencies += "commons-beanutils" % "commons-beanutils" % "1.9.2"
+
+libraryDependencies += "com.adrianhurt" %% "play-bootstrap" % "1.1-P25-B3-SNAPSHOT"
+
+
 
 /**
   * For testing

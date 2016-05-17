@@ -15,6 +15,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Active</th>
                                 <th>Token</th>
                                 <th>Current Mission</th>
                                 <th>Battery State</th>
@@ -27,6 +28,7 @@
                             <tr>
                                 <th>@drone.getId</th>
                                 <th>@drone.getName</th>
+                                <th>@drone.getIsActive</th>
                                 <th>@drone.getToken</th>
                                 <th>@if(drone.getCurrentMission() != null) {drone.getCurrentMission.getState}</th>
                                 <th>@if(drone.getRemainingBatteryPercent > 0) {

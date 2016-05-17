@@ -77,6 +77,9 @@ public class DronesController extends Controller {
         } else {
 
             ModelHelper.updateAttributes(found, form.get());
+            if (form.get().getIsActive() == null) {
+                found.setIsActive(false);
+            }
             droneDao.persist(found);
             flash("success", "Saved successfully");
 

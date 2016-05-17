@@ -26,7 +26,7 @@
 
                     scope.format = new ol.format.WKT();
 
-                    createVectorLayer();
+                    scope.vectorLayer = createVectorLayer();
 
                     scope.map = new ol.Map({
                         target: 'map',
@@ -36,6 +36,7 @@
                             zoom: 18
                         })
                     });
+                    scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
                 }
 
                 function addRouteLayer(calculatedRoute) {
@@ -61,7 +62,7 @@
                 function createVectorLayer() {
                     scope.readOnlyFeatures = gisHelper.getFeaturesFromZones(scope.zones, scope.format);
 
-                    scope.vectorLayer = new ol.layer.Vector({
+                    return new ol.layer.Vector({
                         source: new ol.source.Vector({
                             features: scope.readOnlyFeatures
                         }),

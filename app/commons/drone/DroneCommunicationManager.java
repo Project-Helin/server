@@ -14,20 +14,16 @@ import java.util.UUID;
 @Singleton
 public class DroneCommunicationManager {
 
-    @Inject
     private DroneMessageDispatcher droneMessageDispatcher;
 
     @Inject
     private JsonBasedMessageConverter messageConverter;
 
-    private final JPAApi jpaApi;
-    private DroneDao droneDao;
     private HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
 
     @Inject
-    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi) {
-        this.droneDao = droneDao;
-        this.jpaApi = jpaApi;
+    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi, DroneMessageDispatcher droneMessageDispatcher) {
+        this.droneMessageDispatcher = droneMessageDispatcher;
         jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);
         });
