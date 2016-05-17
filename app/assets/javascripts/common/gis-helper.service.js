@@ -93,6 +93,48 @@
             return styleForZoneType;
         };
 
+        this.getRouteStyle = function() {
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgba(119, 17, 0, 0.8)',
+                    width: 2
+                })
+            });
+        };
+
+        this.createRouteMarkers = function(route) {
+            var _this = this;
+            return route.map(function (wayPoint) {
+                return createRouteMarker(_this.convertPositionToCoordinate(wayPoint.position), wayPoint.id)
+            });
+        };
+
+        function createRouteMarker(coordinates, id) {
+            var marker = new ol.Feature({
+                geometry: new ol.geom.Point(coordinates)
+            });
+
+            if(id) {
+                marker.setId(id);
+            }
+
+            var circle = new ol.style.Circle({
+                radius: 8,
+                fill: new ol.style.Fill({
+                    color: 'rgba(119, 17, 0, 0.8)'
+                }),
+                stroke: null
+            });
+
+            var markerStyle = new ol.style.Style({
+                image: circle,
+                zIndex: 5000
+            });
+
+            marker.setStyle(markerStyle);
+            return marker;
+        }
+
         this.getZoneById = function (zones, zoneId) {
             return zones.filter(function (zone) {
                 return zone.id === zoneId;

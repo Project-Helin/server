@@ -67,18 +67,12 @@
                     });
                 }
 
-                function createRouteMarkers(route) {
-                    return route.map(function (wayPoint) {
-                        return addRouteMarker(gisHelper.convertPositionToCoordinate(wayPoint.position), wayPoint.id)
-                    });
-                }
-
                 function addScopeListeners() {
                     scope.$watch('route', function (newRoute, oldValue) {
                         if (newRoute != null) {
                             var coordinates = gisHelper.convertRouteToCoordinates(newRoute);
                             scope.routeLayer = createRouteLayerWithRouteLine(coordinates);
-                            scope.routeMarkers = createRouteMarkers(newRoute);
+                            scope.routeMarkers = gisHelper.createRouteMarkers(newRoute);
                             scope.routeLayer.getSource().addFeatures(scope.routeMarkers);
                             scope.map.addLayer(scope.routeLayer);
                         }
@@ -105,7 +99,7 @@
                                 name: 'Line'
                             })]
                         }),
-                        style: routeStyle()
+                        style: [gisHelper.getRouteStyle()]
                     });
                 }
 
@@ -118,17 +112,6 @@
                         }),
                         style: polygonStyle
                     });
-                }
-
-                function routeStyle() {
-                    return [
-                        new ol.style.Style({
-                            stroke: new ol.style.Stroke({
-                                color: 'rgba(119, 17, 0, 0.8)',
-                                width: 2
-                            })
-                        })
-                    ];
                 }
 
                 function polygonStyle(feature) {
@@ -162,31 +145,7 @@
                     return marker;
                 }
 
-                function addRouteMarker(coordinates, id) {
-                    var marker = new ol.Feature({
-                        geometry: new ol.geom.Point(coordinates),
-                    });
-
-                    if(id) {
-                        marker.setId(id);
-                    }
-
-                    var circle = new ol.style.Circle({
-                        radius: 8,
-                        fill: new ol.style.Fill({
-                            color: 'rgba(119, 17, 0, 0.8)'
-                        }),
-                        stroke: null
-                    });
-
-                    var markerStyle = new ol.style.Style({
-                        image: circle,
-                        zIndex: 5000
-                    });
-
-                    marker.setStyle(markerStyle);
-                    return marker;
-                }
+                
 
                 activate();
             }
