@@ -14,10 +14,6 @@ import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CoordinateReferenceSystems;
 import org.geolatte.geom.crs.CrsRegistry;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
 /**
  * Contains common static methods related to post gis
  */

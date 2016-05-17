@@ -19,6 +19,7 @@ import models.Project;
 import models.Route;
 import models.Zone;
 import org.slf4j.Logger;
+import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -51,6 +52,9 @@ public class ProjectsApiController extends Controller {
     @Inject
     private RouteMapper routeMapper;
 
+    @Inject
+    private JPAApi jpaApi;
+
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
@@ -70,7 +74,6 @@ public class ProjectsApiController extends Controller {
         return ok(Json.toJson(projectMapper.getProjectDto(found)));
     }
 
-    @Transactional
     public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
         try {
             Route realRoute = calculateRouteOrThrowException(projectID, dronePositionWkt, customerPositionWkt);
@@ -87,15 +90,20 @@ public class ProjectsApiController extends Controller {
                                                  String dronePositionWkt,
                                                  String customerPositionWkt) {
 
-        Project found = getProject(projectID);
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
-        ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
-                GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
+        return jpaApi.withTransaction((em) -> {
+            Project found = getProject(projectID);
 
-        return routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
+            ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
+            ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
+                    GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
+
+            return routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
+        });
+
+
     }
 
     @Transactional
@@ -111,7 +119,7 @@ public class ProjectsApiController extends Controller {
         }
 
         ProjectApiDto fromRequest =
-            Json.fromJson(request().body().asJson(), ProjectApiDto.class);
+                Json.fromJson(request().body().asJson(), ProjectApiDto.class);
         // set all fields
         project.setName(fromRequest.getName());
         addZonesToProject(project, fromRequest);
@@ -142,23 +150,23 @@ public class ProjectsApiController extends Controller {
                               Set<Zone> previousZones) {
 
         return fromRequest
-            .getZones()
-            .stream()
-            .map(zoneDto -> {
-                Zone zone = new Zone();
-                zone.setId(zoneDto.getId());
+                .getZones()
+                .stream()
+                .map(zoneDto -> {
+                    Zone zone = new Zone();
+                    zone.setId(zoneDto.getId());
 
-                if(previousZones.contains(zone)){
-                    zone = findById(previousZones, zoneDto);
-                }
+                    if (previousZones.contains(zone)) {
+                        zone = findById(previousZones, zoneDto);
+                    }
 
-                zone.setType(zoneDto.getType());
-                zone.setHeight(zoneDto.getHeight());
-                zone.setPolygon(zoneDto.getPolygon());
-                zone.setName(zoneDto.getName());
-                zone.setProject(project);
-                return zone;
-            }).collect(Collectors.toList());
+                    zone.setType(zoneDto.getType());
+                    zone.setHeight(zoneDto.getHeight());
+                    zone.setPolygon(zoneDto.getPolygon());
+                    zone.setName(zoneDto.getName());
+                    zone.setProject(project);
+                    return zone;
+                }).collect(Collectors.toList());
     }
 
     private Zone findById(Set<Zone> previousZones, ZoneApiDto zoneDto) {

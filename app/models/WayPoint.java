@@ -7,9 +7,14 @@ import javax.persistence.*;
 
 @Entity(name = "way_points")
 public class WayPoint extends BaseEntity{
-
     private int orderNumber;
     private Point position;
+
+    private int height;
+
+    //fix point is needed to indicate if point has special purpose,
+    // like climbing or start stop, so it can not be removed or rearranged
+    private boolean fixpoint;
 
     @Enumerated(EnumType.STRING)
     private Action action;
@@ -48,5 +53,33 @@ public class WayPoint extends BaseEntity{
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public boolean isFixpoint() {
+        return fixpoint;
+    }
+
+    public void setFixpoint(boolean fixpoint) {
+        this.fixpoint = fixpoint;
+    }
+
+    @Override
+    public String toString() {
+        return "WayPoint{" +
+                "orderNumber=" + orderNumber +
+                ", position=" + position +
+                ", height=" + height +
+                ", fixpoint=" + fixpoint +
+                ", action=" + action +
+                ", route=" + route +
+                '}';
     }
 }
