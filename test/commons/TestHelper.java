@@ -16,6 +16,7 @@ import java.util.UUID;
 /**
  * This class provides helper methods to create sample entities.
  */
+@Deprecated // use ImprovedTestHelper
 public class TestHelper {
 
     @Inject

@@ -105,6 +105,8 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             assertThat(first.getRoute()).isNotNull();
             assertThat(first.getRoute().getWayPoints()).isNotEmpty();
+            // TODO Kiru verify waypoint have action fly ( can be done if route is fixed )
+
         });
     }
 
