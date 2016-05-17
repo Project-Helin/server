@@ -33,8 +33,8 @@
                         email: 'batman@wayneenterprise.com',
                         projectId: projectId,
                         customerPosition: {
-                            lon: "8.816533684730528",
-                            lat: "47.223951016778614"
+                            lon: "8.817394673824309",
+                            lat: "47.22330617326986"
                         },
                         orderProducts: [
                             {
