@@ -4,12 +4,15 @@ import ch.helin.messages.dto.OrderDto;
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
 import commons.ImprovedTestHelper;
+import dao.OrderDao;
 import mappers.RouteMapper;
 import models.Mission;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -27,6 +30,9 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
     @Inject
     RouteMapper routeMapper;
 
+    @Inject
+    OrderDao orderDao;
+
     @Before
     public void login() {
         currentOrganisation = doLogin();
@@ -35,26 +41,30 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
 
     @Test
     public void ShouldShowOrder() {
-        Order order = jpaApi.withTransaction((em) -> {
+        UUID orderId = jpaApi.withTransaction((em) -> {
             Order newOrder = testHelper.createNewOrderWithThreeMissions(
                     testHelper.createNewProject(currentOrganisation),
                     testHelper.createCustomer()
             );
-            return newOrder;
+            return newOrder.getId();
         });
 
-        OrderDto orderDto = apiHelper.doGet(routes.OrderApiController.show(order.getId()), OrderDto.class, browser);
+        OrderDto orderDto = apiHelper.doGet(routes.OrderApiController.show(orderId), OrderDto.class, browser);
 
-        assertThat(orderDto.getState()).isEqualTo(order.getState().name());
-        assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getDisplayName());
-        assertThat(orderDto.getMissions().size()).isEqualTo(3);
-        assertThat(orderDto.getDeliveryPosition().getLon()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(0));
-        assertThat(orderDto.getDeliveryPosition().getLat()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(1));
-        assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
+        jpaApi.withTransaction(() -> {
 
-        Mission firstMission = order.getMissions().iterator().next();
-        assertThat(orderDto.getMissions().get(0).getRouteDto()).isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
+            Order order = orderDao.findById(orderId);
 
+            assertThat(orderDto.getState()).isEqualTo(order.getState().name());
+            assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getDisplayName());
+            assertThat(orderDto.getMissions().size()).isEqualTo(3);
+            assertThat(orderDto.getDeliveryPosition().getLon()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(0));
+            assertThat(orderDto.getDeliveryPosition().getLat()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(1));
+            assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
+
+            Mission firstMission = order.getMissions().iterator().next();
+            assertThat(orderDto.getMissions().get(0).getRouteDto()).isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
+        });
 
     }
 
