@@ -36,19 +36,20 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
     @Test
     public void ShouldShowOrder() {
         Order order = jpaApi.withTransaction((em) -> {
-            return testHelper.createNewOrderWithThreeMissions(
+            Order newOrder = testHelper.createNewOrderWithThreeMissions(
                     testHelper.createNewProject(currentOrganisation),
                     testHelper.createCustomer()
             );
+            return newOrder;
         });
 
         OrderDto orderDto = apiHelper.doGet(routes.OrderApiController.show(order.getId()), OrderDto.class, browser);
 
         assertThat(orderDto.getState()).isEqualTo(order.getState().name());
         assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getDisplayName());
-        assertThat(orderDto.getMissions().size()).isEqualTo(order.getMissions().size());
-        assertThat(orderDto.getOrderProducts().size()).isEqualTo(order.getOrderProducts().size());
-        assertThat(orderDto.getDeliveryPosition()).isEqualTo(order.getDeliveryPosition().getPosition());
+        assertThat(orderDto.getMissions().size()).isEqualTo(3);
+        assertThat(orderDto.getDeliveryPosition().getLon()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(0));
+        assertThat(orderDto.getDeliveryPosition().getLat()).isEqualTo(order.getDeliveryPosition().getPosition().getCoordinate(1));
         assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
 
         Mission firstMission = order.getMissions().iterator().next();

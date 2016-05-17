@@ -1,12 +1,12 @@
 package commons;
 
 import ch.helin.messages.dto.state.DroneState;
+import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
 import models.*;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
@@ -80,13 +80,17 @@ public class ImprovedTestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
-        order.setDeliveryPosition(new Point(44.0, 8.0));
+        Position customerPos = new Position(47, 8);
+        order.setDeliveryPosition(GisHelper.createPoint(customerPos.getLon(), customerPos.getLat()));
+        order.setState(OrderState.NEW);
 
         orderDao.persist(order);
 
         createNewMission(order);
         createNewMission(order);
         createNewMission(order);
+
+        orderDao.persist(order);
 
         return order;
     }
