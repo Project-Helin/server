@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by styp on 16.05.16.
- */
 public class ShortestLineFactoryTest {
 
 

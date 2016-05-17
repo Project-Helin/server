@@ -22,8 +22,6 @@ public class RouteDao extends AbstractDao<Route>{
         super(Route.class, "routes");
     }
 
-
-
     public MultiLineString calculateSkeleton(UUID projectId){
         Query nativeQuery = jpaApi.em().createNativeQuery(
                 "SELECT ST_asText(ST_ApproximateMedialAxis(ST_UNION(polygon\\:\\:geometry))) " +
