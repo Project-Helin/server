@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
+import models.Route;
 import models.WayPoint;
 import models.Zone;
 import models.ZoneType;
@@ -16,10 +17,7 @@ import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UnoverlappingFlyableZoneList {
@@ -35,11 +33,20 @@ public class UnoverlappingFlyableZoneList {
     }
 
     private void removeOverlappingParts(){
-        for (UnoverlappingZone zone : zoneList) {
+        Iterator<UnoverlappingZone> zoneIterator = zoneList.iterator();
+
+        while(zoneIterator.hasNext()){
+            UnoverlappingZone zone = zoneIterator.next();
+
             List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().filter(x -> !x.equals(zone)).map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
 
+
             com.vividsolutions.jts.geom.Polygon subtractedZonePolygon = (com.vividsolutions.jts.geom.Polygon) (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
+            if(subtractedZonePolygon.isEmpty()){
+                zoneIterator.remove();
+                return;
+            }
             zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
         }
     }
@@ -97,7 +104,7 @@ public class UnoverlappingFlyableZoneList {
         return (org.geolatte.geom.LineString) JTS.from(returnLineString, GisHelper.getReferenceSystem());
     }
 
-    public List<WayPoint> assignHeightForPositions(List<Position> positionList) {
+    public List<WayPoint> assignHeightForPositions(List<Position> positionList, Route route) {
 
         List<WayPoint> listWayPoints = new ArrayList<>();
 
@@ -115,6 +122,7 @@ public class UnoverlappingFlyableZoneList {
                     wp.setPosition(point);
                     wp.setAction(Action.FLY);
                     wp.setOrderNumber(listWayPoints.size());
+                    wp.setRoute(route);
 
                     listWayPoints.add(wp);
                 }
