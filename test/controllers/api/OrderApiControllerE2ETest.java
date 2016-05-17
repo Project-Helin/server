@@ -63,7 +63,7 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
             assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
 
             Mission firstMission = order.getMissions().iterator().next();
-            assertThat(orderDto.getMissions().get(0).getRouteDto()).isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
+            assertThat(orderDto.getMissions().get(0).getRoute()).isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
         });
 
     }

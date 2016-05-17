@@ -126,7 +126,7 @@ public class RouteCalculationService {
             positionList.add(positions.getPositionN(i));
         }
 
-        List<WayPoint> wayPoints = unoverlappingZoneList.assignHeightForPositions(positionList);
+        List<WayPoint> wayPoints = unoverlappingZoneList.assignHeightForPositions(positionList, route);
 
         logger.debug("List waypoints with Height {}", wayPoints.toString());
 
@@ -135,7 +135,7 @@ public class RouteCalculationService {
 
     private org.geolatte.geom.Point getIntersectionPointWithPolygon(org.geolatte.geom.MultiPolygon deliveryZonePolygon, org.geolatte.geom.Point customerPoint) {
         com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) JTS.to(customerPoint);
-        com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(deliveryZonePolygon);
+        com.vividsolutions.jts.geom.MultiPolygon jtsPolygon = (com.vividsolutions.jts.geom.MultiPolygon) JTS.to(deliveryZonePolygon);
 
         Coordinate[] coordinates = DistanceOp.nearestPoints(jtsPolygon, jtsPoint);
 
