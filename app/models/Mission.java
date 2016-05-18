@@ -9,7 +9,7 @@ public class Mission extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MissionState state;
 
-    @OneToMany(mappedBy = "mission")
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
     @OrderBy("clientTime DESC")
     private List<DroneInfo> droneInfos;
 

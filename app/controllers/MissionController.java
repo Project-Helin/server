@@ -1,11 +1,11 @@
 package controllers;
 
-import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
-import ch.helin.messages.dto.message.missionMessage.FinalAssignMissionMessage;
-import ch.helin.messages.dto.message.missionMessage.MissionConfirmType;
+import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.drone.DroneCommunicationManager;
+import commons.order.MissionDispatchingService;
 import dao.DroneDao;
+import dao.MissionsDao;
 import mappers.MissionMapper;
 import models.Drone;
 import models.Mission;
@@ -20,6 +20,9 @@ public class MissionController{
     private DroneDao droneDao;
 
     @Inject
+    private MissionsDao missionsDao;
+
+    @Inject
     private JPAApi jpaApi;
 
     @Inject
@@ -27,6 +30,9 @@ public class MissionController{
 
     @Inject
     private DroneCommunicationManager droneCommunicationManager;
+
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
 
     public void onConfirmMissionMessageReceived(UUID droneId, ConfirmMissionMessage missionMessage) {
         jpaApi.withTransaction(() -> {
@@ -45,6 +51,26 @@ public class MissionController{
                 drone.setCurrentMission(null);
             }
 
+            droneDao.persist(drone);
+        });
+    }
+
+    public void onFinishedMissionMessageReceived(UUID droneId, FinishedMissionMessage message) {
+        jpaApi.withTransaction(() -> {
+            boolean successful = message.getFinishedType() == MissionFinishedType.SUCCESSFUL;
+
+            Drone drone = droneDao.findById(droneId);
+            Mission mission = drone.getCurrentMission();
+
+            if (successful) {
+                mission.setState(MissionState.DELIVERED);
+                drone.setCurrentMission(null);
+            } else {
+                mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+                drone.setCurrentMission(null);
+            }
+
+            missionsDao.persist(mission);
             droneDao.persist(drone);
         });
     }

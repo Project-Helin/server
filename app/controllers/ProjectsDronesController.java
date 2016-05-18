@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.SessionHelper;
+import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import dao.ProjectsDao;
 import models.Drone;
@@ -32,6 +33,9 @@ public class ProjectsDronesController extends Controller {
     @Inject
     private FormFactory formFactory;
 
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
+
     @Transactional
     public Result index(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -44,7 +48,7 @@ public class ProjectsDronesController extends Controller {
         Collections.sort(drones, (a, b) -> a.getName().compareTo(b.getName()));
 
         // possible drones to add
-        List<Drone> missingDrones = droneDao.findByOrganisation(sessionHelper.getOrganisation(session()));
+        List<Drone> missingDrones = droneDao.findWithoutProjectByOrganisation(sessionHelper.getOrganisation(session()));
         missingDrones.removeAll(drones);
 
         return ok(index.render(projectId, drones, missingDrones));
@@ -63,10 +67,12 @@ public class ProjectsDronesController extends Controller {
             return forbidden("Drone not found!");
         }
 
-        foundProject.getDrones().add(newDroneToAdd);
-        projectsDao.persist(foundProject);
+        newDroneToAdd.setProject(foundProject);
+        droneDao.persist(newDroneToAdd);
 
-        return index(projectId);
+        missionDispatchingService.tryToDispatchWaitingMissions(projectId);
+
+        return redirect(routes.ProjectsDronesController.index(projectId));
     }
 
     @Transactional
@@ -77,13 +83,13 @@ public class ProjectsDronesController extends Controller {
             return forbidden("Project not found!");
         }
 
-        Drone droneToDelete = findDrone(droneId);
-        if (droneToDelete == null) {
+        Drone droneToRemove = findDrone(droneId);
+        if (droneToRemove == null) {
             return forbidden("Drone not found!");
         }
 
-        foundProject.getDrones().remove(droneToDelete);
-        droneDao.persist(droneToDelete);
+        droneToRemove.setProject(null);
+        droneDao.persist(droneToRemove);
 
         return redirect(routes.ProjectsDronesController.index(projectId));
     }

@@ -58,13 +58,14 @@ public class DronesApiController extends Controller {
 
             drone.setId(UUID.randomUUID());
             drone.setToken(UUID.randomUUID());
+            drone.setIsActive(true);
 
             droneDao.persist(drone);
 
             droneCommunicationManager.addDrone(drone);
 
-            if (drone.getProjects() != null) {
-                drone.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
+            if (drone.getProject() != null) {
+                missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
             }
 
             return ok(Json.toJson(droneMapper.getDroneDto(drone)));

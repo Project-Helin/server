@@ -255,12 +255,13 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
     @Test
     public void confirmOrderTest() {
-        final Drone[] drone = new Drone[1];
+        final Drone[] drone = new Drone[2];
 
         Order order = jpaApi.withTransaction((em) -> {
             Customer customer = testHelper.createCustomer();
             Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
-            drone[0] = testHelper.createNewDroneForProject(project);
+            drone[0] = testHelper.createNewDroneForProject(project, true);
+            drone[1] = testHelper.createNewDroneForProject(project, false);
 
             return testHelper.createNewOrderWithThreeMissions(project, customer);
         });

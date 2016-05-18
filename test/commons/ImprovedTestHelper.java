@@ -124,11 +124,12 @@ public class ImprovedTestHelper {
         return drone;
     }
 
-    public Drone createNewDroneForProject(Project project) {
+    public Drone createNewDroneForProject(Project project, boolean isActive) {
         Drone drone = new Drone();
         drone.setName("Super HSR Drone" + System.currentTimeMillis());
         drone.setPayload(400);
         drone.setToken(UUID.randomUUID());
+        drone.setIsActive(isActive);
 
         drone.setOrganisation(project.getOrganisation());
         drone.setProject(project);

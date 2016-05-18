@@ -33,9 +33,6 @@ public class Drone extends BaseEntity {
     @JoinColumn(name = "current_mission_id")
     private Mission currentMission;
 
-    @ManyToMany(mappedBy = "drones")
-    private Set<Project> projects;
-
     @Column
     private Boolean isActive;
 
@@ -85,14 +82,6 @@ public class Drone extends BaseEntity {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public Set<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(Set<Project> projects) {
-        this.projects = projects;
     }
 
     public Set<DroneInfo> getDroneInfos() {

@@ -76,6 +76,7 @@ public class OrdersController extends Controller {
         }
 
         orderDao.delete(found);
+
         return redirect(routes.OrdersController.index());
     }
 

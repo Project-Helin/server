@@ -13,11 +13,11 @@
                     <table class="table table-bordered table-hover dataTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Active</th>
                                 <th>Token</th>
-                                <th>Current Mission</th>
+                                <th>Current Project</th>
+                                <th>Current Mission State</th>
                                 <th>Battery State</th>
                                 <th>Payload</th>
                                 <th>Action</th>
@@ -26,11 +26,11 @@
                         <tbody>
                         @for(drone <- drones) {
                             <tr>
-                                <th>@drone.getId</th>
                                 <th>@drone.getName</th>
                                 <th>@drone.getIsActive</th>
                                 <th>@drone.getToken</th>
-                                <th>@if(drone.getCurrentMission() != null) {drone.getCurrentMission.getState}</th>
+                                <th>@if(drone.getProject != null) { @drone.getProject.getName }</th>
+                                <th>@if(drone.getCurrentMission != null) { @drone.getCurrentMission.getState }</th>
                                 <th>@if(drone.getRemainingBatteryPercent > 0) {
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-green" role="progressbar" aria-valuenow="@drone.getRemainingBatteryPercent"

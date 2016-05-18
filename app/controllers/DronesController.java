@@ -87,7 +87,9 @@ public class DronesController extends Controller {
             droneDao.persist(found);
             flash("success", "Saved successfully");
 
-            found.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
+            if (found.getProject() != null) {
+                missionDispatchingService.tryToDispatchWaitingMissions(found.getProject().getId());
+            }
 
             return redirect(routes.DronesController.index());
         }

@@ -42,8 +42,9 @@ public class DroneDao extends AbstractDao<Drone> {
                         "select d from drones d " +
                                 " where d.project.id = :project_id " +
                                 " and d.payload >= :payload " +
-                                " and d.currentMission = null " +
-                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) "
+                                " and d.isActive = true " +
+                                " and d.currentMission = null "
+//                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) "
                         ,
                         Drone.class
                 )
@@ -51,5 +52,18 @@ public class DroneDao extends AbstractDao<Drone> {
                 .setParameter("payload", payload);
 
         return getSingleResultOrNull(droneTypedQuery);
+    }
+
+    public List<Drone> findWithoutProjectByOrganisation(Organisation organisation) {
+        return jpaApi
+                .em()
+                .createQuery(
+                        "select d from drones d " +
+                                " where d.organisation = :organisation" +
+                                " and d.project = null "
+                        ,
+                        Drone.class)
+                .setParameter("organisation", organisation)
+                .getResultList();
     }
 }

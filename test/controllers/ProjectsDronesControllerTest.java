@@ -70,6 +70,7 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
 
             Drone firstDrone = found.getDrones().iterator().next();
             assertThat(firstDrone.getName()).isEqualTo(droneToAdd.getName());
+            assertThat(firstDrone.getProject()).isEqualTo(found);
         });
     }
 
