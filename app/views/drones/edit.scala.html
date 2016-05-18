@@ -12,8 +12,10 @@
                         @b3.text(droneForm("name"), '_label -> "Name", 'placeholder -> "Drone Name")
                         @b3.text(droneForm("payload"), '_label -> "Payload in grams", 'placeholder -> "Payload in grams")
                         @b3.checkbox(droneForm("isActive"), '_text -> "Active")
-                        @b3.submit('class -> "btn btn-primary pull-right") { Save }
-                        @b3.button('class -> "btn btn-default pull-left m-r"){ Back }
+                        @b3.free('_id -> "idFormGroup", 'class -> "form-actions pull-right") {
+                            <input type="submit" class="btn btn-primary" id="save" value="Save" />
+                            <a href="@routes.DronesController.index()" class="btn btn-default">Back</a>
+                        }
                     }
 
                 </div>

@@ -63,7 +63,9 @@ public class DronesApiController extends Controller {
 
             droneCommunicationManager.addDrone(drone);
 
-            drone.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
+            if (drone.getProjects() != null) {
+                drone.getProjects().stream().forEach((p) -> missionDispatchingService.tryToDispatchWaitingMissions(p.getId()));
+            }
 
             return ok(Json.toJson(droneMapper.getDroneDto(drone)));
         }
