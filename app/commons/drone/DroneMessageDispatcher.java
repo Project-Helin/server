@@ -5,6 +5,7 @@ import ch.helin.messages.converter.MessageConverter;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;
 import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
+import ch.helin.messages.dto.message.missionMessage.FinishedMissionMessage;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import controllers.DroneInfosController;
@@ -30,9 +31,7 @@ public class DroneMessageDispatcher {
         MessageConverter messageConverter = new JsonBasedMessageConverter();
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 
-        switch(message.getPayloadType()) {
-            //Todo: Added ConfirmMessage
-
+        switch (message.getPayloadType()) {
             case DroneInfo:
                 DroneInfoMessage droneInfoMessage = (DroneInfoMessage) message;
                 droneInfosControllerProvider.get().onDroneInfoReceived(droneId, droneInfoMessage);
@@ -40,6 +39,13 @@ public class DroneMessageDispatcher {
             case ConfirmMission:
                 ConfirmMissionMessage missionMessage = (ConfirmMissionMessage) message;
                 missionControllerProvider.get().onConfirmMissionMessageReceived(droneId, missionMessage);
+                break;
+            case FinishedMission:
+                FinishedMissionMessage finishedMissionMessage = (FinishedMissionMessage) message;
+                missionControllerProvider.get().onFinishedMissionMessageReceived(droneId, finishedMissionMessage);
+                break;
+            default:
+                    logger.error("Message Type: " + message.getPayloadType() + " unknown");
 
         }
     }

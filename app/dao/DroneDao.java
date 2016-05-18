@@ -43,8 +43,13 @@ public class DroneDao extends AbstractDao<Drone> {
                                 " where d.project.id = :project_id " +
                                 " and d.payload >= :payload " +
                                 " and d.isActive = true " +
-                                " and d.currentMission = null "
-//                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t) "
+                                " and d.currentMission = null " +
+                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t " +
+                                    " where t.project.id = :project_id " +
+                                    " and t.payload >= :payload " +
+                                    " and t.isActive = true " +
+                                    " and t.currentMission = null " +
+                                ")"
                         ,
                         Drone.class
                 )
