@@ -1,11 +1,8 @@
 package dto.api;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class OrderProductApiDto {
+    private String id;
     private Integer amount;
-    private String productId;
 
     public Integer getAmount() {
         return amount;
@@ -16,12 +13,12 @@ public class OrderProductApiDto {
         return this;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getId() {
+        return id;
     }
 
-    public OrderProductApiDto setProductId(String productId) {
-        this.productId = productId;
+    public OrderProductApiDto setId(String id) {
+        this.id = id;
         return this;
     }
 }

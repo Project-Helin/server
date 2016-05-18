@@ -96,6 +96,17 @@ public class OrderApiController extends Controller {
             return forbidden("Wrong request");
         }
 
+        try {
+            OrderApiOutputDto routeDto = createOrder(orderApiDto);
+            return ok(Json.toJson(routeDto));
+        } catch (RuntimeException e) {
+            logger.warn("Failed to process input: {}", jsonNode);
+            throw e;
+        }
+    }
+
+    private OrderApiOutputDto createOrder(OrderApiDto orderApiDto) {
+
         //TODO should not be here, the customer should only be loaded
         Customer customer = saveCustomer(orderApiDto);
 
@@ -106,8 +117,15 @@ public class OrderApiController extends Controller {
         addMissionsToOrder(order, route);
         orderDao.persist(order);
 
+        WayPoint last = route.getWayPoints().stream().reduce((a, b) -> b).orElse(null);
+
         RouteDto routeDto = routeMapper.convertToRouteDto(route);
-        return ok(Json.toJson(routeDto));
+
+        OrderApiOutputDto orderApiOutputDto = new OrderApiOutputDto();
+        orderApiOutputDto.setRoute(routeDto);
+        orderApiOutputDto.setDeliveryPosition(GisHelper.createPosition(last.getPosition()));
+        orderApiOutputDto.setOrderId(order.getIdAsString());
+        return orderApiOutputDto;
     }
 
     /*
@@ -194,25 +212,28 @@ public class OrderApiController extends Controller {
     private Set<OrderProduct> splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(Order newOrder, List<OrderProductApiDto> orderProductDtos) {
         HashSet<OrderProduct> orderProducts = new HashSet<>();
 
-        for (OrderProductApiDto orderedProduct : orderProductDtos) {
-            Product product = productsDao.findById(UUID.fromString(orderedProduct.getProductId()));
+        for (OrderProductApiDto orderProduct : orderProductDtos) {
+
+            Product product = productsDao.findById(UUID.fromString(orderProduct.getId()));
             AssertUtils.throwExceptionIfNull(product, "Product not found");
 
-            Integer orderedAmount = orderedProduct.getAmount();
-            boolean orderedAmountFitsOnOneDrone = orderedAmount < product.getMaxItemPerDrone();
+            Integer amount = orderProduct.getAmount();
+            AssertUtils.throwExceptionIfNull(amount, "Order amount cannot be null");
+
+            boolean orderedAmountFitsOnOneDrone = amount < product.getMaxItemPerDrone();
             if (orderedAmountFitsOnOneDrone) {
 
-                orderProducts.add(new OrderProduct(newOrder, product, orderedAmount));
+                orderProducts.add(new OrderProduct(newOrder, product, amount));
             } else {
                 // we need to split the order
-                int neededOrderProducts = orderedAmount / product.getMaxItemPerDrone();
+                int neededOrderProducts = amount / product.getMaxItemPerDrone();
                 for (int i = 0; i < neededOrderProducts; i++) {
 
                     orderProducts.add(new OrderProduct(newOrder, product, product.getMaxItemPerDrone()));
                 }
 
                 // for the remaining items
-                int remaining = orderedAmount % product.getMaxItemPerDrone();
+                int remaining = amount % product.getMaxItemPerDrone();
                 boolean thereAreRestItems = remaining != 0;
                 if (thereAreRestItems) {
 

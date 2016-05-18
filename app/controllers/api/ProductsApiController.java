@@ -34,7 +34,7 @@ public class ProductsApiController extends Controller {
         List<Product> products = productsDao.findAll();
 
         List<Project> projects =
-            projectsDao.findByOrganisation(sessionHelper.getOrganisation(session()).getId());
+            projectsDao.findAll(); // TODO fix this ...
 
         List<ProductApiDto> productDtos =
             products
@@ -44,12 +44,44 @@ public class ProductsApiController extends Controller {
                     productApiDto.setName(product.getName());
                     productApiDto.setId(product.getIdAsString());
                     productApiDto.setPrice(product.getPrice());
-                    productApiDto.setProject(projects.iterator().next().getIdAsString()); // TODO discuss this!
+                    productApiDto.setProjectId(projects.iterator().next().getIdAsString()); // TODO discuss this!
                     return productApiDto;
                 })
                 .collect(Collectors.toList());
         return ok(Json.toJson(productDtos));
     }
 
+    /**
+     * TODO implement this:
+     * Input:
+     * - Customer location
+     *
+     * Output:
+     * => all products in in delivery zone
+     *
+     */
+    @Transactional
+    public Result byLocation() {
+        List<Product> products = productsDao.findAll();
+
+        List<Project> projects =
+            projectsDao.findAll();
+
+        List<ProductApiDto> productDtos =
+            products
+                .stream()
+                .map(product -> {
+                    ProductApiDto productApiDto = new ProductApiDto();
+                    productApiDto.setName(product.getName());
+                    productApiDto.setId(product.getIdAsString());
+
+                    productApiDto.setPrice(product.getPrice());
+                    productApiDto.setProjectId(projects.iterator().next().getIdAsString()); // TODO discuss this!
+                    return productApiDto;
+                })
+                .collect(Collectors.toList());
+
+        return ok(Json.toJson(productDtos));
+    }
 
 }

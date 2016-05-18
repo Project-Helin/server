@@ -74,7 +74,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
-                        .setProductId(product.getIdAsString())
+                        .setId(product.getIdAsString())
                         .setAmount(1)
                 ));
         });
@@ -99,7 +99,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(first.getOrderProduct().getAmount())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getAmount());
 
@@ -127,7 +127,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
-                        .setProductId(product.getIdAsString())
+                        .setId(product.getIdAsString())
                         .setAmount(3) // <= we order 3 items
                 ));
         });
@@ -146,7 +146,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
         });
     }
@@ -169,7 +169,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
-                        .setProductId(product.getIdAsString())
+                        .setId(product.getIdAsString())
                         .setAmount(10) // <= we order 10 items
                 ));
         });
@@ -192,12 +192,12 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             Mission first = iterator.next();
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(first.getOrderProduct().getAmount()).isEqualTo(5);
 
             Mission second = iterator.next();
             assertThat(second.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
         });
     }
@@ -219,7 +219,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
-                        .setProductId(product.getIdAsString())
+                        .setId(product.getIdAsString())
                         .setAmount(13) // <= we order 13 items
                 ));
         });
@@ -238,17 +238,17 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             Mission first = missions.get(0);
             assertThat(first.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
 
             Mission second = missions.get(1);
             assertThat(second.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
 
             Mission third = missions.get(2);
             assertThat(third.getOrderProduct().getProduct().getIdAsString())
-                .isEqualTo(orderToSent.getOrderProducts().get(0).getProductId());
+                .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(third.getOrderProduct().getAmount()).isEqualTo(5);
         });
     }

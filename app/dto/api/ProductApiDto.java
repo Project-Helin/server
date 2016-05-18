@@ -4,10 +4,10 @@ package dto.api;
  * Kirusanth Poopalasingam ( pkirusanth@gmail.com )
  */
 public class ProductApiDto {
+    private String id;
     private String name;
     private Double price;
-    private String project;
-    private String id;
+    private String projectId;
 
     public void setName(String name) {
         this.name = name;
@@ -25,12 +25,12 @@ public class ProductApiDto {
         return price;
     }
 
-    public void setProject(String project) {
-        this.project = project;
+    public void setProjectId(String project) {
+        this.projectId = project;
     }
 
-    public String getProject() {
-        return project;
+    public String getProjectId() {
+        return projectId;
     }
 
     public void setId(String id) {
