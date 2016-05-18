@@ -1,18 +1,19 @@
 package controllers;
 
-import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
-import ch.helin.messages.dto.message.missionMessage.FinalAssignMissionMessage;
-import ch.helin.messages.dto.message.missionMessage.MissionConfirmType;
+import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.ImprovedTestHelper;
 import commons.drone.DroneCommunicationManager;
 import dao.DroneDao;
+import dao.MissionsDao;
 import mappers.MissionMapper;
 import models.*;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 import play.inject.guice.GuiceApplicationBuilder;
+
+import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -28,6 +29,9 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Inject
     DroneDao droneDao;
+
+    @Inject
+    MissionsDao missionsDao;
 
     @Inject
     ImprovedTestHelper testHelper;
@@ -54,20 +58,8 @@ public class MissionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void HandleAcceptedMissionTest() {
-        Drone drone = jpaApi.withTransaction((em) -> {
-
-            Customer customer = testHelper.createCustomer();
-            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
-            Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
-            Drone newDrone = testHelper.createNewDroneForProject(project);
-            Mission newMission = testHelper.createNewMission(order);
-
-            newDrone.setCurrentMission(newMission);
-            droneDao.persist(newDrone);
-
-            return newDrone;
-        });
+    public void onConfirmMissionMessageReceivedTest() {
+        Drone drone = createDroneWithAssignedMission();
 
         jpaApi.withTransaction(() -> {
 
@@ -87,5 +79,69 @@ public class MissionControllerTest extends AbstractIntegrationTest {
             verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone.getId(), expectedMessage);
         });
     }
+
+    @Test
+    public void onSuccessfulFinishedMissionMessageReceivedTest() {
+        Drone drone = createDroneWithAssignedMission();
+
+        UUID missionId = jpaApi.withTransaction((em) -> {
+            FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
+            finishedMissionMessage.setFinishedType(MissionFinishedType.SUCCESSFUL);
+
+            missionController.onFinishedMissionMessageReceived(drone.getId(), finishedMissionMessage);
+
+            return drone.getCurrentMission().getId();
+        });
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            Mission missionFromDB = missionsDao.findById(missionId);
+
+            assertThat(missionFromDB.getState()).isEqualTo(MissionState.DELIVERED);
+            assertThat(droneFromDB.getCurrentMission()).isNull();
+
+        });
+
+
+    }
+
+    @Test
+    public void onFailedFinishedMissionMessageReceivedTest() {
+        Drone drone = createDroneWithAssignedMission();
+
+        UUID missionId = jpaApi.withTransaction((em) -> {
+            FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
+            finishedMissionMessage.setFinishedType(MissionFinishedType.FAILED);
+
+            missionController.onFinishedMissionMessageReceived(drone.getId(), finishedMissionMessage);
+
+            return drone.getCurrentMission().getId();
+        });
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            Mission missionFromDB = missionsDao.findById(missionId);
+
+            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
+            assertThat(droneFromDB.getCurrentMission()).isNull();
+        });
+    }
+
+    private Drone createDroneWithAssignedMission() {
+        return jpaApi.withTransaction((em) -> {
+
+            Customer customer = testHelper.createCustomer();
+            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
+            Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
+            Drone newDrone = testHelper.createNewDroneForProject(project, true);
+            Mission newMission = testHelper.createNewMission(order);
+
+            newDrone.setCurrentMission(newMission);
+            droneDao.persist(newDrone);
+
+            return newDrone;
+        });
+    }
+
 
 }
