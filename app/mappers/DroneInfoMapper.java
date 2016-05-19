@@ -12,7 +12,7 @@ import org.geolatte.geom.Point;
 
 public class DroneInfoMapper {
 
-    public DroneInfo convertToDroneInfo (DroneInfoMessage droneInfoMessage) {
+    public DroneInfo convertToDroneInfo(DroneInfoMessage droneInfoMessage) {
         DroneInfo droneInfo = new DroneInfo();
         DroneInfoDto droneInfoDto = droneInfoMessage.getDroneInfo();
         Position phonePosition = droneInfoDto.getPhonePosition();
@@ -50,9 +50,46 @@ public class DroneInfoMapper {
         droneInfo.setClientTime(droneInfoDto.getClientTime());
 
         return droneInfo;
-
     }
 
+    public DroneInfoDto convertToDroneInfoDto(DroneInfo droneInfo) {
+        DroneInfoDto droneInfoDto = new DroneInfoDto();
+
+        //General Attributes
+        Position phonePosition = GisHelper.createPosition(droneInfo.getPhonePosition());
+        droneInfoDto.setPhonePosition(phonePosition);
+
+        droneInfoDto.setClientTime(droneInfo.getClientTime());
+
+        //droneState
+        DroneState droneState = new DroneState();
+        droneState.setVerticalSpeed(droneInfo.getVerticalSpeed());
+        droneState.setAltitude(droneInfo.getAltitude());
+        droneState.setGroundSpeed(droneInfo.getGroundSpeed());
+        droneState.setIsConnected(droneInfo.isConnectedToDrone());
+        droneState.setTargetAltitude(droneInfo.getTargetAltitude());
+
+        droneInfoDto.setDroneState(droneState);
+
+        //GPSState
+        GpsState gpsState = new GpsState();
+        gpsState.setPosLat(droneInfo.getDronePosition().getPosition().getCoordinate(1));
+        gpsState.setPosLon(droneInfo.getDronePosition().getPosition().getCoordinate(0));
+        gpsState.setSatellitesCount(droneInfo.getSatellitesCount());
+
+        droneInfoDto.setGpsState(gpsState);
+
+        //BatteryState
+
+        BatteryState batteryState = new BatteryState();
+        batteryState.setDischarge(droneInfo.getBatteryDischarge());
+        batteryState.setVoltage(droneInfo.getBatteryVoltage());
+        batteryState.setRemain(droneInfo.getRemainingBatteryPercent());
+
+        droneInfoDto.setBatteryState(batteryState);
+
+        return droneInfoDto;
+    }
 
 
 }

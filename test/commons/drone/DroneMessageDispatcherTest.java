@@ -1,6 +1,7 @@
 package commons.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
+import ch.helin.messages.dto.DroneInfoDto;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.state.DroneState;
 import com.google.inject.Inject;
@@ -52,7 +53,9 @@ public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
         DroneState droneState = testHelper.getDroneState();
 
         DroneInfoMessage droneInfoMessage = new DroneInfoMessage();
-        droneInfoMessage.setDroneState(droneState);
+        DroneInfoDto droneInfoDto = new DroneInfoDto();
+        droneInfoDto.setDroneState(droneState);
+        droneInfoMessage.setDroneInfo(droneInfoDto);
 
         String messageAsJSON = messageConverter.parseMessageToString(droneInfoMessage);
         droneMessageDispatcher.dispatchMessageToController(drone.getId(), messageAsJSON);
