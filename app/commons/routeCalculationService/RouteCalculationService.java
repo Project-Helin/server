@@ -8,7 +8,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
-import commons.gis.ShortestLineFactory;
+import commons.gis.RouteHelper;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
@@ -60,7 +60,7 @@ public class RouteCalculationService {
 
         List<LineString> rawGraph = new LinkedList<>();
 
-        ShortestLineFactory slFactory = new ShortestLineFactory();
+        RouteHelper slFactory = new RouteHelper();
         org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
         LineString lineStringToDrone = slFactory.calculateShortestLineToPoint(skeletonMultiLine, dronePoint);
         logger.debug("Drone-to-Skeleton: {}", GisHelper.toWktStringWithoutSrid(lineStringToDrone));
@@ -71,12 +71,9 @@ public class RouteCalculationService {
 
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
         LineString lineStringToCustomer;
-        if(ZoneHelper.isCustomerInsideDeliveryZone(project.getZones(), customerPoint)){
-            lineStringToCustomer = slFactory.calculateShortestLineToPoint(skeletonMultiLine, customerPoint);
-            rawGraph.add(lineStringToCustomer);
-            skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
-        } else{
 
+        Point realDropPoint = customerPoint;
+        if(!ZoneHelper.isCustomerInsideDeliveryZone(project.getZones(), customerPoint)){
             List<com.vividsolutions.jts.geom.Polygon> polygonList = project.
                     getZones().stream()
                     .filter(x -> x.getType() == ZoneType.DeliveryZone)
@@ -87,11 +84,13 @@ public class RouteCalculationService {
             MultiPolygon deliveryZonePolygons = polygonFactory.createMultiPolygon(polygonList.toArray(new com.vividsolutions.jts.geom.Polygon[]{}));
             org.geolatte.geom.MultiPolygon zoneMultiPolygon = (org.geolatte.geom.MultiPolygon) JTS.from(deliveryZonePolygons, GisHelper.getReferenceSystem());
 
-            Point intersectionPoint = getIntersectionPointWithPolygon(zoneMultiPolygon, customerPoint);
-            lineStringToCustomer = slFactory.calculateShortestLineToPoint(skeletonMultiLine, intersectionPoint);
-            rawGraph.add(lineStringToCustomer);
-            skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
+            realDropPoint = getIntersectionPointWithPolygon(zoneMultiPolygon, customerPoint);
         }
+
+        lineStringToCustomer = slFactory.calculateShortestLineToPoint(skeletonMultiLine, realDropPoint);
+        rawGraph.add(lineStringToCustomer);
+        skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
+
 
         logger.debug("Customer-to-skeleton: {}", lineStringToCustomer);
         logger.debug("Skeleton after split: {}", skeletonMultiLine);

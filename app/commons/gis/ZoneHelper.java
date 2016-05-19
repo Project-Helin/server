@@ -46,7 +46,6 @@ public class ZoneHelper {
         }
     }
 
-
     public static boolean checkThatCustomerIsInOrderZone(Set<Zone> zones, Point customerPoint) {
         Polygon orderZonePolygon = zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).map(x -> convertZoneToJtsPolygon(x)).findFirst().get();
         return orderZonePolygon.contains(JTS.to(customerPoint));

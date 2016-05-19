@@ -8,7 +8,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 import org.geolatte.geom.jts.JTS;
 
 
-public class ShortestLineFactory {
+public class RouteHelper {
 
     public org.geolatte.geom.LineString calculateShortestLineToPoint(org.geolatte.geom.Geometry geometryObject, org.geolatte.geom.Point point){
         Point jtsPoint = (Point) JTS.to(point);
