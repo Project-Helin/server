@@ -47,7 +47,7 @@ public class ZoneHelper {
     }
 
 
-    private static boolean checkThatCustomerIsInOrderZone(Set<Zone> zones, Point customerPoint) {
+    public static boolean checkThatCustomerIsInOrderZone(Set<Zone> zones, Point customerPoint) {
         Polygon orderZonePolygon = zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).map(x -> convertZoneToJtsPolygon(x)).findFirst().get();
         return orderZonePolygon.contains(JTS.to(customerPoint));
     }
@@ -88,9 +88,9 @@ public class ZoneHelper {
                 .map(x -> convertZoneToJtsPolygon(x))
                 .collect(Collectors.toList());
 
-        Geometry unionedPolygons = CascadedPolygonUnion.union(polygonList);
+        Geometry unionOfPolygons = CascadedPolygonUnion.union(polygonList);
 
-        return unionedPolygons.getGeometryType().equals("Polygon");
+        return unionOfPolygons.getGeometryType().equals("Polygon");
     }
 
     public static boolean checkThatDroneIsInLoadingZone(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
