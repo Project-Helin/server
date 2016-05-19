@@ -11,6 +11,7 @@
                 function activate() {
                     createMap();
                     addRouteLayer(scope.missions[0].route.wayPoints);
+                    addFlownRouteLayers(scope.missions);
                     addPopupOverlay();
                 }
 
@@ -46,8 +47,22 @@
                     scope.routeLayer.getSource().addFeatures(scope.routeMarkers);
                     scope.map.addLayer(scope.routeLayer);
                 }
-                
-                function createRouteLayerWithRouteLine(coordinates) {
+
+                function addFlownRouteLayers(missions) {
+                    missions.forEach(function (mission) {
+                        var droneInfos = mission.droneInfos.filter(function (droneInfo) {
+                            return droneInfo.gpsState.posLat != 0.0 || droneInfo.gpsState.posLon != 0.0;
+                        });
+                        var coordinates = gisHelper.convertDroneInfosToCoordinates(droneInfos);
+                        var routeLayer = createRouteLayerWithRouteLine(coordinates, flownRouteStyle);
+                        var routeMarkers = gisHelper.createDroneInfoMarkers(droneInfos);
+                        routeLayer.getSource().addFeatures(routeMarkers);
+                        scope.map.addLayer(routeLayer);
+                    });
+                }
+
+
+                function createRouteLayerWithRouteLine(coordinates, routeStyle) {
                     return new ol.layer.Vector({
                         source: new ol.source.Vector({
                             features: [new ol.Feature({
@@ -55,7 +70,7 @@
                                 name: 'Line'
                             })]
                         }),
-                        style: gisHelper.getRouteStyle()
+                        style: routeStyle || gisHelper.getRouteStyle()
                     });
                 }
 
@@ -72,6 +87,15 @@
                 
                 function polygonStyle(feature) {
                     return [gisHelper.getZoneStyle(gisHelper.getZoneById(scope.zones, feature.getId()))];
+                }
+
+                function flownRouteStyle() {
+                    return new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: '#49bcff',
+                            width: 1
+                        })
+                    });
                 }
                 
                 activate();

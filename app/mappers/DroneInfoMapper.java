@@ -55,6 +55,8 @@ public class DroneInfoMapper {
     public DroneInfoDto convertToDroneInfoDto(DroneInfo droneInfo) {
         DroneInfoDto droneInfoDto = new DroneInfoDto();
 
+        droneInfoDto.setId(droneInfo.getId());
+
         //General Attributes
         Position phonePosition = GisHelper.createPosition(droneInfo.getPhonePosition());
         droneInfoDto.setPhonePosition(phonePosition);
@@ -73,8 +75,8 @@ public class DroneInfoMapper {
 
         //GPSState
         GpsState gpsState = new GpsState();
-        gpsState.setPosLat(droneInfo.getDronePosition().getPosition().getCoordinate(1));
-        gpsState.setPosLon(droneInfo.getDronePosition().getPosition().getCoordinate(0));
+        gpsState.setPosLat(droneInfo.getDronePosition().getPosition().getCoordinate(0));
+        gpsState.setPosLon(droneInfo.getDronePosition().getPosition().getCoordinate(1));
         gpsState.setSatellitesCount(droneInfo.getSatellitesCount());
 
         droneInfoDto.setGpsState(gpsState);
