@@ -20,23 +20,23 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class UnoverlappingFlyableZoneList {
+public class NonOverlappingFlyableZoneList {
 
-    private static final Logger logger = LoggerFactory.getLogger(UnoverlappingFlyableZoneList.class);
+    private static final Logger logger = LoggerFactory.getLogger(NonOverlappingFlyableZoneList.class);
 
-    private List<UnoverlappingZone> zoneList;
+    private List<NonOverlappingZone> zoneList;
 
-    public UnoverlappingFlyableZoneList(Set<Zone> zones) {
-        zoneList = zones.stream().filter(x -> x.getType() != ZoneType.OrderZone).map(UnoverlappingZone::new).sorted(Comparator.comparing(x -> x.getHeight())).collect(Collectors.toList());
-        logger.debug("UnoverlappingFlyableZoneList Size {}", zoneList.size());
+    public NonOverlappingFlyableZoneList(Set<Zone> zones) {
+        zoneList = zones.stream().filter(x -> x.getType() != ZoneType.OrderZone).map(NonOverlappingZone::new).sorted(Comparator.comparing(x -> x.getHeight())).collect(Collectors.toList());
+        logger.debug("NonOverlappingFlyableZoneList Size {}", zoneList.size());
         removeOverlappingParts();
     }
 
     private void removeOverlappingParts(){
-        Iterator<UnoverlappingZone> zoneIterator = zoneList.iterator();
+        Iterator<NonOverlappingZone> zoneIterator = zoneList.iterator();
 
         while(zoneIterator.hasNext()){
-            UnoverlappingZone zone = zoneIterator.next();
+            NonOverlappingZone zone = zoneIterator.next();
 
             List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().filter(x -> !x.equals(zone)).map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
@@ -51,16 +51,16 @@ public class UnoverlappingFlyableZoneList {
         }
     }
 
-    public List<UnoverlappingZone> getZoneList() {
+    public List<NonOverlappingZone> getZoneList() {
         return zoneList;
     }
 
-    private com.vividsolutions.jts.geom.Polygon convertZoneToPolygon(UnoverlappingZone zone) {
+    private com.vividsolutions.jts.geom.Polygon convertZoneToPolygon(NonOverlappingZone zone) {
         return (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
     }
 
     public void debugZoneList() {
-        for (UnoverlappingZone zone : zoneList) {
+        for (NonOverlappingZone zone : zoneList) {
             logger.info("ZoneList Debug {}", zone.getPolygon().toString());
         }
     }
@@ -78,7 +78,7 @@ public class UnoverlappingFlyableZoneList {
             GeometryFactory geometryFactory = new GeometryFactory();
             com.vividsolutions.jts.geom.LineString lineStringSegment = geometryFactory.createLineString(new Coordinate[]{coordinates[i], coordinates[i + 1]});
 
-            for (UnoverlappingZone zone : zoneList) {
+            for (NonOverlappingZone zone : zoneList) {
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
                 com.vividsolutions.jts.geom.LineString exteriorRing = currentPolygon.getExteriorRing();
                 if(exteriorRing.intersects(lineStringSegment)){
@@ -113,7 +113,7 @@ public class UnoverlappingFlyableZoneList {
             org.geolatte.geom.Point point = GisHelper.createPoint(position.getCoordinate(0), position.getCoordinate(1));
             Point jtsPoint = (Point) JTS.to(point);
 
-            for (UnoverlappingZone zone : zoneList) {
+            for (NonOverlappingZone zone : zoneList) {
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
 
                 if(currentPolygon.contains(jtsPoint)){
