@@ -11,7 +11,7 @@
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
 
-                function activate() {
+                function initialize() {
                     createMap();
                     addMapInteractions();
                     addScopeListeners();
@@ -147,7 +147,7 @@
 
                 
 
-                activate();
+                initialize();
             }
         };
 
