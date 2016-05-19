@@ -82,21 +82,6 @@ public class GisHelper {
 
     /**
      *
-     * @param wkbString - a WellKnownBinary String
-     * @return GeoLatte.geometry - parsed to a simple WKT format
-     */
-    @Deprecated // don't use this -> use WKT instead!
-    public static Geometry convertFromWkbToGeometry(String wkbString) {
-        if (wkbString == null) {
-            return null;
-        }
-        ByteBuffer buffer = ByteBuffer.from(wkbString);
-        WkbDecoder decoder = Wkb.newDecoder(Wkb.Dialect.POSTGIS_EWKB_1);
-        return decoder.decode(buffer);
-    }
-
-    /**
-     *
      * @param wktString - a WellKnownBinary String
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */

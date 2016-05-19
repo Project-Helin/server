@@ -54,12 +54,22 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         Position endPosition = new Position(8.8164874, 47.2235279);
 
         Zone zone = new Zone();
-        org.geolatte.geom.Geometry geometry = GisHelper.convertFromWkbToGeometry("0103000020E6100000010000000F000000FFB" +
-                "E7D4109A2214002A052D59E9C474031D6A58B22A2214091F301CF999C4740DBD8E020E4A121401D871466909C47403720F1E" +
-                "8D2A1214051F0BB048D9C4740305A7EEBC4A12140B1324EBD8B9C474033FF231A9DA1214091AF6CC7939C474076EC7CBC82A" +
-                "12140510DF2439A9C4740ABA84A3574A1214039F1A836A29C4740E98D44AA7AA12140979DDE81A69C47409C77BF0B80A12140" +
-                "74325B54A79C47401FC639C3C9A1214075CB0D85969C474086992F86D4A121403483A03D959C4740248CACC0D7A121408CC91" +
-                "7B5979C4740248CACC0D7A121408CC917B5979C4740FFBE7D4109A2214002A052D59E9C4740");
+        org.geolatte.geom.Geometry geometry =
+                GisHelper.convertFromWktToGeometry("POLYGON((8.81647686634051 47.2235972073977," +
+                                                            "8.81666981124281 47.2234438666848," +
+                                                            "8.81619360680309 47.2231567001565," +
+                                                            "8.8160622400611 47.2230535428686," +
+                                                            "8.81595550458323 47.2230145103289," +
+                                                            "8.81565171899238 47.2232598572438," +
+                                                            "8.8154505636687 47.2234578067679," +
+                                                            "8.81533972298015 47.2237003636278," +
+                                                            "8.81538898550839 47.2238313996306," +
+                                                            "8.81543003761526 47.2238564915941," +
+                                                            "8.81599245147942 47.2233434979779," +
+                                                            "8.81607455569316 47.2233044656518," +
+                                                            "8.81609918695728 47.2233797422551," +
+                                                            "8.81609918695728 47.2233797422551," +
+                                                            "8.81647686634051 47.2235972073977))");
 
         zone.setPolygon((Polygon) geometry);
         zone.setName("testpolygon");

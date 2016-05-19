@@ -22,18 +22,6 @@ public class GisHelperTest {
     private static final Logger logger = LoggerFactory.getLogger(GisHelperTest.class);
 
     @Test
-    public void shouldConvertPointToWkb() {
-
-        //The magic binary represents the well readable point 'POINT (30 10)' in WKB
-        String pointAsWkb = "0101000020E61000000000000000003E400000000000002440";
-        Geometry<?> geometry = Wkb.fromWkb(ByteBuffer.from(pointAsWkb));
-        logger.info("{}", geometry);
-
-        Geometry wkt = GisHelper.convertFromWkbToGeometry(pointAsWkb);
-        assertThat(wkt).isEqualTo(geometry);
-    }
-
-    @Test
     public void shouldConvertPointToWkt() {
         Geometry<?> geometry = Wkt.fromWkt("SRID=4326; POINT (30 10)");
         logger.info("{}", geometry);
