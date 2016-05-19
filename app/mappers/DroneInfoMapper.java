@@ -1,5 +1,6 @@
 package mappers;
 
+import ch.helin.messages.dto.DroneInfoDto;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.state.BatteryState;
 import ch.helin.messages.dto.state.DroneState;
@@ -13,10 +14,11 @@ public class DroneInfoMapper {
 
     public DroneInfo convertToDroneInfo (DroneInfoMessage droneInfoMessage) {
         DroneInfo droneInfo = new DroneInfo();
-        Position phonePosition = droneInfoMessage.getPhonePosition();
-        GpsState gpsState = droneInfoMessage.getGpsState();
-        BatteryState batteryState = droneInfoMessage.getBatteryState();
-        DroneState droneState = droneInfoMessage.getDroneState();
+        DroneInfoDto droneInfoDto = droneInfoMessage.getDroneInfo();
+        Position phonePosition = droneInfoDto.getPhonePosition();
+        GpsState gpsState = droneInfoDto.getGpsState();
+        BatteryState batteryState = droneInfoDto.getBatteryState();
+        DroneState droneState = droneInfoDto.getDroneState();
 
         if (phonePosition != null) {
             Point phoneCoordinates = GisHelper.createPoint(phonePosition.getLat(), phonePosition.getLon());
@@ -43,10 +45,9 @@ public class DroneInfoMapper {
             droneInfo.setBatteryVoltage(batteryState.getVoltage());
             droneInfo.setRemainingBatteryPercent(batteryState.getRemain());
             droneInfo.setBatteryDischarge(batteryState.getDischarge());
-            droneInfo.setClientTime(droneInfoMessage.getClientTime());
         }
 
-        droneInfo.setClientTime(droneInfoMessage.getClientTime());
+        droneInfo.setClientTime(droneInfoDto.getClientTime());
 
         return droneInfo;
 
