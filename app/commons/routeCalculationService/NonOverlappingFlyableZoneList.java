@@ -82,9 +82,7 @@ public class NonOverlappingFlyableZoneList {
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
                 com.vividsolutions.jts.geom.LineString exteriorRing = currentPolygon.getExteriorRing();
                 if(exteriorRing.intersects(lineStringSegment)){
-                    logger.debug("FUCK YEAH! INTERSECTION!");
                     Point intersectionPoint = (Point) exteriorRing.intersection(lineStringSegment);
-
                     returnLineStringCoordinates.add(intersectionPoint.getCoordinate());
                     logger.debug("Intersection Coordinate is {}", intersectionPoint.getCoordinate());
                 }
@@ -99,37 +97,33 @@ public class NonOverlappingFlyableZoneList {
         com.vividsolutions.jts.geom.LineString returnLineString = returnLineStringFactory.createLineString(returnCoordinates);
 
         logger.debug("Output to cutLineStringOnPolygonBorder geometry {}", returnLineString.toString());
-        //com.vividsolutions.jts.geom.LineString intersectionLine = (com.vividsolutions.jts.geom.LineString) jtsLineString.intersection(multiPolygonOfUnoverlappedZones);
 
         return (org.geolatte.geom.LineString) JTS.from(returnLineString, GisHelper.getReferenceSystem());
     }
 
-    public List<WayPoint> assignHeightForPositions(List<Position> positionList, Route route) {
+    public List<ch.helin.messages.dto.way.Position> assignHeightForPositions(List<Position> positionList) {
 
-        List<WayPoint> listWayPoints = new ArrayList<>();
+        List<ch.helin.messages.dto.way.Position> positions = new ArrayList<>();
 
-        for (Position position : positionList) {
+        for (Position geoLattePosition : positionList) {
 
-            org.geolatte.geom.Point point = GisHelper.createPoint(position.getCoordinate(0), position.getCoordinate(1));
+            org.geolatte.geom.Point point = GisHelper.createPoint(geoLattePosition.getCoordinate(0), geoLattePosition.getCoordinate(1));
             Point jtsPoint = (Point) JTS.to(point);
 
             for (NonOverlappingZone zone : zoneList) {
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
 
                 if(currentPolygon.contains(jtsPoint)){
-                    WayPoint wp = new WayPoint();
-                    wp.setHeight(zone.getHeight());
-                    wp.setPosition(point);
-                    wp.setAction(Action.FLY);
-                    wp.setOrderNumber(listWayPoints.size());
-                    wp.setRoute(route);
-
-                    listWayPoints.add(wp);
+                    ch.helin.messages.dto.way.Position wPoint = new ch.helin.messages.dto.way.Position();
+                    wPoint.setLat(geoLattePosition.getCoordinate(1));
+                    wPoint.setLon(geoLattePosition.getCoordinate(0));
+                    wPoint.setHeight(zone.getHeight());
+                    positions.add(wPoint);
                 }
             }
         }
 
-        return listWayPoints;
+        return positions;
 
     }
 }

@@ -11,7 +11,7 @@ public class WayPoint extends BaseEntity{
     private Point position;
 
     @Transient
-    private int height;
+    private double height;
 
     @Enumerated(EnumType.STRING)
     private Action action;
@@ -52,11 +52,11 @@ public class WayPoint extends BaseEntity{
         this.action = action;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 

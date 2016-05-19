@@ -30,4 +30,12 @@ public class Route extends BaseEntity {
     public void setMission(Mission mission) {
         this.mission = mission;
     }
+
+    @Override
+    public String toString() {
+        return "Route{" +
+                "mission=" + mission +
+                ", wayPoints=" + wayPoints +
+                '}';
+    }
 }

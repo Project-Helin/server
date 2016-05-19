@@ -93,7 +93,7 @@ public class ProjectsApiController extends Controller {
         Position dronePosition = GisHelper.createPosition(dronePositionWkt);
         Position customerPosition = GisHelper.createPosition(customerPositionWkt);
 
-        return jpaApi.withTransaction((em) -> {
+        List<Position> positionList = jpaApi.withTransaction((em) -> {
             Project found = getProject(projectID);
 
             ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
@@ -105,6 +105,7 @@ public class ProjectsApiController extends Controller {
             return routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
         });
 
+        return RouteHelper.positionListToRoute(positionList);
 
     }
 

@@ -1,6 +1,7 @@
 package commons.routeCalculationService;
 
 import ch.helin.messages.commons.AssertUtils;
+import ch.helin.messages.dto.way.*;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -14,6 +15,7 @@ import dao.ProjectsDao;
 import dao.RouteDao;
 import models.*;
 import org.geolatte.geom.*;
+import org.geolatte.geom.Position;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
@@ -36,16 +38,17 @@ public class RouteCalculationService {
 
     private static final Logger logger = LoggerFactory.getLogger(RouteCalculationService.class);
 
-    public Route calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
+    public List<ch.helin.messages.dto.way.Position> calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
         Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
         AssertUtils.throwExceptionIfNull(pointOnPolygon, "Point on polygon could not be calculated.");
 
-        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
+        return null;
+//        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
     }
 
-    public Route calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
-                                   ch.helin.messages.dto.way.Position customerPosition,
-                                   Project project) {
+    public List<ch.helin.messages.dto.way.Position> calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
+                                                                   ch.helin.messages.dto.way.Position customerPosition,
+                                                                   Project project) {
 
         logger.info("State of calculateRoute dronePosition {}", AssertUtils.throwExceptionIfNull(dronePosition));
         logger.info("State of calculateRoute customerPosition {}", AssertUtils.throwExceptionIfNull(customerPosition));
@@ -105,31 +108,29 @@ public class RouteCalculationService {
 
         LineString lineStringFromPositions = getLineStringFromPositions(resultFromDijkstra);
 
-        Route route = new Route();
-        List<WayPoint> wayPoints = calculateHeightForFlightPath(route, project.getZones(), lineStringFromPositions);
-        route.setWayPoints(wayPoints);
+        List<ch.helin.messages.dto.way.Position> positions = calculateHeightForFlightPath(project.getZones(), lineStringFromPositions);
 
-        return route;
+        return positions;
 
     }
 
-    private List<WayPoint> calculateHeightForFlightPath(Route route, Set<Zone> zones, LineString lineString) {
+    private List<ch.helin.messages.dto.way.Position> calculateHeightForFlightPath(Set<Zone> zones, LineString lineString) {
         NonOverlappingFlyableZoneList unoverlappingZoneList = new NonOverlappingFlyableZoneList(zones);
         unoverlappingZoneList.debugZoneList();
         LineString lineString1 = unoverlappingZoneList.cutLineStringOnPolygonBorder(lineString);
 
         List<Position> positionList = new ArrayList<>();
 
-        PositionSequence positions = lineString1.getPositions();
-        for(int i = 0; i<positions.size(); i++){
-            positionList.add(positions.getPositionN(i));
+        PositionSequence positionseq = lineString1.getPositions();
+        for(int i = 0; i<positionseq.size(); i++){
+            positionList.add(positionseq.getPositionN(i));
         }
 
-        List<WayPoint> wayPoints = unoverlappingZoneList.assignHeightForPositions(positionList, route);
+        List<ch.helin.messages.dto.way.Position> positions = unoverlappingZoneList.assignHeightForPositions(positionList);
 
-        logger.debug("List waypoints with Height {}", wayPoints.toString());
+        logger.debug("List waypoints with Height {}", positions.toString());
 
-        return wayPoints;
+        return positions;
     }
 
     private org.geolatte.geom.Point getIntersectionPointWithPolygon(org.geolatte.geom.MultiPolygon deliveryZonePolygon, org.geolatte.geom.Point customerPoint) {

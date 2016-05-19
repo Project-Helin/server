@@ -1,9 +1,12 @@
 package controllers.api;
 
 import ch.helin.messages.commons.AssertUtils;
+import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.OrderDto;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
+import ch.helin.messages.dto.way.Waypoint;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.SessionHelper;
@@ -24,10 +27,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -101,7 +101,9 @@ public class OrderApiController extends Controller {
 
         Order order = saveOrder(orderApiDto, customer);
 
-        Route route = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+        List<Position> positionList = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+
+        Route route = RouteHelper.positionListToRoute(positionList);
 
         addMissionsToOrder(order, route);
         orderDao.persist(order);
@@ -109,6 +111,8 @@ public class OrderApiController extends Controller {
         RouteDto routeDto = routeMapper.convertToRouteDto(route);
         return ok(Json.toJson(routeDto));
     }
+
+
 
     /*
     * An existing Order is set as confirmed
