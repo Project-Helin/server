@@ -1,5 +1,6 @@
 package controllers;
 
+import ch.helin.messages.dto.DroneInfoDto;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.state.GpsState;
 import ch.helin.messages.dto.way.Position;
@@ -40,15 +41,19 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             Organisation organisation = testHelper.createNewOrganisation();
             Drone drone = testHelper.createNewDrone(organisation);
 
-            DroneInfoMessage droneInfoMessage = new DroneInfoMessage();
-            droneInfoMessage.setGpsState(new GpsState());
+            DroneInfoDto droneInfoDto = new DroneInfoDto();
+
+            droneInfoDto.setGpsState(new GpsState());
 
             Date now = new Date();
-            droneInfoMessage.setClientTime(now);
+            droneInfoDto.setClientTime(now);
             Position position = new Position(47.222645, 8.820594);
-            droneInfoMessage.setPhonePosition(position);
-            droneInfoMessage.getGpsState().setPosLat(position.getLat());
-            droneInfoMessage.getGpsState().setPosLon(position.getLon());
+            droneInfoDto.setPhonePosition(position);
+            droneInfoDto.getGpsState().setPosLat(position.getLat());
+            droneInfoDto.getGpsState().setPosLon(position.getLon());
+
+            DroneInfoMessage droneInfoMessage = new DroneInfoMessage();
+            droneInfoMessage.setDroneInfo(droneInfoDto);
 
             droneInfosController.onDroneInfoReceived(drone.getId(), droneInfoMessage);
             jpaApi.em().flush();
@@ -96,10 +101,14 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
 
 
         DroneInfoMessage olderDroneInfoMessage = new DroneInfoMessage();
-        olderDroneInfoMessage.setClientTime(older);
+        DroneInfoDto olderDroneInfo = new DroneInfoDto();
+        olderDroneInfo.setClientTime(older);
+        olderDroneInfoMessage.setDroneInfo(olderDroneInfo);
 
         DroneInfoMessage newerDroneInfoMessage = new DroneInfoMessage();
-        newerDroneInfoMessage.setClientTime(newer);
+        DroneInfoDto newerDroneInfo = new DroneInfoDto();
+        newerDroneInfo.setClientTime(newer);
+        newerDroneInfoMessage.setDroneInfo(newerDroneInfo);
 
         droneInfosController.onDroneInfoReceived(detachedDrone.getId(), olderDroneInfoMessage);
         droneInfosController.onDroneInfoReceived(detachedDrone.getId(), newerDroneInfoMessage);
