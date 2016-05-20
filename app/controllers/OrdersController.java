@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.SessionHelper;
+import dao.MissionsDao;
 import dao.OrderDao;
 import dao.ProjectsDao;
 import models.Order;
@@ -32,6 +33,9 @@ public class OrdersController extends Controller {
 
     @Inject
     private OrderDao orderDao;
+
+    @Inject
+    private MissionsDao missionsDao;
 
     @Inject
     private ProjectsDao projectsDao;

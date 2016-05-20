@@ -6,21 +6,23 @@ import commons.drone.DroneCommunicationManager;
 import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import dao.MissionsDao;
+import dao.OrderDao;
 import mappers.MissionMapper;
-import models.Drone;
-import models.Mission;
-import models.MissionState;
+import models.*;
 import play.db.jpa.JPAApi;
 
 import java.util.UUID;
 
 
-public class MissionController{
+public class MissionController {
     @Inject
     private DroneDao droneDao;
 
     @Inject
     private MissionsDao missionsDao;
+
+    @Inject
+    private OrderDao orderDao;
 
     @Inject
     private JPAApi jpaApi;
@@ -45,6 +47,9 @@ public class MissionController{
                 FinalAssignMissionMessage finalAssignMissionMessage = new FinalAssignMissionMessage();
                 finalAssignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
                 droneCommunicationManager.sendMessageToDrone(drone.getId(), finalAssignMissionMessage);
+                Order order = mission.getOrder();
+                order.setState(OrderState.IN_DELIVERY);
+                orderDao.persist(order);
 
             } else {
                 mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
@@ -72,7 +77,25 @@ public class MissionController{
 
             missionsDao.persist(mission);
             droneDao.persist(drone);
+
+            missionDispatchingService.tryToDispatchWaitingMissions(mission.getOrder().getProject().getId());
+
+            Order order = mission.getOrder();
+            updateOrderState(order);
         });
+    }
+
+    private void updateOrderState(Order order) {
+        boolean allMissionsDelivered = order.getMissions().stream().allMatch((m) -> m.getState() == MissionState.DELIVERED);
+        boolean someMissionsDelivered = order.getMissions().stream().anyMatch((m) -> m.getState() == MissionState.DELIVERED);
+
+        if (allMissionsDelivered) {
+            order.setState(OrderState.FINISHED);
+        } else if (someMissionsDelivered){
+            order.setState(OrderState.PARTIALLY_DELIVERED);
+        }
+
+        orderDao.persist(order);
     }
 
 }

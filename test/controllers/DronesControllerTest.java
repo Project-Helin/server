@@ -96,7 +96,6 @@ public class DronesControllerTest extends AbstractE2ETest {
         assertThat(browser.pageSource()).doesNotContain(drone.getName());
         assertThat(browser.pageSource()).contains(newDroneName);
 
-        assertThat(browser.pageSource()).doesNotContain(String.valueOf(drone.getPayload()));
         assertThat(browser.pageSource()).contains(String.valueOf(newPayload));
     }
 

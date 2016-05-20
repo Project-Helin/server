@@ -1,15 +1,37 @@
-<div class="col-xs-3">
-    <h3> MissionList </h3>
+<div class="col-xs-12">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3>Overview</h3>
 
-    <div class="panel panel-info" ng-repeat="mission in data.order.missions"> {{mission.orderProduct.amount}}
-        {{mission.orderProduct.product.name}}
-        State {{mission}}
+        </div>
+        <div class="box-body no-padding">
+            <div class="row">
+                <div class="col-xs-9">
+                    <order-viewer-map ng-if="data.project != null" zones="data.project.zones"
+                                      missions="data.order.missions"></order-viewer-map>
+                </div>
+                <div class="col-xs-3">
+                    <div class="pad box-pane-right bg-blue">
+                        <div ng-repeat="mission in data.order.missions">
+                            <div class="description-block margin-bottom">
+                                <i class="glyphicon glyphicon-road" style="font-size: 40px;"/>
+                                <div class="description-header">
+                                    {{mission.orderProduct.amount}} {{mission.orderProduct.product.name}}
+                                </div>
+                                <div class="description-text">
+                                    {{mission.state}}
+                                </div>
+                            </div>
+                            <p>
+                            <p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
     </div>
-
-</div>
-
-<div class="col-xs-9">
-    <h3> Map </h3>
-
-    <order-viewer-map ng-if="data.project != null" zones="data.project.zones" missions="data.order.missions"></order-viewer-map>
 </div>

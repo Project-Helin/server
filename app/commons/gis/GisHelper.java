@@ -55,6 +55,13 @@ public class GisHelper {
     }
 
 
+    public static String toWktStringWithSrid(Geometry<?> geometry) {
+        AssertUtils.throwExceptionIfNull(geometry);
+
+        String wktWith = Wkt.toWkt(geometry);
+        return wktWith;
+    }
+
     /**
      * Create point from longitude and latitude using WGS-84
      * ( see http://spatialreference.org/ref/epsg/wgs-84/ )

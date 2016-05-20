@@ -5,9 +5,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class OrderApiDto {
     private String displayName;
     private String email;
