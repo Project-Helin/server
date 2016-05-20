@@ -97,8 +97,10 @@ public class ProjectsApiController extends Controller {
             Project found = getProject(projectID);
 
             ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
-            ZoneHelper.asserThatDroneIsInLoadingZoneOrThrowRundTimeException(found.getZones(),
+            ZoneHelper.assertThatDroneIsInLoadingZoneOrThrowRunTimeException(found.getZones(),
                     GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
+            ZoneHelper.assertThatCustomerIsInOrderZoneOrThrowRunTimeException(found.getZones(),
+                    GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat()));
 
             return routeCalculationService.calculateRoute(dronePosition, customerPosition, found);
         });

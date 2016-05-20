@@ -115,7 +115,7 @@ public class RouteCalculationService {
     }
 
     private List<WayPoint> calculateHeightForFlightPath(Route route, Set<Zone> zones, LineString lineString) {
-        UnoverlappingFlyableZoneList unoverlappingZoneList = new UnoverlappingFlyableZoneList(zones);
+        NonOverlappingFlyableZoneList unoverlappingZoneList = new NonOverlappingFlyableZoneList(zones);
         unoverlappingZoneList.debugZoneList();
         LineString lineString1 = unoverlappingZoneList.cutLineStringOnPolygonBorder(lineString);
 

@@ -6,9 +6,7 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -27,7 +25,7 @@ public class ZoneHelperTest{
 
         zoneSet.add(zone);
 
-        assertTrue(ZoneHelper.assertOneLoadingZone(zoneSet));
+        assertTrue(ZoneHelper.checkOneLoadingZone(zoneSet));
     }
 
     @Test
@@ -49,7 +47,7 @@ public class ZoneHelperTest{
         zone2.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
         zoneSet.add(zone2);
 
-        assertFalse(ZoneHelper.assertOneLoadingZone(zoneSet));
+        assertFalse(ZoneHelper.checkOneLoadingZone(zoneSet));
     }
 
     @Test
@@ -64,7 +62,7 @@ public class ZoneHelperTest{
 
         zoneSet.add(zone);
 
-        assertFalse(ZoneHelper.assertMoreThanOneDeliveryZone(zoneSet));
+        assertFalse(ZoneHelper.checkMoreThanOneDeliveryZone(zoneSet));
     }
 
     @Test
@@ -79,7 +77,7 @@ public class ZoneHelperTest{
 
         zoneSet.add(zone);
 
-        assertTrue(ZoneHelper.assertMoreThanOneDeliveryZone(zoneSet));
+        assertTrue(ZoneHelper.checkMoreThanOneDeliveryZone(zoneSet));
     }
 
 
@@ -97,7 +95,7 @@ public class ZoneHelperTest{
 
         zoneSet.add(zone);
 
-        assertTrue(ZoneHelper.assertOneOrderZone(zoneSet));
+        assertTrue(ZoneHelper.checkOneOrderZone(zoneSet));
 
     }
 
@@ -120,7 +118,7 @@ public class ZoneHelperTest{
         zone2.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))"));
         zoneSet.add(zone2);
 
-        assertFalse(ZoneHelper.assertOneLoadingZone(zoneSet));
+        assertFalse(ZoneHelper.checkOneLoadingZone(zoneSet));
     }
 
     @Test
@@ -147,7 +145,7 @@ public class ZoneHelperTest{
         zone2.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON ((130 110, 140 140, 120 140, 110 120, 130 110))"));
         zoneSet.add(zone2);
 
-        assertFalse(ZoneHelper.assertAllZonesAreConnected(zoneSet));
+        assertFalse(ZoneHelper.checkAllZonesAreConnected(zoneSet));
     }
 
     @Test
@@ -169,7 +167,7 @@ public class ZoneHelperTest{
         zone2.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON ((20 10, 140 140, 120 140, 110 120, 20 10))"));
         zoneSet.add(zone2);
 
-        assertTrue(ZoneHelper.assertAllZonesAreConnected(zoneSet));
+        assertTrue(ZoneHelper.checkAllZonesAreConnected(zoneSet));
     }
 
     @Test
@@ -243,7 +241,7 @@ public class ZoneHelperTest{
         zone7.setType(ZoneType.DeliveryZone);
         zoneSet.add(zone7);
 
-        assertTrue(ZoneHelper.assertAllZonesInisideOrderZone(zoneSet));
+        assertTrue(ZoneHelper.checkAllZonesInisideOrderZone(zoneSet));
 
 
     }
@@ -319,12 +317,12 @@ public class ZoneHelperTest{
         zone7.setType(ZoneType.DeliveryZone);
         zoneSet.add(zone7);
 
-        assertFalse(ZoneHelper.assertAllZonesInisideOrderZone(zoneSet));
+        assertFalse(ZoneHelper.checkAllZonesInisideOrderZone(zoneSet));
 
     }
 
     @Test
-    public void pointShouldBeInSingleDeliveryZone(){
+    public void droneShouldBeInSingleDeliveryZone(){
         Set<Zone> zoneSet = new HashSet<>();
 
         Zone zone1 = new Zone();
@@ -343,15 +341,15 @@ public class ZoneHelperTest{
     }
 
     @Test
-    public void pointShouldBeOutsideDeliveryZone(){
+    public void droneShouldBeOutsideDeliveryZone(){
         Set<Zone> zoneSet = new HashSet<>();
 
         Zone zone1 = new Zone();
         zone1.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON((8.81732141599059 47.223743356166," +
-                "8.81741797551513 47.2239583031011," +
-                "8.81779884919524 47.2237797879112," +
-                "8.81750917062163 47.2236449903287," +
-                "8.81732141599059 47.223743356166))"));
+                                                                                "8.81741797551513 47.2239583031011," +
+                                                                                "8.81779884919524 47.2237797879112," +
+                                                                                "8.81750917062163 47.2236449903287," +
+                                                                                "8.81732141599059 47.223743356166))"));
         zone1.setType(ZoneType.DeliveryZone);
         zoneSet.add(zone1);
 
@@ -361,5 +359,22 @@ public class ZoneHelperTest{
 
     }
 
+    @Test
+    public void customerShouldBeInOrderZone(){
+        Set<Zone> zoneSet = new HashSet<>();
+
+        Zone zone1 = new Zone();
+        zone1.setPolygon((Polygon) GisHelper.convertFromWktToGeometry("POLYGON((8.81732141599059 47.223743356166," +
+                "8.81741797551513 47.2239583031011," +
+                "8.81779884919524 47.2237797879112," +
+                "8.81750917062163 47.2236449903287," +
+                "8.81732141599059 47.223743356166))"));
+        zone1.setType(ZoneType.OrderZone);
+        zoneSet.add(zone1);
+
+        Point customerPoint = GisHelper.createPoint(8.81749314556619, 47.2238690455062);
+
+        assertTrue(ZoneHelper.checkThatCustomerIsInOrderZone(zoneSet, customerPoint));
+    }
 
 }
