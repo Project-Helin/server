@@ -22,7 +22,6 @@ public class RouteHelperTest {
 
         Route route = RouteHelper.positionListToRoute(positions);
 
-        System.out.println(route.toString());
          /*
          * The positions are just a one-way path, so we have to dublicate and reverse it, to find the full path.
          * We remove one, because the drop off command is only executed once!

@@ -67,7 +67,6 @@ public class WayPoint extends BaseEntity{
                 ", position=" + position +
                 ", height=" + height +
                 ", action=" + action +
-                ", route=" + route +
                 '}';
     }
 }
