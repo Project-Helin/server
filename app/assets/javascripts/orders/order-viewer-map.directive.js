@@ -10,7 +10,6 @@
             link: function (scope) {
                 function initialize() {
                     scope.route = scope.missions[0].route.wayPoints;
-                    console.log(scope.route);
                     scope.allDroneInfos = flatDroneInfosToOneArray();
                     createMap();
                     addRouteLayer(scope.route);
