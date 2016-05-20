@@ -14,13 +14,15 @@ import java.util.List;
 public class RouteHelper {
 
     public static Route positionListToRoute(List<Position> positionList) {
+        Route route = new Route();
+
         List<WayPoint> flightToDeliveryList = new ArrayList<>();
         for (Position position : positionList) {
             WayPoint waypoint = new WayPoint();
             waypoint.setHeight(position.getHeight());
             waypoint.setPosition(GisHelper.createPoint(position.getLon(), position.getLat()));
             waypoint.setAction(Action.FLY);
-
+            waypoint.setRoute(route);
             flightToDeliveryList.add(waypoint);
         }
 
@@ -36,7 +38,10 @@ public class RouteHelper {
         completeFlightList.addAll(flightToDeliveryList);
         completeFlightList.addAll(flightToHomeList);
 
-        Route route = new Route();
+        int order = 0;
+        for (WayPoint wayPoint : completeFlightList) {
+            wayPoint.setOrderNumber(order++);
+        }
 
         route.setWayPoints(completeFlightList);
         return route;
