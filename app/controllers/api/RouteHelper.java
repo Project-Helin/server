@@ -30,7 +30,7 @@ public class RouteHelper {
         List<WayPoint> flightToHomeList = new ArrayList(Lists.reverse(flightToDeliveryList));
 
         // Remove Dropoff, it is already done - next coordinate is the 'second last'
-        flightToHomeList.remove(0); //.setAction(Action.DROP);
+        flightToHomeList.remove(0);
 
         List<WayPoint> completeFlightList = new ArrayList<>();
         completeFlightList.addAll(flightToDeliveryList);

@@ -7,19 +7,19 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class AssertPolygonTest {
+public class PolygonHelperTest {
 
     @Test
     public void polygonType() {
         String polygonTypeString = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10))";
         Geometry polygonType = GisHelper.convertFromWktToGeometry(polygonTypeString);
 
-        assertTrue(AssertPolygon.isTypePolygon(polygonType));
+        assertTrue(PolygonHelper.isTypePolygon(polygonType));
 
         String pointTypeString = "POINT (30 10)";
         Geometry pointType = GisHelper.convertFromWktToGeometry(pointTypeString);
 
-        assertFalse(AssertPolygon.isTypePolygon(pointType));
+        assertFalse(PolygonHelper.isTypePolygon(pointType));
     }
 
     @Test
@@ -37,12 +37,12 @@ public class AssertPolygonTest {
         String polygonString = "POLYGON((-1 -1, -1 0, 1 0, 1 1, 0 1, 0 -1, -1 -1))";
         Polygon invalidPolygon = GisHelper.convertFromWktToGeometry(polygonString);
 
-        assertFalse(AssertPolygon.isPolygonValid(invalidPolygon));
+        assertFalse(PolygonHelper.isPolygonValid(invalidPolygon));
 
         polygonString = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10))";
         Polygon validPolygon = (Polygon) GisHelper.convertFromWktToGeometry(polygonString);
 
-        assertTrue(AssertPolygon.isPolygonValid(validPolygon));
+        assertTrue(PolygonHelper.isPolygonValid(validPolygon));
     }
 
     /**
@@ -64,12 +64,12 @@ public class AssertPolygonTest {
         String polygonWithInnerRingString = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10), (20 30, 35 35, 30 20, 20 30))";
         Polygon polygonWithInteriorRing = (Polygon) GisHelper.convertFromWktToGeometry(polygonWithInnerRingString);
 
-        assertFalse(AssertPolygon.hasNoInteriorRing(polygonWithInteriorRing));
+        assertFalse(PolygonHelper.hasNoInteriorRing(polygonWithInteriorRing));
 
         String pointTypeString = "POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10))";
         Polygon pointType = (Polygon) GisHelper.convertFromWktToGeometry(pointTypeString);
 
-        assertTrue(AssertPolygon.hasNoInteriorRing(pointType));
+        assertTrue(PolygonHelper.hasNoInteriorRing(pointType));
     }
 
 }

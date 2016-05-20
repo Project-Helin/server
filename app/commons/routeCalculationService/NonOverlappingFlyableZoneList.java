@@ -1,15 +1,11 @@
 package commons.routeCalculationService;
 
-
-import ch.helin.messages.dto.Action;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
-import models.Route;
-import models.WayPoint;
 import models.Zone;
 import models.ZoneType;
 import org.geolatte.geom.Position;
@@ -41,7 +37,6 @@ public class NonOverlappingFlyableZoneList {
             List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().filter(x -> !x.equals(zone)).map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
 
-
             com.vividsolutions.jts.geom.Polygon subtractedZonePolygon = (com.vividsolutions.jts.geom.Polygon) (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
             if(subtractedZonePolygon.isEmpty()){
                 zoneIterator.remove();
@@ -49,10 +44,6 @@ public class NonOverlappingFlyableZoneList {
             }
             zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
         }
-    }
-
-    public List<NonOverlappingZone> getZoneList() {
-        return zoneList;
     }
 
     private com.vividsolutions.jts.geom.Polygon convertZoneToPolygon(NonOverlappingZone zone) {
@@ -82,7 +73,9 @@ public class NonOverlappingFlyableZoneList {
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
                 com.vividsolutions.jts.geom.LineString exteriorRing = currentPolygon.getExteriorRing();
                 if(exteriorRing.intersects(lineStringSegment)){
-                    Point intersectionPoint = (Point) exteriorRing.intersection(lineStringSegment);
+                    Geometry intersection = exteriorRing.intersection(lineStringSegment);
+                    logger.debug("Intersection object is {}", intersection.toString());
+                    Point intersectionPoint = (Point) intersection;
                     returnLineStringCoordinates.add(intersectionPoint.getCoordinate());
                     logger.debug("Intersection Coordinate is {}", intersectionPoint.getCoordinate());
                 }
@@ -122,8 +115,7 @@ public class NonOverlappingFlyableZoneList {
                 }
             }
         }
-
         return positions;
-
     }
+
 }

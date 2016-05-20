@@ -42,8 +42,7 @@ public class RouteCalculationService {
         Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
         AssertUtils.throwExceptionIfNull(pointOnPolygon, "Point on polygon could not be calculated.");
 
-        return null;
-//        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
+        return calculateRoute(GisHelper.createPosition(pointOnPolygon), customerPosition, project);
     }
 
     public List<ch.helin.messages.dto.way.Position> calculateRoute(ch.helin.messages.dto.way.Position dronePosition,
@@ -77,6 +76,7 @@ public class RouteCalculationService {
 
         Point realDropPoint = customerPoint;
         if(!ZoneHelper.isCustomerInsideDeliveryZone(project.getZones(), customerPoint)){
+            logger.debug("Customer is not in DeliveryZone.");
             List<com.vividsolutions.jts.geom.Polygon> polygonList = project.
                     getZones().stream()
                     .filter(x -> x.getType() == ZoneType.DeliveryZone)

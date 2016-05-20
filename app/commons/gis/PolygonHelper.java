@@ -5,7 +5,7 @@ import org.geolatte.geom.GeometryType;
 import org.geolatte.geom.Polygon;
 import org.geolatte.geom.jts.JTS;
 
-public class AssertPolygon {
+public class PolygonHelper {
 
     public static boolean isPolygonValid(Polygon polygon) {
         com.vividsolutions.jts.geom.Geometry jtsPolygon = JTS.to(polygon);
