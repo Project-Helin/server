@@ -104,7 +104,7 @@ POST        /api/orders/:orderId/confirm                            controllers.
 
 ## Products
 GET         /api/products/                                          controllers.api.ProductsApiController.index()
-GET         /api/products/byLocation                                controllers.api.ProductsApiController.byLocation()
+GET         /api/products/find-by-location/:lat/:lon                controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
 
 # Mission
 GET         /api/mission/:missionId/show                            controllers.api.MissionApiController.show(missionId : java.util.UUID)
