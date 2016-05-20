@@ -1,61 +1,73 @@
 package commons.gis;
 
-import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import models.Zone;
 import models.ZoneType;
-import org.geolatte.geom.*;
+import org.geolatte.geom.Point;
 import org.geolatte.geom.jts.JTS;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ZoneHelper {
 
     public static void assertAllConstraintsOrThrowRuntimeException(Set<Zone> zones) throws RuntimeException{
-        if(!assertOneLoadingZone(zones)){
+        if(!checkOneLoadingZone(zones)){
             throw new RuntimeException("There should be one loading zone.");
         }
-        if(!assertMoreThanOneDeliveryZone(zones)){
+        if(!checkMoreThanOneDeliveryZone(zones)){
             throw new RuntimeException("There should be more than one delivery zone.");
         }
-        if(!assertOneOrderZone(zones)){
+        if(!checkOneOrderZone(zones)){
             throw new RuntimeException("There should be at least on order zone.");
         }
-        if(!assertAllZonesInisideOrderZone(zones)){
+        if(!checkAllZonesInisideOrderZone(zones)){
             throw new RuntimeException("All zones are not inside order zone.");
         }
-        if(!assertAllZonesAreConnected(zones)){
+        if(!checkAllZonesAreConnected(zones)){
             throw new RuntimeException("All zones are not connected.");
         }
     }
 
-    public static void asserThatDroneIsInLoadingZoneOrThrowRundTimeException(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
-        if(!assertThatDroneIsInLoadingZone(zones, dronePoint)){
+    public static void assertThatCustomerIsInOrderZoneOrThrowRunTimeException(Set<Zone> zones, org.geolatte.geom.Point customerPoint){
+        if(!checkThatCustomerIsInOrderZone(zones, customerPoint)){
+            throw new RuntimeException("Customer can't be outside OrderZone.");
+        }
+
+    }
+
+    public static void assertThatDroneIsInLoadingZoneOrThrowRunTimeException(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
+        if(!checkThatDroneIsInLoadingZone(zones, dronePoint)){
             throw new RuntimeException("Drone should be inside the loading zone.");
         }
     }
 
-    public static boolean assertOneLoadingZone(Set<Zone> zones){
+
+    public static boolean checkThatCustomerIsInOrderZone(Set<Zone> zones, Point customerPoint) {
+        Polygon orderZonePolygon = zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).map(x -> convertZoneToJtsPolygon(x)).findFirst().get();
+        return orderZonePolygon.contains(JTS.to(customerPoint));
+    }
+
+    public static boolean checkOneLoadingZone(Set<Zone> zones){
         int numOfLoadingZones = (int) zones.stream().filter(x -> x.getType() == ZoneType.LoadingZone).count();
         return (numOfLoadingZones == 1);
     }
 
-    public static boolean assertMoreThanOneDeliveryZone(Set<Zone> zones){
+    public static boolean checkMoreThanOneDeliveryZone(Set<Zone> zones){
         int numOfDeliveryZones = (int) zones.stream().filter(x -> x.getType() == ZoneType.DeliveryZone).count();
         return (numOfDeliveryZones >= 1);
     }
 
-    public static boolean assertOneOrderZone(Set<Zone> zones){
+    public static boolean checkOneOrderZone(Set<Zone> zones){
         int numOfOrderZones = (int) zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).count();
         return (numOfOrderZones == 1);
     }
 
-    // TODO rename this: checkXXX
-    public static boolean assertAllZonesInisideOrderZone(Set<Zone> zones){
+    public static boolean checkAllZonesInisideOrderZone(Set<Zone> zones){
         Zone orderZone = zones.stream().filter(x -> x.getType() == ZoneType.OrderZone).findFirst().get();
         int numOfZonesInside = (int) zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
@@ -69,19 +81,19 @@ public class ZoneHelper {
 
     // If all zones are connected, a solution can be generated.
     // No isle problems! order zone not included ;)
-    public static boolean assertAllZonesAreConnected(Set<Zone> zones){
+    public static boolean checkAllZonesAreConnected(Set<Zone> zones){
 
         List<Polygon> polygonList = zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
                 .map(x -> convertZoneToJtsPolygon(x))
                 .collect(Collectors.toList());
 
-        Geometry unionedPolygons = CascadedPolygonUnion.union(polygonList);
+        Geometry unionOfPolygons = CascadedPolygonUnion.union(polygonList);
 
-        return unionedPolygons.getGeometryType().equals("Polygon");
+        return unionOfPolygons.getGeometryType().equals("Polygon");
     }
 
-    public static boolean assertThatDroneIsInLoadingZone(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
+    public static boolean checkThatDroneIsInLoadingZone(Set<Zone> zones, org.geolatte.geom.Point dronePoint){
         Zone loadingZone = zones.stream().filter(x -> x.getType() == ZoneType.LoadingZone).findFirst().get();
 
         return JTS.to(loadingZone.getPolygon()).contains(JTS.to(dronePoint));

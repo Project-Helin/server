@@ -25,7 +25,7 @@
         this.convertZoneToFeature = function (zone, format) {
             var feature = format.readFeature(zone.polygon, {
                 dataProjection: this.dataProjectionCode,
-                featureProjection:this.mapProjectionCode
+                featureProjection: this.mapProjectionCode
             });
 
             feature.setId(zone.id);
@@ -37,18 +37,28 @@
 
             return format.writeFeature(feature, {
                 dataProjection: this.dataProjectionCode,
-                featureProjection:this.mapProjectionCode
+                featureProjection: this.mapProjectionCode
             });
         };
 
         this.convertPositionToCoordinate = function (position) {
-            return ol.proj.transform([position.lon, position.lat], this.dataProjectionCode,this.mapProjectionCode);
+            return ol.proj.transform([position.lon, position.lat], this.dataProjectionCode, this.mapProjectionCode);
         };
 
         this.convertRouteToCoordinates = function (route) {
             var _this = this;
             var coordinates = route.map(function (wayPoint) {
                     return _this.convertPositionToCoordinate(wayPoint.position)
+                }
+            );
+            return coordinates;
+        };
+
+        this.convertDroneInfosToCoordinates = function (droneInfos) {
+            var _this = this;
+            var coordinates = droneInfos.map(function (droneInfo) {
+                    var gpsState = droneInfo.gpsState;
+                    return _this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat});
                 }
             );
             return coordinates;
@@ -93,7 +103,7 @@
             return styleForZoneType;
         };
 
-        this.getRouteStyle = function() {
+        this.getRouteStyle = function () {
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
                     color: 'rgba(119, 17, 0, 0.8)',
@@ -102,10 +112,19 @@
             });
         };
 
-        this.createRouteMarkers = function(route) {
+        this.createRouteMarkers = function (route) {
             var _this = this;
             return route.map(function (wayPoint) {
                 return createRouteMarker(_this.convertPositionToCoordinate(wayPoint.position), wayPoint.id)
+            });
+        };
+
+
+        this.createDroneInfoMarkers = function (droneInfos) {
+            var _this = this;
+            return droneInfos.map(function (droneInfo) {
+                var gpsState = droneInfo.gpsState;
+                return createDroneInfoMarker(_this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat}), droneInfo.id)
             });
         };
 
@@ -114,7 +133,7 @@
                 geometry: new ol.geom.Point(coordinates)
             });
 
-            if(id) {
+            if (id) {
                 marker.setId(id);
             }
 
@@ -122,6 +141,32 @@
                 radius: 8,
                 fill: new ol.style.Fill({
                     color: 'rgba(119, 17, 0, 0.8)'
+                }),
+                stroke: null
+            });
+
+            var markerStyle = new ol.style.Style({
+                image: circle,
+                zIndex: 5000
+            });
+
+            marker.setStyle(markerStyle);
+            return marker;
+        }
+
+        function createDroneInfoMarker(coordinates, id) {
+            var marker = new ol.Feature({
+                geometry: new ol.geom.Point(coordinates)
+            });
+
+            if (id) {
+                marker.setId(id);
+            }
+
+            var circle = new ol.style.Circle({
+                radius: 4,
+                fill: new ol.style.Fill({
+                    color: '#3c8dbc'
                 }),
                 stroke: null
             });
