@@ -62,7 +62,7 @@ public class ProductsDao extends AbstractDao<Product> {
             Product.class
         );
 
-        nativeQuery.setParameter("type", ZoneType.OrderZone.name());
+        nativeQuery.setParameter("type", ZoneType.DeliveryZone.name());
 
         List<Product> resultList = nativeQuery.getResultList();
         return resultList;
