@@ -117,6 +117,19 @@
 
 
                                     scope.popup.show(evt.coordinate, popupHtml);
+                                } else {
+                                    var foundWayPoint = scope.route.filter(function (wayPoint) {
+                                        return wayPoint.id == feature.getId();
+                                    });
+
+                                    if (foundWayPoint[0]) {
+                                        var popupHtml =
+                                            '<div>' +
+                                            '<div>Altitude: ' +  foundWayPoint[0].position.height + 'm</div>' +
+                                            '<div>Action: ' +  foundWayPoint[0].action + '<div>' +
+                                            '</div>';
+                                        scope.popup.show(evt.coordinate, popupHtml);
+                                    }
                                 }
                             }
                         });
