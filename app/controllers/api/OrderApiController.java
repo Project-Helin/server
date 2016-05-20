@@ -5,8 +5,6 @@ import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.OrderDto;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
-import ch.helin.messages.dto.way.Waypoint;
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.SessionHelper;
@@ -27,7 +25,10 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -119,7 +120,11 @@ public class OrderApiController extends Controller {
         addMissionsToOrder(order, route);
         orderDao.persist(order);
 
-        WayPoint last = route.getWayPoints().stream().reduce((a, b) -> b).orElse(null);
+        WayPoint last = route.getWayPoints()
+            .stream()
+            .filter(o -> o.getAction() == Action.DROP)
+            .findFirst()
+            .get();
 
         RouteDto routeDto = routeMapper.convertToRouteDto(route);
 
