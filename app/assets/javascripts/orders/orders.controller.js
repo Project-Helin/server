@@ -23,7 +23,7 @@
                     console.log("Got a few products", productArray);
 
                     var firstProductId = productArray[0].id;
-                    var projectId = productArray[0].project;
+                    var projectId = productArray[0].projectId;
                     sendOrder(firstProductId, projectId);
                 });
 
@@ -38,7 +38,7 @@
                         },
                         orderProducts: [
                             {
-                                productId: productId,
+                                id: productId,
                                 amount: 10
 
                             }
