@@ -3,11 +3,11 @@
         return {
             restrict: 'E',
             scope: {
-                missions: '=', 
+                missions: '=',
                 zones: '='
             },
-            template:'<div id="map" class="map"></div>',
-            link: function(scope) {
+            template: '<div id="map" class="map"></div>',
+            link: function (scope) {
                 function initialize() {
                     scope.route = scope.missions[0].route.wayPoints;
                     scope.allDroneInfos = flatDroneInfosToOneArray();
@@ -94,7 +94,7 @@
 
                 function addMapInteractions() {
 
-                    scope.map.on('click', function (evt) {
+                    scope.map.on('pointermove', function (evt) {
                         scope.map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
                             if (feature.getId()) {
                                 var foundDroneInfo = scope.allDroneInfos.filter(function (droneInfo) {
@@ -108,11 +108,11 @@
                                         '<div>Time: ' + $filter('date')(i.clientTime, 'dd.MM.yyyy HH:mm:ss') + '</div>' +
                                         '<div>Battery: ' + i.batteryState.remain + '%<div>' +
                                         '<div>Voltage: ' + i.batteryState.voltage + 'V<div>' +
-                                        '<div>Discharge: ' + i.batteryState.discharge/100 + 'A<div>' +
-                                        '<div>Speed: ' + i.droneState.groundSpeed + ' m/s<div>' +
-                                        '<div>vertical Speed: ' + i.droneState.verticalSpeed + ' m/s<div>' +
-                                        '<div>Altitude: ' + i.droneState.altitude + 'm<div>' +
-                                        '<div>target Altitude: ' + i.droneState.targetAltitude + 'm<div>' +
+                                        '<div>Discharge: ' + i.batteryState.discharge.toFixed(2) / 100 + 'A<div>' +
+                                        '<div>Speed: ' + i.droneState.groundSpeed.toFixed(2) + ' m/s<div>' +
+                                        '<div>vertical Speed: ' + i.droneState.verticalSpeed.toFixed(2) + ' m/s<div>' +
+                                        '<div>Altitude: ' + i.droneState.altitude.toFixed(2) + 'm<div>' +
+                                        '<div>target Altitude: ' + i.droneState.targetAltitude.toFixed(2) + 'm<div>' +
                                         '</div>';
 
 
@@ -120,6 +120,7 @@
                                 }
                             }
                         });
+
                     });
                 }
 
@@ -144,7 +145,7 @@
                         })
                     });
                 }
-                
+
                 initialize();
             }
         };

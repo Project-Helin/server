@@ -119,11 +119,12 @@ public class MissionControllerTest extends AbstractIntegrationTest {
         });
 
         jpaApi.withTransaction(() -> {
+            //should reassign failed mission
             Drone droneFromDB = droneDao.findById(drone.getId());
             Mission missionFromDB = missionsDao.findById(missionId);
 
-            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
-            assertThat(droneFromDB.getCurrentMission()).isNull();
+            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_DRONE_CONFIRMATION);
+            assertThat(droneFromDB.getCurrentMission()).isEqualTo(missionFromDB);
         });
     }
 

@@ -23,7 +23,10 @@ public class MissionMapper {
         missionDto.setRoute(routeMapper.convertToRouteDto(mission.getRoute()));
         missionDto.setOrderProduct(orderProductsMapper.convertToOrderProductDto(mission.getOrderProduct()));
         missionDto.setDroneInfos(mission.getDroneInfos().stream().map(droneInfoMapper::convertToDroneInfoDto).collect(Collectors.toList()));
-        missionDto.setState(mission.getState().name());
+        if (mission.getState() != null) {
+            missionDto.setState(mission.getState().name());
+        }
+
         return missionDto;
     }
 

@@ -36,7 +36,6 @@ public class DroneInfoMapper {
             droneInfo.setTargetAltitude(droneState.getTargetAltitude());
             droneInfo.setAltitude(droneState.getAltitude());
             droneInfo.setVerticalSpeed(droneState.getVerticalSpeed());
-            droneInfo.setGroundSpeed(droneState.getVerticalSpeed());
             droneInfo.setConnectedToDrone(droneState.isConnected());
         }
 
