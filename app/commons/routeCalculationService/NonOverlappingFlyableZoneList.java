@@ -1,14 +1,15 @@
 package commons.routeCalculationService;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
 import models.Zone;
 import models.ZoneType;
-import org.geolatte.geom.Position;
+import org.geolatte.geom.*;
 import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +38,23 @@ public class NonOverlappingFlyableZoneList {
             List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().filter(x -> !x.equals(zone)).map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
 
-            com.vividsolutions.jts.geom.Polygon subtractedZonePolygon = (com.vividsolutions.jts.geom.Polygon) (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
-            if(subtractedZonePolygon.isEmpty()){
+            Geometry difference = (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
+            logger.debug("Difference of Polygons {}", difference.toString());
+            logger.debug("Type of Polygon is {}", difference.getGeometryType());
+
+            if(difference.isEmpty()){
                 zoneIterator.remove();
                 return;
             }
-            zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
+            if(difference.getGeometryType() == "Polygon"){
+                Polygon subtractedZonePolygon = (Polygon) difference;
+                zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
+                return;
+            }
+            if(difference.getGeometryType() == "MultiPolygon"){
+                throw new RuntimeException("FUCK THIS SHIT!");
+            }
+
         }
     }
 
