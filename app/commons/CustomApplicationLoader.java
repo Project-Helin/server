@@ -28,18 +28,23 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
         logger.info("Building ObjectMapperApplicationLoader ");
 
         ObjectMapper currentMapper = installJsonGeometryConverter();
-
-        addSettingForModelhelper();
-
-        // replace the mapper
+        // replace the mapper default mapper with own mapper
         Json.setObjectMapper(currentMapper);
+
+        addSettingForModelHelper();
+
         return super.builder(context);
     }
 
-    private void addSettingForModelhelper() {
+    private void addSettingForModelHelper() {
+        // TODO Marcel: could you explain this? Is this because no exception should be thrown?
         BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
     }
 
+    /**
+     * We need to install custom mapper for Point and Polygon, because
+     * otherwise they are not mapped from and to JSON.
+     */
     private ObjectMapper installJsonGeometryConverter() {
         ObjectMapper currentMapper = Json.mapper();
 
