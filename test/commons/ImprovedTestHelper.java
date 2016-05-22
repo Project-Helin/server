@@ -81,7 +81,7 @@ public class ImprovedTestHelper {
         order.setProject(project);
         order.setCustomer(customer);
         Position customerPos = new Position(47, 8);
-        order.setDeliveryPosition(GisHelper.createPoint(customerPos.getLon(), customerPos.getLat()));
+        order.setCustomerPosition(GisHelper.createPoint(customerPos.getLon(), customerPos.getLat()));
         order.setState(OrderState.NEW);
 
         orderDao.persist(order);
