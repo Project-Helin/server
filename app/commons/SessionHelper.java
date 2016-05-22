@@ -1,6 +1,6 @@
 package commons;
 
-import ch.helin.messages.commons.AssertUtils;
+import ch.helin.commons.AssertUtils;
 import com.google.inject.Inject;
 import dao.OrganisationsDao;
 import dao.UserDao;

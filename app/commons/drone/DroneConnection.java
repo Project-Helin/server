@@ -1,6 +1,6 @@
 package commons.drone;
 
-import ch.helin.messages.commons.ConnectionUtils;
+import ch.helin.commons.ConnectionUtils;
 import com.rabbitmq.client.*;
 import models.Drone;
 import org.slf4j.Logger;

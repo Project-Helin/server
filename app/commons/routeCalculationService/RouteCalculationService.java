@@ -1,7 +1,6 @@
 package commons.routeCalculationService;
 
-import ch.helin.messages.commons.AssertUtils;
-import ch.helin.messages.dto.way.*;
+import ch.helin.commons.AssertUtils;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -13,9 +12,10 @@ import commons.gis.RouteHelper;
 import commons.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
-import models.*;
+import models.Project;
+import models.Zone;
+import models.ZoneType;
 import org.geolatte.geom.*;
-import org.geolatte.geom.Position;
 import org.geolatte.geom.jts.JTS;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;

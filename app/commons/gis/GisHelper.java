@@ -1,14 +1,9 @@
 package commons.gis;
 
-import ch.helin.messages.commons.AssertUtils;
+import ch.helin.commons.AssertUtils;
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.Waypoint;
-import models.WayPoint;
-import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
-import org.geolatte.geom.codec.Wkb;
-import org.geolatte.geom.codec.WkbDecoder;
 import org.geolatte.geom.codec.Wkt;
 import org.geolatte.geom.crs.CoordinateReferenceSystem;
 import org.geolatte.geom.crs.CoordinateReferenceSystems;

@@ -63,7 +63,7 @@ libraryDependencies += "com.adrianhurt" %% "play-bootstrap" % "1.1-P25-B3-SNAPSH
   * For testing
   */
 libraryDependencies += "org.easytesting" % "fest-assert" % "1.4"
-libraryDependencies += "ch.helin" % "drone-server-messages" % "1.0"
+libraryDependencies += "ch.helin" % "commons" % "1.0"
 
 libraryDependencies += "org.seleniumhq.selenium" % "selenium-java" % "2.51.0"
 

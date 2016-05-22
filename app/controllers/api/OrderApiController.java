@@ -1,6 +1,6 @@
 package controllers.api;
 
-import ch.helin.messages.commons.AssertUtils;
+import ch.helin.commons.AssertUtils;
 import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.OrderDto;
 import ch.helin.messages.dto.way.Position;
