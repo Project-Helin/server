@@ -12,33 +12,33 @@ import models.ZoneType;
 import org.geolatte.geom.Point;
 import org.junit.Test;
 import org.omg.PortableInterceptor.AdapterStateHelper;
+import org.slf4j.Logger;
 import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class ProjectsDaoTest extends AbstractIntegrationTest {
+
+    private static final Logger logger = getLogger(ProjectsDaoTest.class);
 
     @Inject
     private ProjectsDao projectsDao;
 
     @Inject
-    private TestHelper testHelper;
-
-    @Inject
-    private ImprovedTestHelper improvedTestHelper;
+    private ImprovedTestHelper testHelper;
 
     @Inject
     private JPAApi jpaApi;
 
     @Test
-    @Transactional
     public void findPointOnLoadingZone() {
         jpaApi.withTransaction(() -> {
             Project project = testHelper.createNewProject(
@@ -58,33 +58,38 @@ public class ProjectsDaoTest extends AbstractIntegrationTest {
         });
     }
 
+    /**
+     * This test is here to check if hibernate is corretly configured
+     * to save alle zones with all projects.
+     *
+     * I had problem with that and wrote this test. Lets keep is as
+     * a safety net.
+     */
     @Test
-    public void bla() {
+    public void checkIfZoneArePersistedWithProject() {
 
         Project saved = jpaApi.withTransaction((em) -> {
             Project project = new Project();
             project.setName("First Demo");
-            Zone ja = testHelper.createUnsavedZone("ja", ZoneType.DeliveryZone);
-            ja.setProject(project);
-            project.setZones(new HashSet<>(Arrays.asList(ja)));
-            project.setOrganisation(improvedTestHelper.createNewOrganisation());
-            projectsDao.persist(project);
 
+            Zone zone = testHelper.createUnsavedZone("ja", ZoneType.DeliveryZone);
+            zone.setProject(project);
+
+            project.setZones(Stream.of(zone).collect(Collectors.toSet()));
+            project.setOrganisation(testHelper.createNewOrganisation());
+            projectsDao.persist(project);
             return project;
         });
 
-        System.out.println("=> saved ");
+        logger.info("Saved Project. Try to load it again.");
 
         jpaApi.withTransaction(() ->{
-            Project byId = projectsDao.findById(saved.getId());
+            Project foundProject = projectsDao.findById(saved.getId());
 
-            System.out.println("=> check if saved");
-            Zone first = byId.getZones().iterator().next();
-            first.setType(ZoneType.LoadingZone);
+            logger.info("Check if saved correctly.");
+            Zone first = foundProject.getZones().iterator().next();
 
+            assertThat(first).isNotNull();
         });
-
-
-        System.out.println("=> done");
     }
 }
