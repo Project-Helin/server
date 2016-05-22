@@ -16,9 +16,6 @@ import java.util.stream.Stream;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class ProductsDaoTest extends AbstractIntegrationTest {
 
     @Inject
@@ -30,14 +27,11 @@ public class ProductsDaoTest extends AbstractIntegrationTest {
     @Inject
     private JPAApi jpaApi;
 
-    @Inject
-    private ImprovedTestHelper testHelper;
-
     @Test
     public void shouldFindProductByPosition() {
-
         jpaApi.withTransaction(() -> {
             Organisation organisation = testHelper.createNewOrganisation();
+
             Project project = testHelper.createNewProject(organisation,
                 testHelper.createUnsavedZone(
                     "Delivery Zone",
@@ -53,9 +47,6 @@ public class ProductsDaoTest extends AbstractIntegrationTest {
             List<Product> byPosition = productsDao.findByPosition(30d, 30d);
             assertThat(byPosition).hasSize(1);
             assertThat(byPosition).containsOnly(product);
-
         });
-
-
     }
 }

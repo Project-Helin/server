@@ -27,7 +27,7 @@ public class RouteDaoTest extends AbstractIntegrationTest {
     private RouteDao routeDao;
 
     @Test
-    public void name() throws Exception {
+    public void checkIfRouteCanBePersisted() throws Exception {
         jpaApi.withTransaction(() -> {
 
             WayPoint bla = new WayPoint();
@@ -73,9 +73,9 @@ public class RouteDaoTest extends AbstractIntegrationTest {
         zones.add(zone);
 
 
-        Project testProject = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
 
         MultiLineString multiLineResult = jpaApi.withTransaction(() -> {
+            Project testProject = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
             return routeDao.calculateSkeleton(testProject.getId());
         });
 

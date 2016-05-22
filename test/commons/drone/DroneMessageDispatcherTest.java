@@ -4,6 +4,7 @@ import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.dto.DroneInfoDto;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.state.DroneState;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import controllers.DroneInfosController;
@@ -43,24 +44,31 @@ public class DroneMessageDispatcherTest extends AbstractIntegrationTest {
 
     @Test
     public void testDroneStateMessage() {
-        String password = "password243";
+        final Drone[] drone = new Drone[1];
 
-        User userWithOrganisation = testHelper.createUserWithOrganisation(password);
-        Organisation organisation = userWithOrganisation.getOrganisations().stream().findFirst().get();
+        DroneInfoMessage droneInfoMessage = jpaApi.withTransaction((em) -> {
+            String password = "password243";
 
-        Drone drone = testHelper.createNewDrone(organisation);
+            User userWithOrganisation = testHelper.createUserWithOrganisation(password);
+            Organisation organisation = userWithOrganisation.getOrganisations().stream().findFirst().get();
 
-        DroneState droneState = testHelper.getDroneState();
+            drone[0] = testHelper.createNewDrone(organisation);
 
-        DroneInfoMessage droneInfoMessage = new DroneInfoMessage();
-        DroneInfoDto droneInfoDto = new DroneInfoDto();
-        droneInfoDto.setDroneState(droneState);
-        droneInfoMessage.setDroneInfo(droneInfoDto);
+            DroneState droneState = testHelper.getDroneState();
+
+            DroneInfoMessage infoMessage = new DroneInfoMessage();
+            DroneInfoDto droneInfoDto = new DroneInfoDto();
+            droneInfoDto.setDroneState(droneState);
+            infoMessage.setDroneInfo(droneInfoDto);
+
+            return infoMessage;
+        });
+
 
         String messageAsJSON = messageConverter.parseMessageToString(droneInfoMessage);
-        droneMessageDispatcher.dispatchMessageToController(drone.getId(), messageAsJSON);
+        droneMessageDispatcher.dispatchMessageToController(drone[0].getId(), messageAsJSON);
 
-        verify(droneStateController, times(1)).onDroneInfoReceived(drone.getId(), droneInfoMessage);
+        verify(droneStateController, times(1)).onDroneInfoReceived(drone[0].getId(), droneInfoMessage);
     }
 
 

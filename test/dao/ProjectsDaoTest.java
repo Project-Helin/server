@@ -33,9 +33,6 @@ public class ProjectsDaoTest extends AbstractIntegrationTest {
     private ProjectsDao projectsDao;
 
     @Inject
-    private ImprovedTestHelper testHelper;
-
-    @Inject
     private JPAApi jpaApi;
 
     @Test

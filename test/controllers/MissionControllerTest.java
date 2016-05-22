@@ -3,7 +3,6 @@ package controllers;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.ImprovedTestHelper;
 import commons.drone.DroneCommunicationManager;
 import dao.DroneDao;
 import dao.MissionsDao;
@@ -22,22 +21,19 @@ import static play.inject.Bindings.bind;
 public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Inject
-    JPAApi jpaApi;
+    private JPAApi jpaApi;
 
     @Inject
-    MissionController missionController;
+    private MissionController missionController;
 
     @Inject
-    DroneDao droneDao;
+    private DroneDao droneDao;
 
     @Inject
-    MissionsDao missionsDao;
+    private MissionsDao missionsDao;
 
     @Inject
-    ImprovedTestHelper testHelper;
-
-    @Inject
-    MissionMapper missionMapper;
+    private MissionMapper missionMapper;
 
 
     private DroneCommunicationManager droneCommunicationManager;
@@ -101,8 +97,6 @@ public class MissionControllerTest extends AbstractIntegrationTest {
             assertThat(droneFromDB.getCurrentMission()).isNull();
 
         });
-
-
     }
 
     @Test
@@ -143,6 +137,4 @@ public class MissionControllerTest extends AbstractIntegrationTest {
             return newDrone;
         });
     }
-
-
 }

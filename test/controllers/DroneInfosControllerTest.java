@@ -35,29 +35,31 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
     private OrderDao orderDao;
 
     @Test
-    public void TestHandleNewDroneInfoMessage() {
+    public void testHandleNewDroneInfoMessage() {
+        Position position = new Position(47.222645, 8.820594);
+        Date now = new Date();
 
-        jpaApi.withTransaction(() -> {
-            Organisation organisation = testHelper.createNewOrganisation();
-            Drone drone = testHelper.createNewDrone(organisation);
+        Drone drone = jpaApi.withTransaction((em) -> {
+            return testHelper.createNewDrone(testHelper.createNewOrganisation());
+        });
 
+        DroneInfoMessage message = jpaApi.withTransaction(() -> {
             DroneInfoDto droneInfoDto = new DroneInfoDto();
-
             droneInfoDto.setGpsState(new GpsState());
-
-            Date now = new Date();
             droneInfoDto.setClientTime(now);
-            Position position = new Position(47.222645, 8.820594);
+
             droneInfoDto.setPhonePosition(position);
             droneInfoDto.getGpsState().setPosLat(position.getLat());
             droneInfoDto.getGpsState().setPosLon(position.getLon());
 
             DroneInfoMessage droneInfoMessage = new DroneInfoMessage();
             droneInfoMessage.setDroneInfo(droneInfoDto);
+            return droneInfoMessage;
+        });
 
-            droneInfosController.onDroneInfoReceived(drone.getId(), droneInfoMessage);
-            jpaApi.em().flush();
+        droneInfosController.onDroneInfoReceived(drone.getId(), message);
 
+        jpaApi.withTransaction(() -> {
             Drone droneFromDB = droneDao.findById(drone.getId());
             DroneInfo droneInfoFromDB = droneFromDB.getDroneInfos().stream().findFirst().get();
 
@@ -70,12 +72,13 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void TestHandleDroneInfoDuringMission() {
+    public void testHandleDroneInfoDuringMission() {
         Date older = new Date(1);
         Date newer = new Date(450000000);
 
-        Organisation organisation = testHelper.createNewOrganisation();
-        Drone detachedDrone = testHelper.createNewDrone(organisation);
+        Drone detachedDrone = jpaApi.withTransaction(em -> {
+            return testHelper.createNewDrone(testHelper.createNewOrganisation());
+        });
 
         UUID missionId = jpaApi.withTransaction((em) -> {
             Drone drone = droneDao.findById(detachedDrone.getId());
