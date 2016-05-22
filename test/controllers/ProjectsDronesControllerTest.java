@@ -85,8 +85,6 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
 
         Project project = jpaApi.withTransaction(em -> {
             droneToDelete[0] = testHelper.createNewDrone(organisation);
-            droneToDelete[0].setId(UUID.randomUUID());
-
             return testHelper.createNewProject(organisation, droneToDelete[0]);
         });
 
