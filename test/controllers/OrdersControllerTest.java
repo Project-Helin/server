@@ -1,6 +1,8 @@
 package controllers;
 
+import com.google.inject.Inject;
 import commons.AbstractE2ETest;
+import commons.ImprovedTestHelper;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;
@@ -17,18 +19,22 @@ public class OrdersControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;
 
+    @Inject
+    protected ImprovedTestHelper testHelper;
+
     @Before
     public void login() {
         organisation = doLogin();
     }
 
     @Test
-    @Ignore
     public void shouldShowNewOrderInAllOrderView() {
-        Order order = testHelper.createNewOrder(
-            testHelper.createNewProject(organisation),
-            testHelper.createCustomer()
-        );
+        Order order = jpaApi.withTransaction((em) -> {
+            return testHelper.createNewOrder(
+                testHelper.createNewProject(organisation),
+                testHelper.createCustomer()
+            );
+        });
 
         browser.goTo(routes.OrdersController.index().url());
 
@@ -39,10 +45,12 @@ public class OrdersControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldNotShowOrderFromAnotherOrganisation() {
-        Order order = testHelper.createNewOrder(
-            testHelper.createNewProject(testHelper.createNewOrganisation()),
-            testHelper.createCustomer()
-        );
+        Order order = jpaApi.withTransaction((em) -> {
+            return testHelper.createNewOrder(
+                testHelper.createNewProject(testHelper.createNewOrganisation()),
+                testHelper.createCustomer()
+            );
+        });
 
         browser.goTo(routes.OrdersController.index().url());
 
@@ -52,19 +60,20 @@ public class OrdersControllerTest extends AbstractE2ETest {
     }
 
     @Test
-    @Ignore
     public void shouldShowOrderPerProject() throws InterruptedException {
-        Order order = testHelper.createNewOrder(
-            testHelper.createNewProject(organisation),
-            testHelper.createCustomer()
-        );
+        Order order = jpaApi.withTransaction((em) -> {
+            return testHelper.createNewOrder(
+                testHelper.createNewProject(organisation),
+                testHelper.createCustomer()
+            );
+        });
 
         browser.goTo(routes.OrdersController.index().url());
         browser.fillSelect("#projectList").withValue(order.getProject().getId().toString());
 
         // wait till
         WebDriverWait wait = new WebDriverWait(browser.getDriver(), 10);
-        WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated(By.id("projectList")));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("projectList")));
         element.click();
 
         // verify

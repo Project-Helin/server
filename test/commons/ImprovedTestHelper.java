@@ -70,6 +70,7 @@ public class ImprovedTestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
+        order.setState(OrderState.NEW);
 
         orderDao.persist(order);
 
