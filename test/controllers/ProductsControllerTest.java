@@ -21,9 +21,6 @@ public class ProductsControllerTest extends AbstractE2ETest {
     @Inject
     private ProductsDao productsDao;
 
-    @Inject
-    private ImprovedTestHelper testHelper;
-
     private Organisation currentOrganisation;
 
     @Before

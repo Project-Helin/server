@@ -25,7 +25,7 @@ public class ProjectsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowNewProject() {
-        Project project = testHelper.createNewProject(organisation);
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(organisation));
 
         browser.goTo(routes.ProjectsController.index().url());
 
@@ -35,7 +35,7 @@ public class ProjectsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldRemoveProject() {
-        Project project = testHelper.createNewProject(organisation);
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(organisation));
 
         browser.goTo(routes.ProjectsController.index().url());
         assertThat(browser.pageSource()).contains(project.getName());

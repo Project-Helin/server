@@ -34,11 +34,11 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowProjectAsJson() {
-        Project newProject = testHelper.createNewProject(
+        Project newProject = jpaApi.withTransaction(em -> testHelper.createNewProject(
             currentOrganisation,
             testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
-        );
+        ));
 
         ProjectApiDto project = apiHelper.doGet(
             routes.ProjectsApiController.show(newProject.getId()),
@@ -62,13 +62,15 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test(expected = Exception.class)
     public void shouldNotShowProjectAsJson() {
-        Organisation anotherOrganisation = testHelper.createNewOrganisation();
 
-        Project newProject = testHelper.createNewProject(
-            anotherOrganisation,
-            testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
-            testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
-        );
+        Project newProject = jpaApi.withTransaction(em -> {
+            Organisation anotherOrganisation = testHelper.createNewOrganisation();
+            return testHelper.createNewProject(
+                anotherOrganisation,
+                testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
+                testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
+            );
+        });
 
         apiHelper.doPost(
             routes.ProjectsApiController.show(newProject.getId()),
@@ -100,7 +102,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldUpdateProjectWithoutZones() {
-        Project project = testHelper.createNewProject(currentOrganisation);
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(currentOrganisation));
 
         ProjectApiDto projectDto = new ProjectApiDto(project.getId(), "My Super Project", Collections.emptyList());
         apiHelper.doPost(routes.ProjectsApiController.updateOrInsert(projectDto.getId()), projectDto, browser);
@@ -137,11 +139,11 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldRemoveZoneFromProject() {
-        Project newProject = testHelper.createNewProject(
+        Project newProject = jpaApi.withTransaction(em -> testHelper.createNewProject(
             currentOrganisation,
             testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone),
             testHelper.createUnsavedZone("Loading zone", ZoneType.LoadingZone)
-        );
+        ));
 
         Zone firstZone = newProject.getZones().iterator().next();
         ProjectApiDto projectDto = mapToDto(newProject, firstZone);
@@ -165,8 +167,10 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldAddZoneToProject() {
-        Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
-        Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
+        Project newProject = jpaApi.withTransaction(em -> {
+            Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
+            return testHelper.createNewProject(currentOrganisation, firstSavedZone);
+        });
 
         Zone firstZone = newProject.getZones().iterator().next();
         ZoneApiDto secondNew = new ZoneApiDto(UUID.randomUUID(), null, 100, ZoneType.LoadingZone, "JO");
@@ -199,8 +203,10 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldUpdateSavedZones() {
-        Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
-        Project newProject = testHelper.createNewProject(currentOrganisation, firstSavedZone);
+        Project newProject = jpaApi.withTransaction(em -> {
+            Zone firstSavedZone = testHelper.createUnsavedZone("Flight zone", ZoneType.FlightZone);
+            return testHelper.createNewProject(currentOrganisation, firstSavedZone);
+        });
 
         Zone firstZone = newProject.getZones().iterator().next();
         firstZone.setName("Jo!");

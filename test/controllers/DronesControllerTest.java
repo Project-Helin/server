@@ -20,7 +20,7 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowNewDrone() {
-        Drone drone = testHelper.createNewDrone(organisation);
+        Drone drone = jpaApi.withTransaction(em -> testHelper.createNewDrone(organisation));
 
         browser.goTo(routes.DronesController.index().url());
 
@@ -33,8 +33,10 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldNotShowDroneFromAnotherOrganisation() {
-        Organisation anotherOrganisation = testHelper.createNewOrganisation();
-        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+        Drone drone = jpaApi.withTransaction(em -> {
+            Organisation anotherOrganisation = testHelper.createNewOrganisation();
+            return testHelper.createNewDrone(anotherOrganisation);
+        });
 
         browser.goTo(routes.DronesController.index().url());
 
@@ -46,7 +48,9 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldRemoveDrone() {
-        Drone drone = testHelper.createNewDrone(organisation);
+        Drone drone = jpaApi.withTransaction(em -> {
+            return testHelper.createNewDrone(organisation);
+        });
 
         browser.goTo(routes.DronesController.index().url());
         assertThat(browser.pageSource()).contains(drone.getName());
@@ -64,8 +68,10 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldNotAllowToRemoveDroneFromOtherOrganisation() {
-        Organisation anotherOrganisation = testHelper.createNewOrganisation();
-        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+        Drone drone = jpaApi.withTransaction(em -> {
+            Organisation anotherOrganisation = testHelper.createNewOrganisation();
+            return testHelper.createNewDrone(anotherOrganisation);
+        });
 
         browser.goTo(routes.DronesController.delete(drone.getId()).url());
 
@@ -75,7 +81,7 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldUpdateDrone() {
-        Drone drone = testHelper.createNewDrone(organisation);
+        Drone drone = jpaApi.withTransaction(em -> testHelper.createNewDrone(organisation));
 
         browser.goTo(routes.DronesController.index().url());
 
@@ -101,8 +107,10 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldNotAllowToUpdateDroneFromOtherOrganisation() {
-        Organisation anotherOrganisation = testHelper.createNewOrganisation();
-        Drone drone = testHelper.createNewDrone(anotherOrganisation);
+        Drone drone = jpaApi.withTransaction(em -> {
+            Organisation anotherOrganisation = testHelper.createNewOrganisation();
+            return testHelper.createNewDrone(anotherOrganisation);
+        });
 
         browser.goTo(routes.DronesController.edit(drone.getId()).url());
 

@@ -30,22 +30,25 @@ public class ProjectsProductsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowProductInProject() {
-        Product newProduct = testHelper.createProduct(organisation);
-        newProduct.setId(UUID.randomUUID());
-        Project project = testHelper.createNewProject(organisation, newProduct);
+        Project project = jpaApi.withTransaction(em -> {
+            Product newProduct = testHelper.createProduct(organisation);
+            return testHelper.createNewProject(organisation, newProduct);
+        });
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-products-" + project.getId());
 
         // verify
+        Product newProduct = project.getProducts().iterator().next();
         assertThat(browser.pageSource()).contains(newProduct.getName());
     }
 
     @Test
     public void shouldNotShowProductFromOtherOrganisation() {
-        Product productFromOtherOrganisation =
-            testHelper.createProduct(testHelper.createNewOrganisation());
-        Project project = testHelper.createNewProject(organisation);
+        Product productFromOtherOrganisation = jpaApi.withTransaction(em ->
+            testHelper.createProduct(testHelper.createNewOrganisation())
+        );
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(organisation));
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-products-" + project.getId());
@@ -56,10 +59,8 @@ public class ProjectsProductsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldAddProductToProject() {
-        Product productToAdd = testHelper.createProduct(organisation);
-        productToAdd.setId(UUID.randomUUID());
-
-        Project project = testHelper.createNewProject(organisation);
+        Product productToAdd = jpaApi.withTransaction(em -> testHelper.createProduct(organisation));
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(organisation));
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-products-" + project.getId());
@@ -79,17 +80,18 @@ public class ProjectsProductsControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldDeleteProductFromProject() {
-        Product productToDelete = testHelper.createProduct(organisation);
-        productToDelete.setId(UUID.randomUUID());
-
-        Project project = testHelper.createNewProject(organisation, productToDelete);
+        final Product[] productToDelete = new Product[1];
+        Project project = jpaApi.withTransaction(em -> {
+            productToDelete[0] = testHelper.createProduct(organisation);
+            return testHelper.createNewProject(organisation, productToDelete[0]);
+        });
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-products-" + project.getId());
 
         // delete product
-        browser.click(withId("delete-" + productToDelete.getId().toString()));
-        waitAndClick("deleteconfirm-" + productToDelete.getId().toString());
+        browser.click(withId("delete-" + productToDelete[0].getId().toString()));
+        waitAndClick("deleteconfirm-" + productToDelete[0].getId().toString());
         waitFiveSeconds();
 
         // verify in db

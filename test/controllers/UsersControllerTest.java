@@ -52,7 +52,7 @@ public class UsersControllerTest extends AbstractE2ETest {
     @Test
     public void login() {
 
-        User user = testHelper.createUserWithOrganisation(PLAIN_TEXT_PASSWORD);
+        User user = jpaApi.withTransaction(em -> testHelper.createUserWithOrganisation(PLAIN_TEXT_PASSWORD));
 
         browser.goTo(routes.UsersController.login().url());
         assertThat(browser.pageSource()).contains("Login");
@@ -65,7 +65,7 @@ public class UsersControllerTest extends AbstractE2ETest {
     @Test
     public void loginWithWrongData() {
 
-        User user = testHelper.createUserWithOrganisation(PLAIN_TEXT_PASSWORD);
+        User user = jpaApi.withTransaction(em -> testHelper.createUserWithOrganisation(PLAIN_TEXT_PASSWORD));
 
         browser.goTo(routes.UsersController.login().url());
 

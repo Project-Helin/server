@@ -36,7 +36,7 @@ public abstract class AbstractE2ETest extends WithBrowser {
     private Database database;
 
     @Inject
-    protected TestHelper testHelper;
+    protected ImprovedTestHelper testHelper;
 
     @Before
     public void setupDatabaseAndHelper() {
@@ -118,8 +118,8 @@ public abstract class AbstractE2ETest extends WithBrowser {
     protected Organisation doLogin() {
         String password = "bla";
 
-        Organisation organisation = testHelper.createNewOrganisation();
-        User user = testHelper.createUserWithOrganisation(password, organisation);
+        Organisation organisation = jpaApi.withTransaction(em -> testHelper.createNewOrganisation());
+        User user = jpaApi.withTransaction(em -> testHelper.createUserWithOrganisation(password, organisation));
 
         browser.goTo("/login");
         fillInLoginForm(user, password);

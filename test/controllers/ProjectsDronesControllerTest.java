@@ -26,22 +26,25 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldShowDroneInProject() {
-        Drone newDrone = testHelper.createNewDrone(organisation);
-        newDrone.setId(UUID.randomUUID());
-        Project project = testHelper.createNewProject(organisation, newDrone);
+        final Drone[] newDrone = new Drone[1];
+
+        Project project = jpaApi.withTransaction(em -> {
+            newDrone[0] = testHelper.createNewDrone(organisation);
+            return testHelper.createNewProject(organisation, newDrone[0]);
+        });
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-drones-" + project.getId());
 
         // verify
-        assertThat(browser.pageSource()).contains(newDrone.getName());
+        assertThat(browser.pageSource()).contains(newDrone[0].getName());
     }
 
     @Test
     public void shouldNotShowDroneFromOtherOrganisation() {
         Drone droneFromOtherOrganisation =
-            testHelper.createNewDrone(testHelper.createNewOrganisation());
-        Project project = testHelper.createNewProject(organisation);
+            jpaApi.withTransaction(em -> testHelper.createNewDrone(testHelper.createNewOrganisation()));
+        Project project = jpaApi.withTransaction(em -> testHelper.createNewProject(organisation));
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-drones-" + project.getId());
@@ -52,10 +55,12 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
 
     @Test
     public void shouldAddDroneToProject() {
-        Drone droneToAdd = testHelper.createNewDrone(organisation);
-        droneToAdd.setId(UUID.randomUUID());
+        final Drone[] droneToAdd = new Drone[1];
 
-        Project project = testHelper.createNewProject(organisation);
+        Project project = jpaApi.withTransaction(em -> {
+            droneToAdd[0] = testHelper.createNewDrone(organisation);
+            return testHelper.createNewProject(organisation);
+        });
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-drones-" + project.getId());
@@ -69,24 +74,28 @@ public class ProjectsDronesControllerTest extends AbstractE2ETest {
             assertThat(found.getDrones()).hasSize(1);
 
             Drone firstDrone = found.getDrones().iterator().next();
-            assertThat(firstDrone.getName()).isEqualTo(droneToAdd.getName());
+            assertThat(firstDrone.getName()).isEqualTo(droneToAdd[0].getName());
             assertThat(firstDrone.getProject()).isEqualTo(found);
         });
     }
 
     @Test
     public void shouldDeleteDroneFromProject() {
-        Drone droneToDelete = testHelper.createNewDrone(organisation);
-        droneToDelete.setId(UUID.randomUUID());
+        final Drone[] droneToDelete = new Drone[1];
 
-        Project project = testHelper.createNewProject(organisation, droneToDelete);
+        Project project = jpaApi.withTransaction(em -> {
+            droneToDelete[0] = testHelper.createNewDrone(organisation);
+            droneToDelete[0].setId(UUID.randomUUID());
+
+            return testHelper.createNewProject(organisation, droneToDelete[0]);
+        });
 
         browser.goTo(routes.ProjectsController.index().url());
         browser.click("#show-drones-" + project.getId());
 
         // delete drone
-        browser.click(withId("delete-" + droneToDelete.getId().toString()));
-        waitAndClick("deleteconfirm-" + droneToDelete.getId().toString());
+        browser.click(withId("delete-" + droneToDelete[0].getId().toString()));
+        waitAndClick("deleteconfirm-" + droneToDelete[0].getId().toString());
         waitFiveSeconds();
 
         // verify in db
