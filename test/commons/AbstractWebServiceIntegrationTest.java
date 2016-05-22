@@ -22,7 +22,7 @@ public abstract class AbstractWebServiceIntegrationTest extends WithServer {
     private Database database;
 
     @Inject
-    protected TestHelper testHelper;
+    protected ImprovedTestHelper testHelper;
 
     @Before
     public void setupDatabaseAndHelper() {

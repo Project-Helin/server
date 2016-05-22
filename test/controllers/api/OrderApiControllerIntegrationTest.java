@@ -39,11 +39,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
     @Inject
     private ProjectsDao projectsDao;
 
-    @Inject
-    private ImprovedTestHelper testHelper;
-
     private DroneCommunicationManager droneCommunicationManager;
-
 
     @Override
     protected Application provideApplication() {

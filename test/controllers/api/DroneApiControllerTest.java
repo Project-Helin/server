@@ -31,7 +31,7 @@ public class DroneApiControllerTest extends AbstractWebServiceIntegrationTest {
 
     @Test
     public void createDrone() throws ExecutionException, InterruptedException {
-        User user = testHelper.createUserWithOrganisation("bla");
+        User user = jpaApi.withTransaction(em -> testHelper.createUserWithOrganisation("bla"));
 
         Organisation organisation = user.getOrganisations().stream().findFirst().get();
 
