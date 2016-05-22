@@ -2,11 +2,9 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.ImprovedTestHelper;
 import dao.ProductsDao;
 import models.Organisation;
 import models.Product;
-import models.User;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,6 +1,7 @@
 package commons;
 
 import ch.helin.messages.dto.state.DroneState;
+import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
@@ -16,7 +17,6 @@ import java.util.UUID;
 /**
  * This class provides helper methods to create sample entities.
  */
-@Deprecated // use ImprovedTestHelper
 public class TestHelper {
 
     @Inject
@@ -61,9 +61,7 @@ public class TestHelper {
         organisation.setToken(UUID.randomUUID().toString().substring(0, 5));
         organisation.setName("Super HSR " + System.currentTimeMillis());
 
-        jpaApi.withTransaction(() -> {
-            organisationsDao.persist(organisation);
-        });
+        organisationsDao.persist(organisation);
 
         return organisation;
     }
@@ -72,10 +70,9 @@ public class TestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
+        order.setState(OrderState.NEW);
 
-        jpaApi.withTransaction(() -> {
-            orderDao.persist(order);
-        });
+        orderDao.persist(order);
 
         return order;
     }
@@ -84,14 +81,17 @@ public class TestHelper {
         Order order = new Order();
         order.setProject(project);
         order.setCustomer(customer);
+        Position customerPos = new Position(47, 8);
+        order.setCustomerPosition(GisHelper.createPoint(customerPos.getLon(), customerPos.getLat()));
+        order.setState(OrderState.NEW);
 
-        jpaApi.withTransaction(() -> {
-            orderDao.persist(order);
-        });
+        orderDao.persist(order);
 
         createNewMission(order);
         createNewMission(order);
         createNewMission(order);
+
+        orderDao.persist(order);
 
         return order;
     }
@@ -103,13 +103,11 @@ public class TestHelper {
 
         Route route = new Route();
 
-        jpaApi.withTransaction(() -> {
-            routeDao.persist(route);
-            missionsDao.persist(mission);
+        routeDao.persist(route);
+        missionsDao.persist(mission);
 
-            route.setMission(mission);
-            routeDao.persist(route);
-        });
+        route.setMission(mission);
+        routeDao.persist(route);
 
         return mission;
     }
@@ -122,26 +120,22 @@ public class TestHelper {
 
         drone.setOrganisation(organisation);
 
-        jpaApi.withTransaction(() -> {
-            droneDao.persist(drone);
-        });
+        droneDao.persist(drone);
 
         return drone;
     }
 
-    public Drone createNewDroneForProject(Project project) {
+    public Drone createNewDroneForProject(Project project, boolean isActive) {
         Drone drone = new Drone();
         drone.setName("Super HSR Drone" + System.currentTimeMillis());
         drone.setPayload(400);
         drone.setToken(UUID.randomUUID());
+        drone.setIsActive(isActive);
 
         drone.setOrganisation(project.getOrganisation());
         drone.setProject(project);
 
-        jpaApi.withTransaction(() -> {
-            droneDao.persist(drone);
-        });
-
+        droneDao.persist(drone);
         return drone;
     }
 
@@ -152,9 +146,7 @@ public class TestHelper {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-        jpaApi.withTransaction(() -> {
-            userDao.persist(user);
-        });
+        userDao.persist(user);
 
         return user;
     }
@@ -170,14 +162,12 @@ public class TestHelper {
         user.setEmail("anna.bolika@example.com");
         user.setPassword(plainTextPassword);
 
-        jpaApi.withTransaction(() -> {
-            userDao.persist(user);
-            organisation.getAdministrators().add(user);
-            jpaApi.em().merge(organisation);
-            jpaApi.em().flush();
-            jpaApi.em().refresh(user);
-            user.getOrganisations().size();
-        });
+        userDao.persist(user);
+        organisation.getAdministrators().add(user);
+        jpaApi.em().merge(organisation);
+        jpaApi.em().flush();
+        jpaApi.em().refresh(user);
+        user.getOrganisations().size();
 
         return user;
     }
@@ -188,14 +178,19 @@ public class TestHelper {
     }
 
     public Product createProduct(Organisation newOrganisation) {
+        return createProduct(newOrganisation, 1);
+    }
+
+    public Product createProduct(Organisation newOrganisation, int maxItemPerDrone) {
         Product product = new Product();
         product.setName("This is a product");
         product.setPrice(10d);
         product.setWeightGramm(100);
+        product.setMaxItemPerDrone(maxItemPerDrone);
 
         product.setOrganisation(newOrganisation);
 
-        jpaApi.withTransaction(() -> productsDao.persist(product));
+        productsDao.persist(product);
         return product;
     }
 
@@ -215,12 +210,27 @@ public class TestHelper {
             project.getDrones().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
+
 
         return project;
+    }
+
+    public Project createNewProjectWithTwoZones(Organisation organisation) {
+        return createNewProject(
+            organisation,
+            createUnsavedZone(
+                "Loading Zone",
+                ZoneType.LoadingZone,
+                createSamplePolygon()
+            ),
+            createUnsavedZone(
+                "Delivery Zone",
+                ZoneType.DeliveryZone,
+                createSamplePolygon()
+            )
+        );
     }
 
     public Project createNewProject(Organisation organisation, Zone... zones) {
@@ -235,10 +245,8 @@ public class TestHelper {
             project.getZones().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
 
         return project;
     }
@@ -252,10 +260,8 @@ public class TestHelper {
             project.getProducts().add(each);
         }
 
-        jpaApi.withTransaction(() -> {
-            project.setOrganisation(organisation);
-            projectsDao.persist(project);
-        });
+        project.setOrganisation(organisation);
+        projectsDao.persist(project);
 
         return project;
     }
@@ -270,6 +276,7 @@ public class TestHelper {
         zone.setType(type);
         zone.setHeight(100);
         zone.setPolygon(polygon);
+
         return zone;
     }
 
@@ -317,10 +324,17 @@ public class TestHelper {
         customer.setEmail("testcustomer@helin.ch");
         customer.setToken(RandomStringUtils.randomAlphanumeric(10));
 
-        jpaApi.withTransaction(() -> {
-            customerDao.persist(customer);
-        });
+
+        customerDao.persist(customer);
+
 
         return customer;
+    }
+
+    /**
+     * This polygon looks like this: https://upload.wikimedia.org/wikipedia/commons/3/3f/SFA_Polygon.svg
+     */
+    public Polygon createSamplePolygon() {
+        return GisHelper.convertFromWktToGeometry("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))");
     }
 }

@@ -4,7 +4,6 @@ import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
 import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.AbstractWebServiceIntegrationTest;
-import commons.ImprovedTestHelper;
 import commons.drone.DroneCommunicationManager;
 import dao.OrderDao;
 import dao.ProjectsDao;

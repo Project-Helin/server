@@ -22,7 +22,7 @@ public abstract class AbstractIntegrationTest extends WithApplication {
     private Database database;
 
     @Inject
-    protected ImprovedTestHelper testHelper;
+    protected TestHelper testHelper;
 
     @Before
     public void setupDatabaseAndHelper() {

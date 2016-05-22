@@ -3,7 +3,7 @@ package controllers.api;
 import ch.helin.messages.dto.OrderDto;
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.ImprovedTestHelper;
+import commons.TestHelper;
 import dao.OrderDao;
 import mappers.RouteMapper;
 import models.Mission;
@@ -20,9 +20,6 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
 
 
     private Organisation currentOrganisation;
-
-    @Inject
-    ImprovedTestHelper testHelper;
 
     @Inject
     ApiHelper apiHelper;

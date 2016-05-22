@@ -36,7 +36,7 @@ public abstract class AbstractE2ETest extends WithBrowser {
     private Database database;
 
     @Inject
-    protected ImprovedTestHelper testHelper;
+    protected TestHelper testHelper;
 
     @Before
     public void setupDatabaseAndHelper() {

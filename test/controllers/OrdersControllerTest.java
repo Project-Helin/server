@@ -1,12 +1,9 @@
 package controllers;
 
-import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.ImprovedTestHelper;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -18,9 +15,6 @@ import static org.fest.assertions.Assertions.assertThat;
 public class OrdersControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;
-
-    @Inject
-    protected ImprovedTestHelper testHelper;
 
     @Before
     public void login() {

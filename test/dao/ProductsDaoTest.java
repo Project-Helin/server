@@ -2,7 +2,6 @@ package dao;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.ImprovedTestHelper;
 import models.Organisation;
 import models.Product;
 import models.Project;

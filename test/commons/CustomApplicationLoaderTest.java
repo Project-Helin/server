@@ -3,10 +3,7 @@ package commons;
 import com.fasterxml.jackson.databind.JsonNode;
 import commons.gis.GisHelper;
 import dto.api.ZoneApiDto;
-import models.Project;
-import org.geolatte.geom.Point;
 import org.geolatte.geom.Polygon;
-import org.junit.Ignore;
 import org.junit.Test;
 import play.api.ApplicationLoader;
 import play.libs.Json;
@@ -17,7 +14,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class CustomApplicationLoaderTest {
 
-    private ImprovedTestHelper improvedTestHelper = new ImprovedTestHelper();
+    private TestHelper testHelper = new TestHelper();
 
     @Test
     public void shouldParseJsonCorrectly(){
@@ -27,7 +24,7 @@ public class CustomApplicationLoaderTest {
          */
         new CustomApplicationLoader().builder(new ApplicationLoader.Context(null, null, null, null));
 
-        Polygon polygon = improvedTestHelper.createSamplePolygon();
+        Polygon polygon = testHelper.createSamplePolygon();
 
         ZoneApiDto zoneApiDto = new ZoneApiDto();
         zoneApiDto.setId(UUID.randomUUID());
