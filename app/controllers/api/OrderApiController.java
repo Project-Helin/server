@@ -188,7 +188,7 @@ public class OrderApiController extends Controller {
         Order order = new Order();
         order.setCustomer(customer);
         Position customerPosition = orderApiDto.getCustomerPosition();
-        order.setDeliveryPosition(GisHelper.createPoint(customerPosition.getLat(), customerPosition.getLon()));
+        order.setCustomerPosition(GisHelper.createPoint(customerPosition.getLat(), customerPosition.getLon()));
         order.setProject(project);
         order.setState(OrderState.ROUTE_SUGGESTED);
         Set<OrderProduct> splitOrderProducts = splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(order, orderApiDto.getOrderProducts());

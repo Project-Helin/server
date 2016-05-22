@@ -11,9 +11,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by martin on 19.05.16.
- */
 public class RouteHelperTest {
 
     @Test

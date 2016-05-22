@@ -2,8 +2,10 @@ package commons;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import commons.gis.GisHelper;
+import dto.api.ZoneApiDto;
 import models.Project;
 import org.geolatte.geom.Point;
+import org.geolatte.geom.Polygon;
 import org.junit.Ignore;
 import org.junit.Test;
 import play.api.ApplicationLoader;
@@ -15,22 +17,29 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class CustomApplicationLoaderTest {
 
+    private ImprovedTestHelper improvedTestHelper = new ImprovedTestHelper();
+
     @Test
-    @Ignore // do this with zone
     public void shouldParseJsonCorrectly(){
         /**
-         * Yeah - just trigger it by hand using dummy values
+         * Since the mapper registered in a singleton,
+         * we need to trigger it by hand using dummy values
          */
         new CustomApplicationLoader().builder(new ApplicationLoader.Context(null, null, null, null));
 
-        Point point = GisHelper.createPoint(30, 10);
+        Polygon polygon = improvedTestHelper.createSamplePolygon();
 
-        Project project = new Project();
-        project.setId(UUID.randomUUID());
-        project.setName("First Demo");
+        ZoneApiDto zoneApiDto = new ZoneApiDto();
+        zoneApiDto.setId(UUID.randomUUID());
+        zoneApiDto.setHeight(10);
+        zoneApiDto.setPolygon(polygon);
 
-        JsonNode string = Json.toJson(project);
+        JsonNode string = Json.toJson(zoneApiDto);
         String jsonRaw = string.toString();
-        assertThat(jsonRaw).contains(GisHelper.toWktStringWithoutSrid(point));
+
+        /**
+         * That polygon should be included ask WKT in the JSON
+         */
+        assertThat(jsonRaw).contains(GisHelper.toWktStringWithoutSrid(polygon));
     }
 }

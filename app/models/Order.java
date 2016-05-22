@@ -17,7 +17,7 @@ public class Order extends BaseEntity{
     private Customer customer;
 
     @Column
-    private Point deliveryPosition;
+    private Point customerPosition;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProduct> orderProducts;
@@ -70,11 +70,11 @@ public class Order extends BaseEntity{
         this.state = state;
     }
 
-    public Point getDeliveryPosition() {
-        return deliveryPosition;
+    public Point getCustomerPosition() {
+        return customerPosition;
     }
 
-    public void setDeliveryPosition(Point deliveryPosition) {
-        this.deliveryPosition = deliveryPosition;
+    public void setCustomerPosition(Point customerPosition) {
+        this.customerPosition = customerPosition;
     }
 }
