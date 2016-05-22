@@ -3,13 +3,9 @@ package dao;
 import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.TestHelper;
 import commons.gis.GisHelper;
 import models.*;
-import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
-import org.geolatte.geom.Point;
-
 import org.geolatte.geom.Polygon;
 import org.junit.Test;
 
@@ -17,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class RouteDaoTest extends AbstractIntegrationTest {

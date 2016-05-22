@@ -2,23 +2,15 @@ package dao;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
-import commons.ImprovedTestHelper;
-import commons.TestHelper;
 import commons.gis.GisHelper;
-import models.Organisation;
 import models.Project;
 import models.Zone;
 import models.ZoneType;
 import org.geolatte.geom.Point;
 import org.junit.Test;
-import org.omg.PortableInterceptor.AdapterStateHelper;
 import org.slf4j.Logger;
 import play.db.jpa.JPAApi;
-import play.db.jpa.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
