@@ -81,7 +81,7 @@ public class ProjectsApiControllerTest extends AbstractE2ETest {
 
     @Test(expected = Exception.class)
     public void shouldShowNotExistingProject() {
-        apiHelper.doGetWithJsonResponse(routes.ProjectsApiController.show(UUID.randomUUID()), ProjectApiDto.class);
+        apiHelper.doGet(routes.ProjectsApiController.show(UUID.randomUUID()), ProjectApiDto.class);
     }
 
     @Test

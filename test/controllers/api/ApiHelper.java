@@ -29,8 +29,8 @@ public class ApiHelper {
     @Inject
     private WSClient wsClient;
 
-    public <T> T doGetWithJsonResponse(Call urlRouteLink,
-                                       Class<T> expectedReturnType) {
+    public <T> T doGet(Call urlRouteLink,
+                       Class<T> expectedReturnType) {
         try {
             return doGetCareFree(urlRouteLink, expectedReturnType);
         } catch (Exception e) {
