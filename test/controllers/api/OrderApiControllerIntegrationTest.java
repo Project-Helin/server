@@ -288,6 +288,23 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
         });
     }
 
+    @Test
+    public void shouldCancelOrder() {
+        Order order = jpaApi.withTransaction((em) -> {
+            Customer customer = testHelper.createCustomer();
+            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
+            testHelper.createNewDroneForProject(project, true);
+
+            return testHelper.createNewOrderWithThreeMissions(project, customer);
+        });
+
+        apiHelper.doPost(routes.OrderApiController.cancel(order.getId()), Json.newObject());
+
+        jpaApi.withTransaction(() ->{
+            Order found = orderDao.findById(order.getId());
+            assertThat(found).isNull();
+        });
+    }
 
     private List<Mission> getFirstMissionSortedByAmount(List<Order> all) {
         return all.get(0)

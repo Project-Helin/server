@@ -100,6 +100,7 @@ GET         /api/projects/:projectId/calculate-route                controllers.
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
 GET         /api/orders/:orderId                                    controllers.api.OrderApiController.show(orderId : java.util.UUID)
 POST        /api/orders/:orderId/confirm                            controllers.api.OrderApiController.confirm(orderId : java.util.UUID)
+POST        /api/orders/:orderId/cancel                             controllers.api.OrderApiController.cancel(orderId : java.util.UUID)
 
 
 ## Products

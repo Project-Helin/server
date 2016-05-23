@@ -135,8 +135,6 @@ public class OrderApiController extends Controller {
         return orderApiOutputDto;
     }
 
-
-
     /*
     * An existing Order is set as confirmed
     * and the mission is sent to drone
@@ -156,6 +154,16 @@ public class OrderApiController extends Controller {
 
        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
+        return ok();
+    }
+
+    public Result cancel(UUID orderID) {
+        Order order = orderDao.findById(orderID);
+        if (order == null) {
+            return forbidden("Order not found");
+        }
+        logger.info("Delete order with id {}", orderID);
+        orderDao.delete(order);
         return ok();
     }
 

@@ -17,8 +17,6 @@ import java.util.UUID;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class OrderApiControllerE2ETest extends AbstractE2ETest {
-
-
     private Organisation currentOrganisation;
 
     @Inject
@@ -35,9 +33,8 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
         currentOrganisation = doLogin();
     }
 
-
     @Test
-    public void ShouldShowOrder() {
+    public void shouldShowOrder() {
         UUID orderId = jpaApi.withTransaction((em) -> {
             Order newOrder = testHelper.createNewOrderWithThreeMissions(
                     testHelper.createNewProject(currentOrganisation),
