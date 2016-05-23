@@ -4,8 +4,10 @@
     </div>
     <div class="col-xs-8 m-b-lg">
         <div class="btn btn-warning pull-right" ng-show="data.routeWayPoints" ng-click="reset()">Reset</div>
-        <div class="btn btn-info pull-right" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">
-            Calculate Route</div>
+        <div class="btn btn-info pull-right" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">Calculate Route</div>
+        <div class="pull-right m-r-md">
+            <a class="btn btn-info" href="/projects/{{projectId}}/edit" role="button">Edit</a>
+        </div>
     </div>
     <route-map zones="data.selectedProject.zones" route-data="data.routeData" route="data.routeWayPoints" ng-if="data.selectedProject"></route-map>
 
