@@ -3,6 +3,7 @@ package dao;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import commons.gis.GisHelper;
+import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;
 import models.*;
 
@@ -59,11 +60,13 @@ public class ProductsDao extends AbstractDao<Product> {
                 "  p.name as name, " +
                 "  p.price as price, " +
                 "  project.id\\:\\:varchar  as projectId, " +
-                "  project.organisation_id\\:\\:varchar  as organisationId " +
+                "  o.id\\:\\:varchar  as organisationId, " +
+                "  o.name as organisationName " +
                 " from zones z " +
                 " join projects_products pp on pp.project_id = z.project_id  " +
                 " join products p on p.id = pp.product_id  " +
                 " join projects project on project.id = pp.project_id  " +
+                " join organisations o on o.id = project.organisation_id  " +
                 " where z.type = :type and st_contains(z.polygon\\:\\:geometry, '" + wkt + "' ) = true"
         );
 
@@ -77,7 +80,11 @@ public class ProductsDao extends AbstractDao<Product> {
                 productApiDto.setName(String.valueOf(o[1]));
                 productApiDto.setPrice(Double.valueOf(String.valueOf(o[2])));
                 productApiDto.setProjectId(String.valueOf(o[3]));
-                productApiDto.setOrganisationId(String.valueOf(o[4]));
+
+                OrganisationApiDto organisationApiDto = new OrganisationApiDto();
+                organisationApiDto.setId(String.valueOf(o[4]));
+                organisationApiDto.setName(String.valueOf(o[5]));
+                productApiDto.setOrganisation(organisationApiDto);
 
                 return productApiDto;
             })

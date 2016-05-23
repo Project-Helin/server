@@ -5,7 +5,8 @@ public class ProductApiDto {
     private String name;
     private Double price;
     private String projectId;
-    private String organisationId;
+
+    private OrganisationApiDto organisation;
 
     public void setName(String name) {
         this.name = name;
@@ -39,11 +40,11 @@ public class ProductApiDto {
         return id;
     }
 
-    public String getOrganisationId() {
-        return organisationId;
+    public OrganisationApiDto getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationId(String organisationId) {
-        this.organisationId = organisationId;
+    public void setOrganisation(OrganisationApiDto organisation) {
+        this.organisation = organisation;
     }
 }

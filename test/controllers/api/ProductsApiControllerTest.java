@@ -3,6 +3,7 @@ package controllers.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
 import commons.AbstractWebServiceIntegrationTest;
+import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;
 import models.Organisation;
 import models.Product;
@@ -41,7 +42,10 @@ public class ProductsApiControllerTest extends AbstractWebServiceIntegrationTest
         assertThat(foundProduct.getName()).isEqualTo(product.getName());
         assertThat(foundProduct.getPrice()).isEqualTo(product.getPrice());
         assertThat(foundProduct.getProjectId()).isEqualTo(firstProduct.getIdAsString());
-        assertThat(foundProduct.getOrganisationId()).isEqualTo(firstProduct.getOrganisation().getIdAsString());
+
+        OrganisationApiDto organisation = foundProduct.getOrganisation();
+        assertThat(organisation.getId()).isEqualTo(firstProduct.getOrganisation().getIdAsString());
+        assertThat(organisation.getName()).isEqualTo(firstProduct.getOrganisation().getName());
     }
 
     @Test
