@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 public class OrderMapper {
 
     @Inject
-    MissionMapper missionMapper;
+    private MissionMapper missionMapper;
 
     @Inject
-    OrderProductsMapper orderProductsMapper;
+    private OrderProductsMapper orderProductsMapper;
 
 
     public OrderDto convertToOrderDto(Order order) {
