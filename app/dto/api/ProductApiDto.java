@@ -1,13 +1,11 @@
 package dto.api;
 
-/**
- * Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class ProductApiDto {
     private String id;
     private String name;
     private Double price;
     private String projectId;
+    private String organisationId;
 
     public void setName(String name) {
         this.name = name;
@@ -39,5 +37,13 @@ public class ProductApiDto {
 
     public String getId() {
         return id;
+    }
+
+    public String getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setOrganisationId(String organisationId) {
+        this.organisationId = organisationId;
     }
 }

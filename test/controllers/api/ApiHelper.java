@@ -1,6 +1,7 @@
 package controllers.api;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import dto.api.ProjectApiDto;
@@ -12,6 +13,7 @@ import play.libs.ws.WSResponse;
 import play.mvc.Call;
 import play.test.TestBrowser;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +33,30 @@ public class ApiHelper {
                                        Class<T> expectedReturnType) {
         try {
             return doGetCareFree(urlRouteLink, expectedReturnType);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * We need this variation of get, because the json mapper cannot figure
+     * out the type of the elements, if a list of objects are returned as json.
+     *
+     * This is due to the nature of Java Generics and Type erasure.
+     * Therefore to get the class of the elements we need to get a TypeReference class
+     * which implements the specific type.
+     *
+     * @param typeReference e.g. TypeReference<List<MyClass>>(){}
+     */
+    public <T> List<T> doGetWithListResponse(Call urlRouteLink, TypeReference<List<T>> typeReference) {
+        try {
+
+            CompletionStage<JsonNode> response = callUrl(urlRouteLink);
+            JsonNode rawResponse = response.toCompletableFuture().get();
+
+            Object mappedJson = Json.mapper().readValue(rawResponse.toString(), typeReference);
+            return (List<T>) mappedJson;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -107,11 +133,7 @@ public class ApiHelper {
     private <T> T doGetCareFree(Call urlRouteLink,
                                 Class<T> expectedReturnType) throws InterruptedException, ExecutionException {
 
-        CompletionStage<JsonNode> response = wsClient
-            .url(BASE_URL + urlRouteLink.url())
-            .get()
-            .thenApply(this::throwExceptionIfFaultyResponse)
-            .thenApply(WSResponse::asJson);
+        CompletionStage<JsonNode> response = callUrl(urlRouteLink);
 
         JsonNode rawResponse = response.toCompletableFuture().get();
         return Json.fromJson(rawResponse, expectedReturnType);
@@ -144,6 +166,14 @@ public class ApiHelper {
 
         return wsClient.url(BASE_URL + urlRouteLink.url())
             .setHeader("Cookie", cookieAsString);
+    }
+
+    private CompletionStage<JsonNode> callUrl(Call urlRouteLink) {
+        return wsClient
+            .url(BASE_URL + urlRouteLink.url())
+            .get()
+            .thenApply(this::throwExceptionIfFaultyResponse)
+            .thenApply(WSResponse::asJson);
     }
 
     /**

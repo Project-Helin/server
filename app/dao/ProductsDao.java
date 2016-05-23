@@ -1,22 +1,17 @@
 package dao;
 
-import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import commons.gis.GisHelper;
+import dto.api.ProductApiDto;
 import models.*;
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryType;
-import org.hibernate.spatial.GeolatteGeometryJavaTypeDescriptor;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ProductsDao extends AbstractDao<Product> {
 
@@ -29,8 +24,8 @@ public class ProductsDao extends AbstractDao<Product> {
 
         TypedQuery<Product> query = jpaApi.em().createQuery(
             "select p " +
-            " from products p " +
-            " where p.organisation = :organisation", Product.class);
+                " from products p " +
+                " where p.organisation = :organisation", Product.class);
         query.setParameter("organisation", organisation);
         return query.getResultList();
     }
@@ -41,8 +36,8 @@ public class ProductsDao extends AbstractDao<Product> {
 
         TypedQuery<Product> query = jpaApi.em().createQuery(
             "select p from products  p " +
-            " where p.organisation = :organisation " +
-            " and p.id = :productId", Product.class);
+                " where p.organisation = :organisation " +
+                " and p.id = :productId", Product.class);
 
         query.setParameter("organisation", organisation);
         query.setParameter("productId", productId);
@@ -50,22 +45,43 @@ public class ProductsDao extends AbstractDao<Product> {
         return query.getSingleResult();
     }
 
-    public List<Product> findByPosition(Double lat, Double lon) {
+    public List<ProductApiDto> findByPosition(Double lat, Double lon) {
         String wkt = GisHelper.toWktStringWithSrid(GisHelper.createPoint(lon, lat));
+        /**
+         * So this sql need explanation:
+         * we need \\:\\:varchar otherwise Hibernate does not understand,
+         * how to parse uuid type to String -> and throws some random ugly
+         * 'hibernate no dialect mapping for jdbc type 1111' exception.
+         */
         Query nativeQuery = jpaApi.em().createNativeQuery(
-            " select " +
-            "  p.* " +
-            " from zones z " +
-            " join projects_products pp on pp.project_id = z.project_id  " +
-            " join products p on p.id = pp.product_id  " +
-            " where z.type = :type and st_contains(z.polygon\\:\\:geometry, '" + wkt + "' ) = true",
-            Product.class
+                " select " +
+                "  p.id\\:\\:varchar as id, " +
+                "  p.name as name, " +
+                "  p.price as price, " +
+                "  project.id\\:\\:varchar  as projectId, " +
+                "  project.organisation_id\\:\\:varchar  as organisationId " +
+                " from zones z " +
+                " join projects_products pp on pp.project_id = z.project_id  " +
+                " join products p on p.id = pp.product_id  " +
+                " join projects project on project.id = pp.project_id  " +
+                " where z.type = :type and st_contains(z.polygon\\:\\:geometry, '" + wkt + "' ) = true"
         );
 
-        nativeQuery.setParameter("type", ZoneType.DeliveryZone.name());
+        nativeQuery.setParameter("type", ZoneType.OrderZone.name());
 
-        List<Product> resultList = nativeQuery.getResultList();
-        return resultList;
+        List<Object[]> objects = nativeQuery.getResultList();
+        return objects.stream()
+            .map(o -> {
+                ProductApiDto productApiDto = new ProductApiDto();
+                productApiDto.setId(String.valueOf(o[0]));
+                productApiDto.setName(String.valueOf(o[1]));
+                productApiDto.setPrice(Double.valueOf(String.valueOf(o[2])));
+                productApiDto.setProjectId(String.valueOf(o[3]));
+                productApiDto.setOrganisationId(String.valueOf(o[4]));
+
+                return productApiDto;
+            })
+            .collect(Collectors.toList());
     }
 
 

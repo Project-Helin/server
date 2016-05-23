@@ -1,7 +1,6 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import commons.SessionHelper;
 import dao.ProductsDao;
 import dao.ProjectsDao;
 import dto.api.ProductApiDto;
@@ -29,13 +28,12 @@ public class ProductsApiController extends Controller {
     @Inject
     private ProjectsDao projectsDao;
 
-    @Inject
-    private SessionHelper sessionHelper;
-
     private static final Logger logger = getLogger(ProductsApiController.class);
 
     @Transactional
-    // TODO this might be not needed -> remove fake order
+    /**
+     * TODO remove this method alongside with the 'Send fake Order' button
+     */
     public Result index() {
         List<Product> products = productsDao.findAll();
 
@@ -57,38 +55,10 @@ public class ProductsApiController extends Controller {
         return ok(Json.toJson(productDtos));
     }
 
-    /**
-     * TODO implement this:
-     * Input:
-     * - Customer location
-     *
-     * Output:
-     * => all products in in delivery zone
-     *
-     */
     @Transactional
     public Result findByLocation(Double lat, Double lon) {
         logger.info("Find by position: lat = {} lon = {}", lat, lon);
-        List<Product> products = productsDao.findByPosition(lat, lon);
-
-        List<Project> projects =
-            projectsDao.findAll();
-
-        List<ProductApiDto> productDtos =
-            products
-                .stream()
-                .map(product -> {
-                    ProductApiDto productApiDto = new ProductApiDto();
-                    productApiDto.setName(product.getName());
-                    productApiDto.setId(product.getIdAsString());
-
-                    productApiDto.setPrice(product.getPrice());
-                    productApiDto.setProjectId(projects.iterator().next().getIdAsString()); // TODO discuss this!
-                    return productApiDto;
-                })
-                .collect(Collectors.toList());
-
-        return ok(Json.toJson(productDtos));
+        List<ProductApiDto> products = productsDao.findByPosition(lat, lon);
+        return ok(Json.toJson(products));
     }
-
 }

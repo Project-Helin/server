@@ -2,6 +2,7 @@ package dao;
 
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
+import dto.api.ProductApiDto;
 import models.Organisation;
 import models.Product;
 import models.Project;
@@ -33,19 +34,21 @@ public class ProductsDaoTest extends AbstractIntegrationTest {
 
             Project project = testHelper.createNewProject(organisation,
                 testHelper.createUnsavedZone(
-                    "Delivery Zone",
-                    ZoneType.DeliveryZone,
+                    "Orderzone Zone",
+                    ZoneType.OrderZone,
                     testHelper.createSamplePolygon()
                 )
             );
             Product product = testHelper.createProduct(organisation);
             project.setProducts(Stream.of(product).collect(Collectors.toSet()));
+            product.setProjects(Stream.of(project).collect(Collectors.toSet()));
             projectsDao.persist(project);
 
             // (30, 30) is withing the above delivery zone
-            List<Product> byPosition = productsDao.findByPosition(30d, 30d);
+            List<ProductApiDto> byPosition = productsDao.findByPosition(30d, 30d);
             assertThat(byPosition).hasSize(1);
-            assertThat(byPosition).containsOnly(product);
+            assertThat(byPosition.get(0).getId()).isEqualTo(product.getIdAsString());
+            assertThat(byPosition.get(0).getName()).isEqualTo(product.getName());
         });
     }
 }
