@@ -85,7 +85,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             // should save the customer
             Customer customer = all.get(0).getCustomer();
-            assertThat(customer.getDisplayName()).isEqualTo("Batman");
+            assertThat(customer.getFamilyName()).isEqualTo("Batman");
             assertThat(customer.getEmail()).isEqualTo("batman@wayneenterprise.com");
 
             // should has one mission

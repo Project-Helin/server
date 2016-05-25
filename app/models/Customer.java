@@ -8,21 +8,13 @@ import javax.persistence.Entity;
 public class Customer extends BaseEntity {
 
     @Column
-    private String displayName;
+    private String givenName;
+
+    @Column
+    private String familyName;
 
     @Column
     private String email;
-
-    @Column
-    private String token;
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
 
     public String getEmail() {
         return email;
@@ -32,11 +24,19 @@ public class Customer extends BaseEntity {
         this.email = email;
     }
 
-    public String getToken() {
-        return token;
+    public String getGivenName() {
+        return givenName;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 }

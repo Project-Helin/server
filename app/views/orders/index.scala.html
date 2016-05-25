@@ -61,7 +61,7 @@
                                 <tr>
                                     <th>@order.getState</th>
                                     <th>@order.getProject.getName</th>
-                                    <th>@order.getCustomer.getDisplayName (@order.getCustomer.getEmail)</th>
+                                    <th>@order.getCustomer.getFamilyName @order.getCustomer.getGivenName<th>
                                     <th>
                                     @for(item <- order.getOrderProducts) {
                                         @item.getProduct.getName ( @item.getAmount )

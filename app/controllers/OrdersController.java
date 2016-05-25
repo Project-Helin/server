@@ -79,6 +79,9 @@ public class OrdersController extends Controller {
             return forbidden();
         }
 
+        found.getOrderProducts().clear();
+        found.getMissions().clear();
+        orderDao.persist(found);
         orderDao.delete(found);
 
         return redirect(routes.OrdersController.index());

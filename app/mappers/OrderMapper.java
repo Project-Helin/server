@@ -19,7 +19,6 @@ public class OrderMapper {
     public OrderDto convertToOrderDto(Order order) {
         OrderDto orderDto = new OrderDto();
 
-        orderDto.setCustomerName(order.getCustomer().getDisplayName());
         orderDto.setDeliveryPosition(GisHelper.createPosition(order.getCustomerPosition()));
         orderDto.setMissions(order.getMissions().stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList()));
         orderDto.setOrderProducts(order.getOrderProducts().stream().map(orderProductsMapper::convertToOrderProductDto).collect(Collectors.toList()));

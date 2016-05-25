@@ -34,7 +34,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
 
         // verify
         assertThat(browser.pageSource()).contains(order.getProject().getName());
-        assertThat(browser.pageSource()).contains(order.getCustomer().getDisplayName());
+        assertThat(browser.pageSource()).contains(order.getCustomer().getFamilyName());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
 
         // verify
         assertThat(browser.pageSource()).doesNotContain(order.getProject().getName());
-        assertThat(browser.pageSource()).doesNotContain(order.getCustomer().getDisplayName());
+        assertThat(browser.pageSource()).doesNotContain(order.getCustomer().getFamilyName());
     }
 
     @Test
@@ -72,7 +72,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
 
         // verify
         assertThat(browser.pageSource()).contains(order.getProject().getName());
-        assertThat(browser.pageSource()).contains(order.getCustomer().getDisplayName());
+        assertThat(browser.pageSource()).contains(order.getCustomer().getFamilyName());
     }
 
 }

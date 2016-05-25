@@ -320,13 +320,10 @@ public class TestHelper {
 
     public Customer createCustomer() {
         Customer customer = new Customer();
-        customer.setDisplayName("Testcustomer");
+        customer.setFamilyName("Testcustomer");
         customer.setEmail("testcustomer@helin.ch");
-        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
-
 
         customerDao.persist(customer);
-
 
         return customer;
     }

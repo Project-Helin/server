@@ -10,7 +10,7 @@
                     <table class="table table-bordered table-hover dataTable">
                         <thead>
                             <tr>
-                                <th>Display Name</th>
+                                <th>Name</th>
                                 <th>Email</th>
                                 <th>Token</th>
                             </tr>
@@ -18,9 +18,9 @@
                         <tbody>
                             @for(customer <- allCustomers) {
                                 <tr>
-                                    <th>@customer.getDisplayName</th>
+                                    <th>@customer.getFamilyName</th>
+                                    <th>@customer.getGivenName</th>
                                     <th>@customer.getEmail</th>
-                                    <th>@customer.getToken</th>
                                 </tr>
                             }
                         </tbody>

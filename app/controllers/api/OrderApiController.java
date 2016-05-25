@@ -178,11 +178,11 @@ public class OrderApiController extends Controller {
 
     private Customer saveCustomer(OrderApiDto orderApiDto) {
         Customer customer = new Customer();
-        customer.setDisplayName(orderApiDto.getDisplayName());
+        // customer.setDisplayName(orderApiDto.getDisplayName());
         customer.setEmail(orderApiDto.getEmail());
 
         // TODO fix this -> see HEL 54
-        customer.setToken(RandomStringUtils.randomAlphanumeric(10));
+        // customer.setToken(RandomStringUtils.randomAlphanumeric(10));
         customerDao.persist(customer);
 
         return customer;

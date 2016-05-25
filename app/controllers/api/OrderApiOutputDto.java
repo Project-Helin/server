@@ -1,14 +1,17 @@
 package controllers.api;
 
+import ch.helin.messages.dto.MissionDto;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 
-public class OrderApiOutputDto {
+import java.util.List;
 
+public class OrderApiOutputDto {
     private String orderId;
     private RouteDto route;
     private Position deliveryPosition;
 
+    private List<MissionDto> missions;
 
     public String getOrderId() {
         return orderId;
@@ -32,5 +35,13 @@ public class OrderApiOutputDto {
 
     public void setDeliveryPosition(Position dropPosition) {
         this.deliveryPosition = dropPosition;
+    }
+
+    public List<MissionDto> getMissions() {
+        return missions;
+    }
+
+    public void setMissions(List<MissionDto> missions) {
+        this.missions = missions;
     }
 }

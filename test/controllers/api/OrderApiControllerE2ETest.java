@@ -50,7 +50,7 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
             Order order = orderDao.findById(orderId);
 
             assertThat(orderDto.getState()).isEqualTo(order.getState().name());
-            assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getDisplayName());
+            assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getFamilyName());
             assertThat(orderDto.getMissions().size()).isEqualTo(3);
             assertThat(orderDto.getDeliveryPosition().getLon()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(0));
             assertThat(orderDto.getDeliveryPosition().getLat()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(1));
