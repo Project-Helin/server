@@ -13,6 +13,7 @@ Tested with IntelliJ IDEA 15.0.3.
 1. Checkout https://github.com/Project-Helin/server
 2. Import server Project in IntelliJ: 
     * File -> Open -> select 'server' folder
+    * Select SBT
     * 'Import Project from SBT' Dialog appears, setup as follows:
         * ☑ Use auto-import
         * ☐ Create directories for empty content roots automatically
@@ -25,9 +26,10 @@ Tested with IntelliJ IDEA 15.0.3.
         * ☑ root-build
         * Click Ok
 3. After few minutes, IntelliJ should have indexed the project.
-4. Now clone https://github.com/Project-Helin/commons this contains all Classes which are shared between Server and Onboard-App
+4. Now clone [Commons Project](https://github.com/Project-Helin/commons) this contains all Classes which are shared between Server and Onboard-App
 5. Import commons Module in IntelliJ: 
        * File -> New -> Module from Existing Sources -> select 'commons' folder
+       * Select Gradle
        * 'Import Project from Gradle' Dialog appears, setup as follows:
            * ☑ Use auto-import
            * Project SDK: Select Java 1.8
@@ -37,6 +39,7 @@ Tested with IntelliJ IDEA 15.0.3.
 7. Open Gradle Projects in the right sidebar and start the following Task: commons -> Tasks -> publishing -> publishToMavenLocal
 8. Start up Virtual machine with Database and RabbitMQ-Broker (see RabbitMQ and Postgresql with vagrant)
 9. Right Click on ApplicationController in app -> controllers -> Run Play 2 App
+10. The Server App is now reacheable at localhost:9000
 
 
 ## RabbitMQ and Postgresql with vagrant
