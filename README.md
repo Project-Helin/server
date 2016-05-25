@@ -25,15 +25,14 @@ Tested with IntelliJ IDEA 15.0.3.
         * ☑ root-build
         * Click Ok
 3. After few minutes, IntelliJ should have indexed the project.
-4. Now checkout https://github.com/Project-Helin/commons this contains all Classes which are shared between Server and Onboard-App
+4. Now clone https://github.com/Project-Helin/commons this contains all Classes which are shared between Server and Onboard-App
 5. Import commons Module in IntelliJ: 
        * File -> New -> Module from Existing Sources -> select 'commons' folder
        * 'Import Project from Gradle' Dialog appears, setup as follows:
            * ☑ Use auto-import
            * Project SDK: Select Java 1.8
            * Project format: .idea (directory based )
-           * Click Ok
-       
+           * Click Ok  
 6. Now you should see the commons module at top of the server project in the Project Tree View   
 7. Open Gradle Projects in the right sidebar and start the following Task: commons -> Tasks -> publishing -> publishToMavenLocal
 8. Start up Virtual machine with Database and RabbitMQ-Broker (see RabbitMQ and Postgresql with vagrant)
