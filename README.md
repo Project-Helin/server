@@ -35,8 +35,8 @@ Tested with IntelliJ IDEA 15.0.3.
            * Click Ok
        
 6. Now you should see the commons module at top of the server project in the Project Tree View   
-7. Open Gradle Projects in the right sidebar and start commons -> Tasks -> publishing -> publishToMavenLocal
-8. Start up Virtual machine with Database and RabbitMQ-Broker (RabbitMQ and Postgresql with vagrant)
+7. Open Gradle Projects in the right sidebar and start the following Task: commons -> Tasks -> publishing -> publishToMavenLocal
+8. Start up Virtual machine with Database and RabbitMQ-Broker (see RabbitMQ and Postgresql with vagrant)
 9. Right Click on ApplicationController in app -> controllers -> Run Play 2 App
 
 
