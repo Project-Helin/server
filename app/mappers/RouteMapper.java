@@ -3,7 +3,6 @@ package mappers;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
-import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import models.Route;
 import models.WayPoint;
@@ -17,7 +16,7 @@ public class RouteMapper {
 
         RouteDto routeDto = new RouteDto();
 
-        if (route.getWayPoints() != null) {
+        if (route != null && route.getWayPoints() != null) {
             List<Waypoint> wayPointDtos = route.getWayPoints().stream()
                     .map(this::convertToWaypointDto)
                     .collect(Collectors.toList());

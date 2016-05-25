@@ -54,11 +54,16 @@
             return coordinates;
         };
 
+        this.convertDroneInfoToCoordinate = function(droneInfo) {
+            var _this = this;
+            var gpsState = droneInfo.gpsState;
+            return _this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat});
+        };
+
         this.convertDroneInfosToCoordinates = function (droneInfos) {
             var _this = this;
             var coordinates = droneInfos.map(function (droneInfo) {
-                    var gpsState = droneInfo.gpsState;
-                    return _this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat});
+                return _this.convertDroneInfoToCoordinate(droneInfo);
                 }
             );
             return coordinates;
@@ -124,7 +129,7 @@
             var _this = this;
             return droneInfos.map(function (droneInfo) {
                 var gpsState = droneInfo.gpsState;
-                return createDroneInfoMarker(_this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat}), droneInfo.id)
+                return _this.createDroneInfoMarker(_this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat}), droneInfo.id)
             });
         };
 
@@ -154,7 +159,7 @@
             return marker;
         }
 
-        function createDroneInfoMarker(coordinates, id) {
+        this.createDroneInfoMarker = function(coordinates, id) {
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });

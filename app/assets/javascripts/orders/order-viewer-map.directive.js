@@ -4,7 +4,8 @@
             restrict: 'E',
             scope: {
                 missions: '=',
-                zones: '='
+                zones: '=',
+                focusDrone: '='
             },
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
@@ -13,9 +14,10 @@
                     scope.allDroneInfos = flatDroneInfosToOneArray();
                     createMap();
                     addRouteLayer(scope.route);
-                    addFlownRouteLayers(scope.missions);
+                    scope.missionLayers = addFlownRouteLayers(scope.missions);
                     addPopupOverlay();
                     addMapInteractions();
+                    addDroneInfoEventListener();
                 }
 
                 function addPopupOverlay() {
@@ -53,6 +55,8 @@
 
 
                 function addFlownRouteLayers(missions) {
+                    var missionLayers = {};
+
                     missions.forEach(function (mission) {
                         var droneInfos = filterEmptyPositions(mission);
                         var coordinates = gisHelper.convertDroneInfosToCoordinates(droneInfos);
@@ -60,7 +64,10 @@
                         var routeMarkers = gisHelper.createDroneInfoMarkers(droneInfos);
                         routeLayer.getSource().addFeatures(routeMarkers);
                         scope.map.addLayer(routeLayer);
+                        missionLayers[mission.id] = routeLayer;
                     });
+
+                    return missionLayers;
                 }
 
                 function filterEmptyPositions(mission) {
@@ -89,6 +96,32 @@
                             features: scope.readOnlyFeatures
                         }),
                         style: polygonStyle
+                    });
+                }
+
+                function panTo(coordinates) {
+                    var pan = ol.animation.pan({
+                        source: scope.map.getView().getCenter()
+                    });
+                    scope.map.beforeRender(pan);
+                    scope.map.getView().setCenter(coordinates);
+                }
+
+                function addNewRouteMarker(data) {
+                    var missionLayer = scope.missionLayers[data.missionId];
+                    var coordinates = gisHelper.convertDroneInfoToCoordinate(data.droneInfo);
+                    var marker = gisHelper.createDroneInfoMarker(coordinates, data.droneInfo.id);
+                    missionLayer.getSource().addFeature(marker);
+                    scope.allDroneInfos.push(data.droneInfo);
+                    return coordinates;
+                }
+
+                function addDroneInfoEventListener() {
+                    scope.$on('DroneInfoReceived', function (event, data) {
+                        var coordinates = addNewRouteMarker(data);
+                        if(scope.focusDrone) {
+                            panTo(coordinates);
+                        }
                     });
                 }
 
@@ -125,8 +158,8 @@
                                     if (foundWayPoint[0]) {
                                         var popupHtml =
                                             '<div>' +
-                                            '<div>Altitude: ' +  foundWayPoint[0].position.height + 'm</div>' +
-                                            '<div>Action: ' +  foundWayPoint[0].action + '<div>' +
+                                            '<div>Altitude: ' + foundWayPoint[0].position.height + 'm</div>' +
+                                            '<div>Action: ' + foundWayPoint[0].action + '<div>' +
                                             '</div>';
                                         scope.popup.show(evt.coordinate, popupHtml);
                                     }

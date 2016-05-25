@@ -2,30 +2,39 @@
     <div class="box box-info">
         <div class="box-header with-border">
             <h3>Overview</h3>
-
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-default btn-sm" ng-class="{'btn-success': data.focusDrone}"
+                        ng-click="data.focusDrone = !data.focusDrone">
+                    Follow Drone
+                </button>
+            </div>
         </div>
         <div class="box-body no-padding">
             <div class="row">
                 <div class="col-xs-9">
                     <order-viewer-map ng-if="data.project != null" zones="data.project.zones"
-                                      missions="data.order.missions"></order-viewer-map>
+                                      missions="data.order.missions" focus-drone="data.focusDrone"
+                    ></order-viewer-map>
                 </div>
                 <div class="col-xs-3">
-                    <div class="pad box-pane-right bg-blue">
-                        <div ng-repeat="mission in data.order.missions">
-                            <div class="description-block margin-bottom">
-                                <i class="glyphicon glyphicon-road" style="font-size: 40px;"/>
-                                <div class="description-header">
-                                    {{mission.orderProduct.amount}} {{mission.orderProduct.product.name}}
-                                </div>
-                                <div class="description-text">
-                                    {{mission.state}}
-                                </div>
+                    <h3>Missions</h3>
+                    <div ng-repeat="mission in data.order.missions" class="pad box-pane-right bg-blue m-t">
+
+                        <div class="description-block m-b">
+                            <i class="glyphicon glyphicon-road" style="font-size: 40px;"/>
+                            <div class="description-header">
+                                {{mission.orderProduct.amount}} {{mission.orderProduct.product.name}}
                             </div>
-                            <p>
-                            <p>
+                            <div class="description-text">
+                                {{mission.state}}
+                            </div>
+
+
                         </div>
                     </div>
+                    <div class="divider"></div>
+                    <p>
+                    <p>
 
 
                 </div>

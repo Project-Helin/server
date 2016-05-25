@@ -20,6 +20,7 @@ public class MissionMapper {
     public MissionDto convertToMissionDto (Mission mission) {
         MissionDto missionDto = new MissionDto();
 
+        missionDto.setId(mission.getId());
         missionDto.setRoute(routeMapper.convertToRouteDto(mission.getRoute()));
         missionDto.setOrderProduct(orderProductsMapper.convertToOrderProductDto(mission.getOrderProduct()));
         missionDto.setDroneInfos(mission.getDroneInfos().stream().map(droneInfoMapper::convertToDroneInfoDto).collect(Collectors.toList()));
