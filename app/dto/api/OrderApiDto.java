@@ -6,29 +6,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 
 public class OrderApiDto {
-    private String displayName;
-    private String email;
+    private String customerId;
     private Position customerPosition;
     private String projectId;
 
     private List<OrderProductApiDto> orderProducts;
 
-    public String getDisplayName() {
-        return displayName;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public OrderApiDto setDisplayName(String displayName) {
-        this.displayName = displayName;
-        return this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public OrderApiDto setEmail(String email) {
-        this.email = email;
-        return this;
+    public void setCustomerID(String customerID) {
+        this.customerId = customerId;
     }
 
     public List<OrderProductApiDto> getOrderProducts() {

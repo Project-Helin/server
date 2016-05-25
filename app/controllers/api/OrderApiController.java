@@ -17,7 +17,6 @@ import dto.api.OrderProductApiDto;
 import mappers.OrderMapper;
 import mappers.RouteMapper;
 import models.*;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -108,8 +107,7 @@ public class OrderApiController extends Controller {
 
     private OrderApiOutputDto createOrder(OrderApiDto orderApiDto) {
 
-        //TODO should not be here, the customer should only be loaded
-        Customer customer = saveCustomer(orderApiDto);
+        Customer customer = findCustomer(orderApiDto);
 
         Order order = saveOrder(orderApiDto, customer);
 
@@ -176,16 +174,9 @@ public class OrderApiController extends Controller {
         }
     }
 
-    private Customer saveCustomer(OrderApiDto orderApiDto) {
-        Customer customer = new Customer();
-        // customer.setDisplayName(orderApiDto.getDisplayName());
-        customer.setEmail(orderApiDto.getEmail());
-
-        // TODO fix this -> see HEL 54
-        // customer.setToken(RandomStringUtils.randomAlphanumeric(10));
-        customerDao.persist(customer);
-
-        return customer;
+    private Customer findCustomer(OrderApiDto orderApiDto) {
+        String customerId = orderApiDto.getCustomerId();
+        return customerDao.findById(UUID.fromString(customerId));
     }
 
     private Order saveOrder(OrderApiDto orderApiDto, Customer customer) {
