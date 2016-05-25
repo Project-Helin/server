@@ -17,7 +17,9 @@
 
             $scope.sendFakeRequest = function () {
 
-                $http.get('/api/products/').then(function (response) {
+                var lon = "8.817394673824309";
+                var lat = "47.22330617326986";
+                $http.get('/api/products/find-by-location/' + lat + '/' + lon  ).then(function (response) {
 
                     var productArray = response.data;
                     console.log("Got a few products", productArray);
@@ -33,8 +35,8 @@
                         email: 'batman@wayneenterprise.com',
                         projectId: projectId,
                         customerPosition: {
-                            lon: "8.817394673824309",
-                            lat: "47.22330617326986"
+                            lon: lon,
+                            lat: lat
                         },
                         orderProducts: [
                             {
