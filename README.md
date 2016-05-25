@@ -4,23 +4,14 @@
 * IntelliJ IDEA ( with Scala and Play plugin enabled )
 * Java 8
 * Enough Coffee 
-* RabbitMQ 
-* PostgreSQL
+* Virtualbox 
+* Vagrant
 
-## Database
-
-1. create Login-Role 'helin' with superuser permissions
-2. Create local database named 'helin'
-3. Create Login-Role 'test' with superuser permissions
-4. Create local database named 'test' (this is used for integrationtests)
-5. Apply this script on both databases: CREATE EXTENSION postgis;CREATE EXTENSION "uuid-ossp";
-
-## Server Setup
+## Server Setup with IntelliJ
 Tested with IntelliJ IDEA 15.0.3.
 
-1. Watch Play Tutorial https://www.youtube.com/watch?v=bLrmnjPQsZc
-2. Checkout https://github.com/Project-Helin/server
-3. Import server Project in IntelliJ: 
+1. Checkout https://github.com/Project-Helin/server
+2. Import server Project in IntelliJ: 
     * File -> Open -> select 'server' folder
     * 'Import Project from SBT' Dialog appears, setup as follows:
         * ☑ Use auto-import
@@ -33,18 +24,30 @@ Tested with IntelliJ IDEA 15.0.3.
         * ☑ root
         * ☑ root-build
         * Click Ok
-4. After few minutes, IntelliJ should have a project.
-5. CTRL+N -> Application -> Enter 
-6. Right Click on Application -> Run Play 2 App
+3. After few minutes, IntelliJ should have indexed the project.
+4. Now checkout https://github.com/Project-Helin/commons this contains all Classes which are shared between Server and Onboard-App
+5. Import commons Module in IntelliJ: 
+       * File -> New -> Module from Existing Sources -> select 'commons' folder
+       * 'Import Project from Gradle' Dialog appears, setup as follows:
+           * ☑ Use auto-import
+           * Project SDK: Select Java 1.8
+           * Project format: .idea (directory based )
+           * Click Ok
+       
+6. Now you should see the commons module at top of the server project in the Project Tree View   
+7. Open Gradle Projects in the right sidebar and start commons -> Tasks -> publishing -> publishToMavenLocal
+8. Start up Virtual machine with Database and RabbitMQ-Broker (RabbitMQ and Postgresql with vagrant)
+9. Right Click on ApplicationController in app -> controllers -> Run Play 2 App
 
-## RabbitMQ with vagrant
+
+## RabbitMQ and Postgresql with vagrant
 1. Install Virtualbox ( tested with 5.0.14 )
-1. Install Vagrant ( tested with 1.8.1 )
-2. Run following command to start new virutal machine
+2. Install Vagrant ( tested with 1.8.1 )
+3. Run following command to start the VM with the preconfigured setup
  ```
  cd <your-folder>/server
  vagrant up
  ```
-3. Go to http://localhost:15672 to verify if server has started correctly
-
-
+ (This can take up to 30 Minutes, because it has to compile some database extensions
+ which are needed for calculating routes.)
+5. Go to http://localhost:15672 to verify if Rabbit-MQ Broker has started correctly
