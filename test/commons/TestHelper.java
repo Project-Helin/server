@@ -320,7 +320,8 @@ public class TestHelper {
 
     public Customer createCustomer() {
         Customer customer = new Customer();
-        customer.setFamilyName("Testcustomer");
+        customer.setGivenName("Bruce");
+        customer.setFamilyName("Wayne");
         customer.setEmail("testcustomer@helin.ch");
 
         customerDao.persist(customer);

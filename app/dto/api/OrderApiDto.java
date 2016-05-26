@@ -6,19 +6,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 
 public class OrderApiDto {
-    private String customerId;
     private Position customerPosition;
     private String projectId;
 
     private List<OrderProductApiDto> orderProducts;
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerID(String customerID) {
-        this.customerId = customerId;
-    }
 
     public List<OrderProductApiDto> getOrderProducts() {
         return orderProducts;

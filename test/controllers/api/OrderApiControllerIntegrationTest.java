@@ -64,8 +64,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
-                .setDisplayName("Batman")
-                .setEmail("batman@wayneenterprise.com")
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
@@ -83,10 +81,9 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             List<Order> all = orderDao.findAll();
             assertThat(all).hasSize(1);
 
-            // should save the customer
+            // customer is not set yet
             Customer customer = all.get(0).getCustomer();
-            assertThat(customer.getFamilyName()).isEqualTo("Batman");
-            assertThat(customer.getEmail()).isEqualTo("batman@wayneenterprise.com");
+            assertThat(customer).isNull();
 
             // should has one mission
             List<Mission> missions = getFirstMissionSortedByAmount(all);
@@ -117,8 +114,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
-                .setDisplayName("Batman")
-                .setEmail("batman@wayneenterprise.com")
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
@@ -159,8 +154,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
-                .setDisplayName("Batman")
-                .setEmail("batman@wayneenterprise.com")
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
@@ -209,8 +202,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
-                .setDisplayName("Batman")
-                .setEmail("batman@wayneenterprise.com")
                 .setProjectId(project.getIdAsString())
                 .setOrderProducts(Arrays.asList(
                     new OrderProductApiDto()
@@ -252,8 +243,9 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
     public void confirmOrderTest() {
         final Drone[] drone = new Drone[2];
 
+        Customer customer = jpaApi.withTransaction(em -> testHelper.createCustomer());
+
         Order order = jpaApi.withTransaction((em) -> {
-            Customer customer = testHelper.createCustomer();
             Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
             drone[0] = testHelper.createNewDroneForProject(project, true);
             drone[1] = testHelper.createNewDroneForProject(project, false);
@@ -261,7 +253,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             return testHelper.createNewOrderWithThreeMissions(project, customer);
         });
 
-        apiHelper.doPost(routes.OrderApiController.confirm(order.getId()), Json.newObject());
+        apiHelper.doPost(routes.OrderApiController.confirm(order.getId(), customer.getId()), Json.newObject());
 
         jpaApi.withTransaction(() -> {
             Order loadedOrder = orderDao.findById(order.getId());
@@ -298,7 +290,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             return testHelper.createNewOrderWithThreeMissions(project, customer);
         });
 
-        apiHelper.doPost(routes.OrderApiController.cancel(order.getId()), Json.newObject());
+        apiHelper.doPost(routes.OrderApiController.delete(order.getId()), Json.newObject());
 
         jpaApi.withTransaction(() ->{
             Order found = orderDao.findById(order.getId());

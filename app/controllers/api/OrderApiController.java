@@ -4,7 +4,6 @@ import ch.helin.commons.AssertUtils;
 import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.OrderDto;
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.RouteDto;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import commons.SessionHelper;
@@ -41,12 +40,6 @@ public class OrderApiController extends Controller {
     private OrderDao orderDao;
 
     @Inject
-    private RouteMapper routeMapper;
-
-    @Inject
-    private OrderMapper orderMapper;
-
-    @Inject
     private CustomerDao customerDao;
 
     @Inject
@@ -66,6 +59,9 @@ public class OrderApiController extends Controller {
 
     @Inject
     private RouteCalculationService routeCalculationService;
+
+    @Inject
+    private OrderMapper orderMapper;
 
     public Result show(UUID orderId) {
 
@@ -88,6 +84,7 @@ public class OrderApiController extends Controller {
      */
     @BodyParser.Of(BodyParser.Json.class)
     public Result create() {
+        logger.info("=> create");
         String jsonNode = request().body().asJson().toString();
         OrderApiDto orderApiDto = parseJsonOrNull(jsonNode);
 
@@ -97,19 +94,17 @@ public class OrderApiController extends Controller {
         }
 
         try {
-            OrderApiOutputDto routeDto = createOrder(orderApiDto);
-            return ok(Json.toJson(routeDto));
+            OrderDto orderDto = createOrder(orderApiDto);
+            return ok(Json.toJson(orderDto));
         } catch (RuntimeException e) {
             logger.warn("Failed to process input: {}", jsonNode);
             throw e;
         }
     }
 
-    private OrderApiOutputDto createOrder(OrderApiDto orderApiDto) {
+    private OrderDto createOrder(OrderApiDto orderApiDto) {
 
-        Customer customer = findCustomer(orderApiDto);
-
-        Order order = saveOrder(orderApiDto, customer);
+        Order order = saveOrder(orderApiDto);
 
         List<Position> positionList = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
 
@@ -118,44 +113,40 @@ public class OrderApiController extends Controller {
         addMissionsToOrder(order, route);
         orderDao.persist(order);
 
-        WayPoint last = route.getWayPoints()
-            .stream()
-            .filter(o -> o.getAction() == Action.DROP)
-            .findFirst()
-            .get();
-
-        RouteDto routeDto = routeMapper.convertToRouteDto(route);
-
-        OrderApiOutputDto orderApiOutputDto = new OrderApiOutputDto();
-        orderApiOutputDto.setRoute(routeDto);
-        orderApiOutputDto.setDeliveryPosition(GisHelper.createPosition(last.getPosition()));
-        orderApiOutputDto.setOrderId(order.getIdAsString());
-        return orderApiOutputDto;
+        return orderMapper.convertToOrderDto(order);
     }
 
     /*
     * An existing Order is set as confirmed
     * and the mission is sent to drone
     */
-    public Result confirm(UUID orderID) {
+    public Result confirm(UUID orderID, UUID customerId) {
+        logger.info("=> confirm order");
         Order order = orderDao.findById(orderID);
         if (order == null) {
             return forbidden("Order not found");
         }
 
+        Customer foundCustomer = customerDao.findById(customerId);
+        if (foundCustomer == null) {
+            return forbidden("Customer not found");
+        }
+
+
         order.setState(OrderState.IN_PROGRESS);
+        order.setCustomer(foundCustomer);
         order.getMissions().stream().forEach(mission -> {
             mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
             missionsDao.persist(mission);
         });
         orderDao.persist(order);
 
-       missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
+        missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
         return ok();
     }
 
-    public Result cancel(UUID orderID) {
+    public Result delete(UUID orderID) {
         Order order = orderDao.findById(orderID);
         if (order == null) {
             return forbidden("Order not found");
@@ -174,18 +165,13 @@ public class OrderApiController extends Controller {
         }
     }
 
-    private Customer findCustomer(OrderApiDto orderApiDto) {
-        String customerId = orderApiDto.getCustomerId();
-        return customerDao.findById(UUID.fromString(customerId));
-    }
 
-    private Order saveOrder(OrderApiDto orderApiDto, Customer customer) {
+    private Order saveOrder(OrderApiDto orderApiDto) {
         Project project =
-                projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
+            projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
         AssertUtils.throwExceptionIfNull(project, "Project not found");
 
         Order order = new Order();
-        order.setCustomer(customer);
         Position customerPosition = orderApiDto.getCustomerPosition();
         order.setCustomerPosition(GisHelper.createPoint(customerPosition.getLat(), customerPosition.getLon()));
         order.setProject(project);
@@ -199,20 +185,20 @@ public class OrderApiController extends Controller {
 
     private void addMissionsToOrder(Order order, Route route) {
         Set<Mission> createdMissions =
-                order.getOrderProducts()
-                        .stream()
-                        .map((orderProduct) -> {
-                            Mission mission = new Mission();
-                            mission.setOrder(order);
-                            mission.setState(MissionState.NEW);
-                            mission.setOrderProduct(orderProduct);
-                            mission.setRoute(route);
+            order.getOrderProducts()
+                .stream()
+                .map((orderProduct) -> {
+                    Mission mission = new Mission();
+                    mission.setOrder(order);
+                    mission.setState(MissionState.NEW);
+                    mission.setOrderProduct(orderProduct);
+                    mission.setRoute(route);
 
-                            route.setMission(mission);
-                            mission.setRoute(route);
-                            return mission;
-                        })
-                        .collect(Collectors.toSet());
+                    route.setMission(mission);
+                    mission.setRoute(route);
+                    return mission;
+                })
+                .collect(Collectors.toSet());
 
         order.setMissions(createdMissions);
     }

@@ -18,8 +18,10 @@ public class OrderMapper {
 
     public OrderDto convertToOrderDto(Order order) {
         OrderDto orderDto = new OrderDto();
+        orderDto.setId(order.getId());
 
-        orderDto.setDeliveryPosition(GisHelper.createPosition(order.getCustomerPosition()));
+        orderDto.setCustomerPosition(GisHelper.createPosition(order.getCustomerPosition()));
+
         orderDto.setMissions(order.getMissions().stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList()));
         orderDto.setOrderProducts(order.getOrderProducts().stream().map(orderProductsMapper::convertToOrderProductDto).collect(Collectors.toList()));
         orderDto.setProjectId(order.getProject().getId());

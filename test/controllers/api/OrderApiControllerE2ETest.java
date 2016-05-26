@@ -16,6 +16,9 @@ import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+/**
+ * We need this test, because it needs browser session
+ */
 public class OrderApiControllerE2ETest extends AbstractE2ETest {
     private Organisation currentOrganisation;
 
@@ -52,8 +55,8 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
             assertThat(orderDto.getState()).isEqualTo(order.getState().name());
             assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getFamilyName());
             assertThat(orderDto.getMissions().size()).isEqualTo(3);
-            assertThat(orderDto.getDeliveryPosition().getLon()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(0));
-            assertThat(orderDto.getDeliveryPosition().getLat()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(1));
+            assertThat(orderDto.getCustomerPosition().getLon()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(0));
+            assertThat(orderDto.getCustomerPosition().getLat()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(1));
             assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
 
             Mission firstMission = order.getMissions().iterator().next();
