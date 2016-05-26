@@ -29,6 +29,7 @@ public class MissionWebSocketManager {
             missionWebSocketMap.put(missionId, connections);
         }
 
+
         connections.add(webSocketConnection);
         webSocketConnection.setCloseCallback((connection) -> removeWebSocketConnection(missionId, connection));
     }

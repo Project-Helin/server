@@ -5,6 +5,11 @@ import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import models.Order;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
 public class OrderMapper {
@@ -20,8 +25,11 @@ public class OrderMapper {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(order.getId());
 
+        orderDto.setCreatedAt(fromLdt(order.getCreatedAt()));
         orderDto.setCustomerPosition(GisHelper.createPosition(order.getCustomerPosition()));
-        orderDto.setCustomerName(order.getCustomer().getFamilyName());
+        if (order.getCustomer() != null) {
+            orderDto.setCustomerName(order.getCustomer().getFamilyName());
+        }
 
         orderDto.setMissions(order.getMissions().stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList()));
         orderDto.setOrderProducts(order.getOrderProducts().stream().map(orderProductsMapper::convertToOrderProductDto).collect(Collectors.toList()));
@@ -29,6 +37,12 @@ public class OrderMapper {
         orderDto.setState(order.getState().name());
 
         return orderDto;
+    }
+
+    static public Date fromLdt(LocalDateTime ldt) {
+        ZonedDateTime zdt = ZonedDateTime.of(ldt, ZoneId.systemDefault());
+        GregorianCalendar cal = GregorianCalendar.from(zdt);
+        return cal.getTime();
     }
 
 

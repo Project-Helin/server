@@ -60,5 +60,8 @@ public abstract class AbstractDao<T extends BaseEntity> {
 
         throw new RuntimeException("Expected to get one result, but got " + resultList.size());
     }
+
+
+
 }
 

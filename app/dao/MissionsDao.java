@@ -38,4 +38,13 @@ public class MissionsDao extends AbstractDao<Mission> {
         query.setParameter("organisation", organisation);
         return query.getResultList();
     }
+
+    public List<Mission> findByOrder(UUID orderId) {
+        TypedQuery<Mission> query = jpaApi.em().createQuery(
+            "select m " +
+                " from missions m " +
+                " where m.order.id = :orderId", Mission.class);
+        query.setParameter("orderId", orderId);
+        return query.getResultList();
+    }
 }

@@ -38,4 +38,14 @@ public class OrderDao extends AbstractDao<Order> {
         query.setParameter("projectId", projectId);
         return query.getResultList();
     }
+
+    public List<Order> findByCustomer(UUID customerId) {
+        TypedQuery<Order> query = jpaApi.em().createQuery(
+            "select p " +
+                " from orders p " +
+                " where p.customer.id = :customerId ", Order.class);
+
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
+    }
 }

@@ -63,8 +63,14 @@ public class OrderApiController extends Controller {
     @Inject
     private OrderMapper orderMapper;
 
-    public Result show(UUID orderId) {
+    public Result findByCustomer(UUID customerId) {
+        List<Order> orders = orderDao.findByCustomer(customerId);
 
+        List<OrderDto> collect = orders.stream().map(orderMapper::convertToOrderDto).collect(Collectors.toList());
+        return ok(Json.toJson(collect));
+    }
+
+    public Result show(UUID orderId) {
         Order order = orderDao.findById(orderId);
 
         if (order.getProject().getOrganisation() != sessionHelper.getOrganisation(session())) {

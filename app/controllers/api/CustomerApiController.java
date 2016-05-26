@@ -26,6 +26,7 @@ public class CustomerApiController extends Controller {
     private JPAApi jpaApi;
 
     public Result show(UUID customerId) {
+        logger.info("Find customer by id {}", customerId);
         Customer found = jpaApi.withTransaction(em -> customerDao.findById(customerId));
 
         CustomerApiDto customerApiDto = new CustomerApiDto();

@@ -14,7 +14,9 @@ import play.mvc.LegacyWebSocket;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MissionApiController extends Controller {
 
@@ -26,6 +28,13 @@ public class MissionApiController extends Controller {
 
     @Inject
     MissionWebSocketManager webSocketManager;
+
+    @Transactional
+    public Result findByOrder(UUID orderId) {
+        List<Mission> missions = missionsDao.findByOrder(orderId);
+        List<MissionDto> collect = missions.stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList());
+        return ok(Json.toJson(collect));
+    }
 
     @Transactional
     public Result show(UUID missionId) {
@@ -46,5 +55,8 @@ public class MissionApiController extends Controller {
             webSocketManager.addWebSocketConnection(missionId, webSocketConnection);
         });
     }
+
+
+
 
 }

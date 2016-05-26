@@ -98,16 +98,17 @@ GET         /api/projects/:projectId/calculate-route                controllers.
 
 ##Order
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
+GET         /api/orders/find-by-customer/:customerId                controllers.api.OrderApiController.findByCustomer(customerId : java.util.UUID)
 GET         /api/orders/:orderId                                    controllers.api.OrderApiController.show(orderId : java.util.UUID)
 POST        /api/orders/:orderId/confirm/:customerId                controllers.api.OrderApiController.confirm(orderId : java.util.UUID, customerId: java.util.UUID)
 POST        /api/orders/:orderId/delete                             controllers.api.OrderApiController.delete(orderId : java.util.UUID)
-
 
 ## Products
 GET         /api/products/                                          controllers.api.ProductsApiController.index()
 GET         /api/products/find-by-location/:lat/:lon                controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
 
 # Mission
+GET         /api/missions/find-by-order/:orderId                    controllers.api.MissionApiController.findByOrder(orderId : java.util.UUID)
 GET         /api/missions/:missionId/show                           controllers.api.MissionApiController.show(missionId : java.util.UUID)
 GET         /api/missions/:missionId/ws                             controllers.api.MissionApiController.ws(missionId : java.util.UUID)
 
