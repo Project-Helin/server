@@ -10,6 +10,10 @@
                 OrdersService.loadOrder($scope.orderId).then(function(order) {
                     $scope.data.order = order;
                     initializeWebSocketConnection(order.missions);
+                    
+                    order.missions.forEach(function(mission) {
+                        mission.active = true;
+                    });
 
                     ProjectsService.loadProject($scope.data.order.projectId).then(function(project) {
                         $scope.data.project = project;

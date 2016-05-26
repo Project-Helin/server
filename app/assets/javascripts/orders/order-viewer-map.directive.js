@@ -2,6 +2,7 @@
     angular.module('OrderViewer').directive('orderViewerMap', ['gisHelper', '$filter', function (gisHelper, $filter) {
         return {
             restrict: 'E',
+            replace: true,
             scope: {
                 missions: '=',
                 zones: '=',
@@ -18,6 +19,22 @@
                     addPopupOverlay();
                     addMapInteractions();
                     addDroneInfoEventListener();
+                    addMissionListener();
+                }
+
+                function addMissionListener() {
+                    scope.$watch('missions', function (newValue, oldValue) {
+                        newValue.forEach(function (mission) {
+                            var missionLayer = scope.missionLayers[mission.id];
+                            var layerIsAlreadyShown = gisHelper.isLayerOnMap(scope.map, missionLayer);
+
+                            if (mission.active && !layerIsAlreadyShown) {
+                                scope.map.addLayer(missionLayer);
+                            } else if(!mission.active && layerIsAlreadyShown) {
+                                scope.map.removeLayer(missionLayer);
+                            }
+                        });
+                    }, true);
                 }
 
                 function addPopupOverlay() {
@@ -99,14 +116,6 @@
                     });
                 }
 
-                function panTo(coordinates) {
-                    var pan = ol.animation.pan({
-                        source: scope.map.getView().getCenter()
-                    });
-                    scope.map.beforeRender(pan);
-                    scope.map.getView().setCenter(coordinates);
-                }
-
                 function addNewRouteMarker(data) {
                     var missionLayer = scope.missionLayers[data.missionId];
                     var coordinates = gisHelper.convertDroneInfoToCoordinate(data.droneInfo);
@@ -119,8 +128,8 @@
                 function addDroneInfoEventListener() {
                     scope.$on('DroneInfoReceived', function (event, data) {
                         var coordinates = addNewRouteMarker(data);
-                        if(scope.focusDrone) {
-                            panTo(coordinates);
+                        if (scope.focusDrone) {
+                            gisHelper.panTo(scope.map, coordinates);
                         }
                     });
                 }
