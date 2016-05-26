@@ -108,7 +108,8 @@ GET         /api/products/                                          controllers.
 GET         /api/products/find-by-location/:lat/:lon                controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
 
 # Mission
-GET         /api/mission/:missionId/show                            controllers.api.MissionApiController.show(missionId : java.util.UUID)
+GET         /api/missions/:missionId/show                            controllers.api.MissionApiController.show(missionId : java.util.UUID)
+GET         /api/missions/:missionId/ws                              controllers.api.MissionApiController.ws(missionId : java.util.UUID)
 
 # Customers
 GET         /api/customers/:customerId                              controllers.api.CustomerApiController.show(customerId: java.util.UUID)

@@ -6,9 +6,10 @@
     padding: 0 15px 8px 15px;
 }
 
+
 #map {
     width: 100%;
-    height: 500px;
+    height: 800px;
 }
 
 .panel.active {
@@ -55,4 +56,8 @@
 
 .position-relative {
     position: relative;
+}
+
+.pad {
+    cursor:pointer;
 }

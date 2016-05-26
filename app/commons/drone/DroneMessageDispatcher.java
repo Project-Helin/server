@@ -28,6 +28,7 @@ public class DroneMessageDispatcher {
     private Provider<MissionController> missionControllerProvider;
 
     public void dispatchMessageToController(UUID droneId, String jsonMessage) {
+        logger.debug("Received Message " + jsonMessage);
         MessageConverter messageConverter = new JsonBasedMessageConverter();
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 
