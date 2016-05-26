@@ -2,9 +2,11 @@
     angular.module('OrderViewer').directive('orderViewerMap', ['gisHelper', '$filter', function (gisHelper, $filter) {
         return {
             restrict: 'E',
+            replace: true,
             scope: {
                 missions: '=',
-                zones: '='
+                zones: '=',
+                focusDrone: '='
             },
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
@@ -13,9 +15,26 @@
                     scope.allDroneInfos = flatDroneInfosToOneArray();
                     createMap();
                     addRouteLayer(scope.route);
-                    addFlownRouteLayers(scope.missions);
+                    scope.missionLayers = addFlownRouteLayers(scope.missions);
                     addPopupOverlay();
                     addMapInteractions();
+                    addDroneInfoEventListener();
+                    addMissionListener();
+                }
+
+                function addMissionListener() {
+                    scope.$watch('missions', function (newValue, oldValue) {
+                        newValue.forEach(function (mission) {
+                            var missionLayer = scope.missionLayers[mission.id];
+                            var layerIsAlreadyShown = gisHelper.isLayerOnMap(scope.map, missionLayer);
+
+                            if (mission.active && !layerIsAlreadyShown) {
+                                scope.map.addLayer(missionLayer);
+                            } else if(!mission.active && layerIsAlreadyShown) {
+                                scope.map.removeLayer(missionLayer);
+                            }
+                        });
+                    }, true);
                 }
 
                 function addPopupOverlay() {
@@ -53,6 +72,8 @@
 
 
                 function addFlownRouteLayers(missions) {
+                    var missionLayers = {};
+
                     missions.forEach(function (mission) {
                         var droneInfos = filterEmptyPositions(mission);
                         var coordinates = gisHelper.convertDroneInfosToCoordinates(droneInfos);
@@ -60,7 +81,10 @@
                         var routeMarkers = gisHelper.createDroneInfoMarkers(droneInfos);
                         routeLayer.getSource().addFeatures(routeMarkers);
                         scope.map.addLayer(routeLayer);
+                        missionLayers[mission.id] = routeLayer;
                     });
+
+                    return missionLayers;
                 }
 
                 function filterEmptyPositions(mission) {
@@ -89,6 +113,24 @@
                             features: scope.readOnlyFeatures
                         }),
                         style: polygonStyle
+                    });
+                }
+
+                function addNewRouteMarker(data) {
+                    var missionLayer = scope.missionLayers[data.missionId];
+                    var coordinates = gisHelper.convertDroneInfoToCoordinate(data.droneInfo);
+                    var marker = gisHelper.createDroneInfoMarker(coordinates, data.droneInfo.id);
+                    missionLayer.getSource().addFeature(marker);
+                    scope.allDroneInfos.push(data.droneInfo);
+                    return coordinates;
+                }
+
+                function addDroneInfoEventListener() {
+                    scope.$on('DroneInfoReceived', function (event, data) {
+                        var coordinates = addNewRouteMarker(data);
+                        if (scope.focusDrone) {
+                            gisHelper.panTo(scope.map, coordinates);
+                        }
                     });
                 }
 
@@ -125,8 +167,8 @@
                                     if (foundWayPoint[0]) {
                                         var popupHtml =
                                             '<div>' +
-                                            '<div>Altitude: ' +  foundWayPoint[0].position.height + 'm</div>' +
-                                            '<div>Action: ' +  foundWayPoint[0].action + '<div>' +
+                                            '<div>Altitude: ' + foundWayPoint[0].position.height + 'm</div>' +
+                                            '<div>Action: ' + foundWayPoint[0].action + '<div>' +
                                             '</div>';
                                         scope.popup.show(evt.coordinate, popupHtml);
                                     }

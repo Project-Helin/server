@@ -35,6 +35,7 @@
                             zoom: 18
                         })
                     });
+                    scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
                 }
 
                 function getDrawInteraction() {

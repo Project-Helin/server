@@ -2,11 +2,13 @@ package controllers;
 
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import com.google.inject.Inject;
+import commons.WebSockets.MissionWebSocketManager;
 import dao.DroneDao;
 import dao.DroneInfoDao;
 import mappers.DroneInfoMapper;
 import models.Drone;
 import models.DroneInfo;
+import models.Mission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.jpa.JPAApi;
@@ -29,6 +31,9 @@ public class DroneInfosController {
     @Inject
     private JPAApi jpaApi;
 
+    @Inject
+    MissionWebSocketManager webSocketManager;
+
     public void onDroneInfoReceived(UUID droneId, DroneInfoMessage droneInfoMessage) {
         jpaApi.withTransaction(()-> {
             DroneInfo droneInfo = droneInfoMapper.convertToDroneInfo(droneInfoMessage);
@@ -36,8 +41,11 @@ public class DroneInfosController {
             Drone drone = droneDao.findById(droneId);
             droneInfo.setDrone(drone);
 
-            if(drone.getCurrentMission() != null) {
-                droneInfo.setMission(drone.getCurrentMission());
+            Mission currentMission = drone.getCurrentMission();
+
+            if(currentMission != null) {
+                droneInfo.setMission(currentMission);
+                webSocketManager.sendDroneInfoToConnectedClients(currentMission.getId(), droneInfoMessage);
             }
 
             droneInfoDao.persist(droneInfo);

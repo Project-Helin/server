@@ -54,11 +54,16 @@
             return coordinates;
         };
 
+        this.convertDroneInfoToCoordinate = function (droneInfo) {
+            var _this = this;
+            var gpsState = droneInfo.gpsState;
+            return _this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat});
+        };
+
         this.convertDroneInfosToCoordinates = function (droneInfos) {
             var _this = this;
             var coordinates = droneInfos.map(function (droneInfo) {
-                    var gpsState = droneInfo.gpsState;
-                    return _this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat});
+                    return _this.convertDroneInfoToCoordinate(droneInfo);
                 }
             );
             return coordinates;
@@ -124,7 +129,10 @@
             var _this = this;
             return droneInfos.map(function (droneInfo) {
                 var gpsState = droneInfo.gpsState;
-                return createDroneInfoMarker(_this.convertPositionToCoordinate({lon: gpsState.posLon, lat: gpsState.posLat}), droneInfo.id)
+                return _this.createDroneInfoMarker(_this.convertPositionToCoordinate({
+                    lon: gpsState.posLon,
+                    lat: gpsState.posLat
+                }), droneInfo.id)
             });
         };
 
@@ -154,7 +162,7 @@
             return marker;
         }
 
-        function createDroneInfoMarker(coordinates, id) {
+        this.createDroneInfoMarker = function (coordinates, id) {
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });
@@ -178,13 +186,31 @@
 
             marker.setStyle(markerStyle);
             return marker;
-        }
+        };
 
         this.getZoneById = function (zones, zoneId) {
             return zones.filter(function (zone) {
                 return zone.id === zoneId;
             })[0];
+        };
+
+
+        this.panTo = function (map, coordinates) {
+            var pan = ol.animation.pan({
+                source: map.getView().getCenter()
+            });
+            map.beforeRender(pan);
+            map.getView().setCenter(coordinates);
+        };
+
+        this.isLayerOnMap = function (map, layer) {
+            var isOnMap = map.getLayers().getArray().filter(function (existingLayer) {
+                return existingLayer === layer;
+            })[0];
+
+            return isOnMap;
         }
+
 
     })
 }());
