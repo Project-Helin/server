@@ -21,6 +21,7 @@ public class OrderMapper {
         orderDto.setId(order.getId());
 
         orderDto.setCustomerPosition(GisHelper.createPosition(order.getCustomerPosition()));
+        orderDto.setCustomerName(order.getCustomer().getFamilyName());
 
         orderDto.setMissions(order.getMissions().stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList()));
         orderDto.setOrderProducts(order.getOrderProducts().stream().map(orderProductsMapper::convertToOrderProductDto).collect(Collectors.toList()));
