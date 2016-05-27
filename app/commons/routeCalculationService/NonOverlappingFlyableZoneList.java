@@ -3,6 +3,7 @@ package commons.routeCalculationService;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -87,9 +88,15 @@ public class NonOverlappingFlyableZoneList {
                 if(exteriorRing.intersects(lineStringSegment)){
                     Geometry intersection = exteriorRing.intersection(lineStringSegment);
                     logger.debug("Intersection object is {}", intersection.toString());
-                    Point intersectionPoint = (Point) intersection;
-                    returnLineStringCoordinates.add(intersectionPoint.getCoordinate());
-                    logger.debug("Intersection Coordinate is {}", intersectionPoint.getCoordinate());
+
+                    Coordinate[] coordinateArray = intersection.getCoordinates();
+
+                    for(int j=0; j<coordinateArray.length; j++) {
+                        Coordinate coordinate = coordinateArray[j];
+                        returnLineStringCoordinates.add(coordinate);
+                        logger.debug("Intersection Coordinate is {}", coordinate.toString());
+                    }
+
                 }
             }
             returnLineStringCoordinates.add(coordinates[i+1]);
