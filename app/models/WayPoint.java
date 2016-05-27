@@ -10,7 +10,7 @@ public class WayPoint extends BaseEntity{
     private int orderNumber;
     private Point position;
 
-    @Transient
+    @Column
     private double height;
 
     @Enumerated(EnumType.STRING)
