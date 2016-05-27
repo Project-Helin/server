@@ -20,9 +20,31 @@
                 }
 
                 function createMap() {
-                    var raster = new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    });
+                    var group =
+                        new ol.layer.Group({
+                            'title': 'Base maps',
+                            layers: [
+                                new ol.layer.Tile({
+                                    title: 'OSM',
+                                    type: 'base',
+                                    visible: true,
+                                    source: new ol.source.OSM()
+                                }),
+                                new ol.layer.Tile({
+                                    title: 'Bing Sattelite',
+                                    type: 'base',
+                                    visible: true,
+                                    preload: Infinity,
+                                    source: new ol.source.BingMaps({
+                                        key: 'Asp51bKxq0601cQL6hIYa-figI3wTNxsTX-kw8wzVZD16nwy2mNGmCA1xXlliZxx',
+                                        imagerySet: 'Aerial',
+                                        // use maxZoom 19 to see stretched tiles instead of the BingMaps
+                                        // "no photos at this zoom level" tiles
+                                        maxZoom: 19
+                                    })
+                                })
+                            ]
+                        });
 
                     scope.format = new ol.format.WKT();
 
@@ -30,13 +52,18 @@
 
                     scope.map = new ol.Map({
                         target: 'map',
-                        layers: [raster, scope.vectorLayer],
+                        layers: [group, scope.vectorLayer],
                         view: new ol.View({
                             center: [981481.3, 5978619.7],
                             zoom: 18
                         })
                     });
                     scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
+
+                    var layerSwitcher = new ol.control.LayerSwitcher({
+                        tipLabel: 'Légende' // Optional label for button
+                    });
+                    scope.map.addControl(layerSwitcher);
                 }
 
                 function addMapInteractions() {
