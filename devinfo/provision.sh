@@ -54,14 +54,15 @@ cd ..
 rm CGAL-4.3.tar.gz
 
 # download and compile SFCGAL
-git clone https://github.com/Oslandia/SFCGAL.git &&\
-cd SFCGAL &&\
+wget https://github.com/Oslandia/SFCGAL/archive/v1.3.0.tar.gz
+tar -xvzf v1.3.0.tar.gz
+cd SFCGAL-1.3.0 &&\
 cmake .
 sudo make -j 2
 sudo make install
 cd ..
 # cleanup
-# no ZIP File to be removed!
+rm v1.3.0.tar.gz
 
 # download and install GEOS 3.5
 wget http://download.osgeo.org/geos/geos-3.5.0.tar.bz2 &&\
