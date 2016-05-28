@@ -48,13 +48,12 @@ public class DroneConnection {
             closeConnection(connection);
             throw new RuntimeException(e);
         }
-
     }
 
 
     public void sendMessage(String message) {
         try {
-            System.out.println("Send message " + message);
+            logger.info("Send message {}", message);
             channel.basicPublish("", producerQueueName, null, message.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -74,8 +73,10 @@ public class DroneConnection {
     public void startConsumer() {
         Consumer consumer = new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-                    throws IOException {
+            public void handleDelivery(String consumerTag,
+                                       Envelope envelope,
+                                       AMQP.BasicProperties properties,
+                                       byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
                droneMessageDispatcher.dispatchMessageToController(drone.getId(), message);
             }
@@ -86,7 +87,5 @@ public class DroneConnection {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }

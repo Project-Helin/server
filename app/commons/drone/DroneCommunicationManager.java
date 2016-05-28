@@ -8,8 +8,9 @@ import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class DroneCommunicationManager {
@@ -19,25 +20,27 @@ public class DroneCommunicationManager {
     @Inject
     private JsonBasedMessageConverter messageConverter;
 
-    private HashMap<UUID, DroneConnection> droneConnections = new HashMap<>();
+    private Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
 
     @Inject
-    public DroneCommunicationManager(DroneDao droneDao, JPAApi jpaApi, DroneMessageDispatcher droneMessageDispatcher) {
+    public DroneCommunicationManager(DroneDao droneDao,
+                                     JPAApi jpaApi,
+                                     DroneMessageDispatcher droneMessageDispatcher) {
+
         this.droneMessageDispatcher = droneMessageDispatcher;
         jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);
         });
+
     }
 
     public void addDrone(Drone drone) {
-        droneConnections.put(drone.getId(), new DroneConnection(drone, droneMessageDispatcher));
+        droneIdToConnection.put(drone.getId(), new DroneConnection(drone, droneMessageDispatcher));
     }
 
     public void sendMessageToDrone(UUID droneId, Message message) {
-        DroneConnection droneConnection = droneConnections.get(droneId);
+        DroneConnection droneConnection = droneIdToConnection.get(droneId);
         String messageAsString = messageConverter.parseMessageToString(message);
         droneConnection.sendMessage(messageAsString);
     }
-
-
 }

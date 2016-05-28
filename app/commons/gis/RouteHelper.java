@@ -10,7 +10,9 @@ import org.geolatte.geom.jts.JTS;
 
 public class RouteHelper {
 
-    public org.geolatte.geom.LineString calculateShortestLineToPoint(org.geolatte.geom.Geometry geometryObject, org.geolatte.geom.Point point){
+    public org.geolatte.geom.LineString calculateShortestLineToPoint(org.geolatte.geom.Geometry geometryObject,
+                                                                     org.geolatte.geom.Point point){
+
         Point jtsPoint = (Point) JTS.to(point);
         Geometry jtsGeometry = JTS.to(geometryObject);
 
@@ -21,7 +23,5 @@ public class RouteHelper {
 
         return (org.geolatte.geom.LineString) JTS.from(jtsResultLineString, GisHelper.getReferenceSystem());
     }
-
-
 
 }
