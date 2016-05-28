@@ -37,6 +37,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class ProjectsApiController extends Controller {
 
     private static final Logger logger = getLogger(ProjectsApiController.class);
+
     @Inject
     private ProjectsDao projectsDao;
 
@@ -60,7 +61,10 @@ public class ProjectsApiController extends Controller {
     public Result index() {
         List<Project> projects = projectsDao.findByOrganisation(getOrganisation().getId());
 
-        List<ProjectApiDto> projectDtos = projects.stream().map(projectMapper::getProjectDto).collect(Collectors.toList());
+        List<ProjectApiDto> projectDtos = projects.stream()
+            .map(projectMapper::getProjectDto)
+            .collect(Collectors.toList());
+
         return ok(Json.toJson(projectDtos));
     }
 
@@ -76,8 +80,10 @@ public class ProjectsApiController extends Controller {
 
     public Result calculateRoute(UUID projectID, String dronePositionWkt, String customerPositionWkt) {
         try {
+
             Route realRoute = calculateRouteOrThrowException(projectID, dronePositionWkt, customerPositionWkt);
             RouteDto routeDto = routeMapper.convertToRouteDto(realRoute);
+
             return ok(Json.toJson(routeDto));
         } catch (Exception e) {
             logger.info("Thrown exception: ", e);
@@ -97,8 +103,10 @@ public class ProjectsApiController extends Controller {
             Project found = getProject(projectID);
 
             ZoneHelper.assertAllConstraintsOrThrowRuntimeException(found.getZones());
+
             ZoneHelper.assertThatDroneIsInLoadingZoneOrThrowRunTimeException(found.getZones(),
                     GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat()));
+
             ZoneHelper.assertThatCustomerIsInOrderZoneOrThrowRunTimeException(found.getZones(),
                     GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat()));
 
@@ -123,6 +131,7 @@ public class ProjectsApiController extends Controller {
 
         ProjectApiDto fromRequest =
                 Json.fromJson(request().body().asJson(), ProjectApiDto.class);
+
         // set all fields
         project.setName(fromRequest.getName());
         addZonesToProject(project, fromRequest);
@@ -173,7 +182,10 @@ public class ProjectsApiController extends Controller {
     }
 
     private Zone findById(Set<Zone> previousZones, ZoneApiDto zoneDto) {
-        return previousZones.stream().filter(o -> o.getId().equals(zoneDto.getId())).findFirst().get();
+        return previousZones.stream()
+            .filter(o -> o.getId().equals(zoneDto.getId()))
+            .findFirst()
+            .get();
     }
 
     private Project getProject(UUID projectId) {

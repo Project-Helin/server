@@ -35,6 +35,7 @@ public class RouteHelper {
 
     private static List<WayPoint> createFlightToDelivery(List<Position> positions, Route route) {
         List<WayPoint> flightToDelivery = new ArrayList<>();
+
         for (Position position : positions) {
             flightToDelivery.add(createWaypoint(route, position));
         }
@@ -49,6 +50,7 @@ public class RouteHelper {
         for (Position reversePosition : Lists.reverse(positions)){
             flightToHome.add(createWaypoint(route, reversePosition));
         }
+
         // Remove Dropoff, it is already done - next coordinate is the 'second last'
         flightToHome.remove(0);
         return flightToHome;

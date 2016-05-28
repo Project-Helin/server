@@ -77,7 +77,6 @@ GET         /assets/*file                                           controllers.
 GET         /registerDrone                                          controllers.RegisterDroneController.index()
 
 
-
 #API
 
 ##Drones

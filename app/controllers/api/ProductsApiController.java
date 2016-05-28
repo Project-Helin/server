@@ -31,6 +31,7 @@ public class ProductsApiController extends Controller {
     @Transactional
     public Result findByLocation(Double lat, Double lon) {
         logger.info("Find by position: lat = {} lon = {}", lat, lon);
+
         List<ProductApiDto> products = productsDao.findByPosition(lat, lon);
         return ok(Json.toJson(products));
     }

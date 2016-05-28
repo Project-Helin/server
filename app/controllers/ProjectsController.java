@@ -18,8 +18,6 @@ import java.util.UUID;
 @Transactional
 public class ProjectsController extends Controller {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProjectsController.class);
-
     @Inject
     private ProjectsDao projectsDao;
 

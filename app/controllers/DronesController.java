@@ -41,6 +41,7 @@ public class DronesController extends Controller {
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         List<Drone> all = droneDao.findByOrganisation(getOrganisation());
+
         String organisationToken = getOrganisation().getToken();
         return ok(index.render(all, organisationToken));
     }
@@ -107,11 +108,9 @@ public class DronesController extends Controller {
         return redirect(routes.DronesController.index());
     }
 
-
     private Drone getDroneById(UUID id) {
         return droneDao.findByIdAndOrganisation(id, getOrganisation());
     }
-
 
     private Organisation getOrganisation() {
         return sessionHelper.getOrganisation(session());

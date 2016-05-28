@@ -66,7 +66,10 @@ public class OrderApiController extends Controller {
     public Result findByCustomer(UUID customerId) {
         List<Order> orders = orderDao.findByCustomer(customerId);
 
-        List<OrderDto> collect = orders.stream().map(orderMapper::convertToOrderDto).collect(Collectors.toList());
+        List<OrderDto> collect = orders.stream()
+            .map(orderMapper::convertToOrderDto)
+            .collect(Collectors.toList());
+
         return ok(Json.toJson(collect));
     }
 
@@ -109,10 +112,10 @@ public class OrderApiController extends Controller {
     }
 
     private OrderDto createOrder(OrderApiDto orderApiDto) {
-
         Order order = saveOrder(orderApiDto);
 
-        List<Position> positionList = routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
+        List<Position> positionList =
+            routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
 
         Route route = RouteHelper.positionListToRoute(positionList);
 
@@ -138,15 +141,14 @@ public class OrderApiController extends Controller {
             return forbidden("Customer not found");
         }
 
-
         order.setState(OrderState.IN_PROGRESS);
         order.setCustomer(foundCustomer);
         order.getMissions().stream().forEach(mission -> {
             mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
             missionsDao.persist(mission);
         });
-        orderDao.persist(order);
 
+        orderDao.persist(order);
         missionDispatchingService.tryToDispatchWaitingMissions(order.getProject().getId());
 
         return ok();
@@ -157,6 +159,7 @@ public class OrderApiController extends Controller {
         if (order == null) {
             return forbidden("Order not found");
         }
+
         logger.info("Delete order with id {}", orderID);
         orderDao.delete(order);
         return ok();
@@ -171,7 +174,6 @@ public class OrderApiController extends Controller {
         }
     }
 
-
     private Order saveOrder(OrderApiDto orderApiDto) {
         Project project =
             projectsDao.findById(UUID.fromString(orderApiDto.getProjectId()));
@@ -182,6 +184,7 @@ public class OrderApiController extends Controller {
         order.setCustomerPosition(GisHelper.createPoint(customerPosition.getLat(), customerPosition.getLon()));
         order.setProject(project);
         order.setState(OrderState.ROUTE_SUGGESTED);
+
         Set<OrderProduct> splitOrderProducts = splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(order, orderApiDto.getOrderProducts());
         order.setOrderProducts(splitOrderProducts);
 
@@ -209,8 +212,9 @@ public class OrderApiController extends Controller {
         order.setMissions(createdMissions);
     }
 
-    private Set<OrderProduct> splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(Order newOrder, List<OrderProductApiDto> orderProductDtos) {
-        HashSet<OrderProduct> orderProducts = new HashSet<>();
+    private Set<OrderProduct> splitAndConvertToOrderProductsBasedOnMaxAmountPerDrone(Order newOrder,
+                                                                                     List<OrderProductApiDto> orderProductDtos) {
+        Set<OrderProduct> orderProducts = new HashSet<>();
 
         for (OrderProductApiDto orderProduct : orderProductDtos) {
 

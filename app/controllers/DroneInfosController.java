@@ -17,8 +17,6 @@ import java.util.UUID;
 
 
 public class DroneInfosController {
-    private static final Logger logger = LoggerFactory.getLogger(DroneInfosController.class);
-
     @Inject
     private DroneDao droneDao;
 

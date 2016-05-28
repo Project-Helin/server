@@ -15,6 +15,7 @@ import java.util.UUID;
 
 
 public class MissionController {
+
     @Inject
     private DroneDao droneDao;
 
@@ -36,21 +37,24 @@ public class MissionController {
     @Inject
     private MissionDispatchingService missionDispatchingService;
 
-    public void onConfirmMissionMessageReceived(UUID droneId, ConfirmMissionMessage missionMessage) {
-        jpaApi.withTransaction(() -> {
-            boolean missionConfirmed = missionMessage.getMissionConfirmType() == MissionConfirmType.ACCEPT;
-            Drone drone = droneDao.findById(droneId);
+    public void onConfirmMissionMessageReceived(UUID droneId,
+                                                ConfirmMissionMessage missionMessage) {
 
+        jpaApi.withTransaction(() -> {
+
+            Drone drone = droneDao.findById(droneId);
             Mission mission = drone.getCurrentMission();
+
+            boolean missionConfirmed = missionMessage.getMissionConfirmType() == MissionConfirmType.ACCEPT;
             if (missionConfirmed) {
+
                 mission.setState(MissionState.LOADING);
-                FinalAssignMissionMessage finalAssignMissionMessage = new FinalAssignMissionMessage();
-                finalAssignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
-                droneCommunicationManager.sendMessageToDrone(drone.getId(), finalAssignMissionMessage);
+
+                sendAssignMissionMessage(drone, mission);
+
                 Order order = mission.getOrder();
                 order.setState(OrderState.IN_DELIVERY);
                 orderDao.persist(order);
-
             } else {
                 mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
                 drone.setCurrentMission(null);
@@ -60,13 +64,19 @@ public class MissionController {
         });
     }
 
+    private void sendAssignMissionMessage(Drone drone, Mission mission) {
+        FinalAssignMissionMessage finalAssignMissionMessage = new FinalAssignMissionMessage();
+        finalAssignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
+
+        droneCommunicationManager.sendMessageToDrone(drone.getId(), finalAssignMissionMessage);
+    }
+
     public void onFinishedMissionMessageReceived(UUID droneId, FinishedMissionMessage message) {
         jpaApi.withTransaction(() -> {
-            boolean successful = message.getFinishedType() == MissionFinishedType.SUCCESSFUL;
-
             Drone drone = droneDao.findById(droneId);
             Mission mission = drone.getCurrentMission();
 
+            boolean successful = message.getFinishedType() == MissionFinishedType.SUCCESSFUL;
             if (successful) {
                 mission.setState(MissionState.DELIVERED);
                 drone.setCurrentMission(null);
@@ -86,6 +96,7 @@ public class MissionController {
     }
 
     private void updateOrderState(Order order) {
+
         boolean allMissionsDelivered = order.getMissions().stream().allMatch((m) -> m.getState() == MissionState.DELIVERED);
         boolean someMissionsDelivered = order.getMissions().stream().anyMatch((m) -> m.getState() == MissionState.DELIVERED);
 
