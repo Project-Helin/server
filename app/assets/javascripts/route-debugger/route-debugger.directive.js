@@ -3,8 +3,7 @@
         return {
             restrict: 'E',
             scope: {
-                projectId: '@',
-                missionId: '@'
+                projectId: '@'
             },
             templateUrl: '/assets/javascripts/route-debugger/route-debugger.tmpl.html',
             controller: 'RouteDebuggerCtrl'

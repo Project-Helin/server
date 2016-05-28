@@ -44,14 +44,5 @@
                     return response.data;
                 });
         };
-        
-        // TODO refactor
-        this.getRoute = function (missionId) {
-            return $http.get('/api/mission/' + missionId + '/show', {})
-                .then(function (response) {
-                    return response.data;
-                });
-        };
-
     }])
 }());
