@@ -19,8 +19,8 @@ public class Wgs84Helper {
     }
 
     /**
-     * Haversin Formula
-     * Approx! -> Berlin to Tokio is 0.5% off to the real distance!
+     * Uses Haversine Formula to calculate the distance from two given LatLon values.
+     * This is only an approximation. E.g Berlin to Tokio is 0.5% off to the real distance!
      */
     public static double getDistanceFromLatLonInKm(double lat1, double lon1,
                                                    double lat2, double lon2) throws Wgs84CoordinateException {
