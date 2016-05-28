@@ -80,7 +80,6 @@ GET         /registerDrone                                          controllers.
 #API
 
 ##Drones
-
 POST        /api/drones/                                            controllers.api.DronesApiController.create()
 
 ##Project
@@ -88,7 +87,6 @@ GET         /api/projects/                                          controllers.
 GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
 POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
 GET         /api/projects/:projectId/calculate-route                controllers.api.ProjectsApiController.calculateRoute(projectId : java.util.UUID, dronePosition : String, customerPosition : String)
-#TODO Get Project including Zones
 
 ##Order
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
