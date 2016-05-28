@@ -1,11 +1,15 @@
+@import scala._
 @(projectId: java.util.UUID)
 
-@main("") {
+@main("",
+    styleSheets = List(
+        "http://openlayers.org/en/v3.14.2/css/ol.css",
+        routes.Assets.at("stylesheets/xeditable.css").toString,
+        routes.Assets.at("stylesheets/toastr.min.css").toString,
+        routes.Assets.at("stylesheets/ol3-layerswitcher.css").toString
+    )
 
-    <link rel="stylesheet" href="http://openlayers.org/en/v3.14.2/css/ol.css" type="text/css">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/xeditable.css")" type="text/css">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/toastr.min.css")" type="text/css">
-    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/ol3-layerswitcher.css")" type="text/css">
+) {
 
     <script src='@routes.Assets.at("javascripts/common/ol-debug-3.14.2.js")'></script>
 
