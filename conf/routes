@@ -105,6 +105,7 @@ POST        /api/orders/:orderId/delete                             controllers.
 
 ## Products
 GET         /api/products/                                          controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
+GET         /api/products/by-project                                controllers.api.ProductsApiController.findByProject(projectId :  String)
 
 # Mission
 GET         /api/missions/find-by-order/:orderId                    controllers.api.MissionApiController.findByOrder(orderId : java.util.UUID)

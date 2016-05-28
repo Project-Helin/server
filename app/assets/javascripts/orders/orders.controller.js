@@ -1,13 +1,14 @@
 (function () {
     angular.module('OrdersApp').controller('OrdersController',
-        ['$scope', '$http', function ($scope, $http) {
+        ['$scope', '$http', 'ProductsService', 'OrdersService', function ($scope, $http, ProductsService, OrdersService) {
 
             console.log("called OrdersController");
 
             $scope.sendConfirmRequest = function (orderId) {
                 console.log("Send confirm for id " + orderId);
 
-                $http.post('/api/orders/' + orderId + "/confirm", {})
+                OrdersService
+                    .confirmOrder(orderId)
                     .then(function (response) {
                         // reload current page
                         location.reload();
@@ -15,17 +16,21 @@
                     });
             };
 
-            $scope.sendFakeRequest = function () {
+            $scope.sendFakeOrder = function (projectId) {
 
                 var lon = "8.817394673824309";
                 var lat = "47.22330617326986";
-                $http.get('/api/products/find-by-location/' + lat + '/' + lon  ).then(function (response) {
 
-                    var productArray = response.data;
+                ProductsService.findByProjects(projectId).then(function (productArray) {
                     console.log("Got a few products", productArray);
 
+                    var noProductsFound = productArray.length == 0;
+                    if (noProductsFound) {
+                        alert("This project has no products");
+                        return;
+                    }
+
                     var firstProductId = productArray[0].id;
-                    var projectId = productArray[0].projectId;
                     sendOrder(firstProductId, projectId);
                 });
 
@@ -48,8 +53,8 @@
                     };
 
                     console.log("Sending orderCargo: ", orderCargoDto);
-
-                    $http.post('/api/orders/', orderCargoDto)
+                    
+                    OrdersService.create(orderCargoDto)
                         .then(function (response) {
                             console.log("Got response back", response.data);
                             location.reload();

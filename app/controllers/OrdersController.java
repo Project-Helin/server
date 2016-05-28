@@ -35,9 +35,6 @@ public class OrdersController extends Controller {
     private OrderDao orderDao;
 
     @Inject
-    private MissionsDao missionsDao;
-
-    @Inject
     private ProjectsDao projectsDao;
 
     @Inject

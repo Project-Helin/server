@@ -94,7 +94,9 @@
                         </table>
 
                         <div class="m-t">
-                            <a ng-click="sendFakeRequest()" class="btn btn-primary">Send fake order</a>
+                            @if(!selectedProject.isEmpty){
+                                <a ng-click="sendFakeOrder('@selectedProject')" class="btn btn-primary">Send fake order</a>
+                            }
                         </div>
                     </div>
                 </div> <!-- /.box-body -->
@@ -106,6 +108,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
     <script src='@routes.Assets.at("javascripts/ui-bootstrap-tpls-1.2.5.js")'></script>
     <script src="@routes.Assets.at("javascripts/jquery-1.11.3.min.js")" type="text/javascript"></script>
+    <script src='@routes.Assets.at("javascripts/common/common.module.js")'></script>
+    <script src='@routes.Assets.at("javascripts/common/products.service.js")'></script>
+    <script src='@routes.Assets.at("javascripts/common/orders.service.js")'></script>
+
     <script src='@routes.Assets.at("javascripts/orders/orders.module.js")'></script>
     <script src='@routes.Assets.at("javascripts/orders/orders.controller.js")'></script>
 
