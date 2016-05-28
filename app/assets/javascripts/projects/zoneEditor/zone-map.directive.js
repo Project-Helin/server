@@ -17,7 +17,6 @@
                     addMapListeners();
                 }
 
-
                 function createMap() {
                     var group =
                         new ol.layer.Group({
@@ -58,8 +57,7 @@
                         })
                     });
 
-
-                    scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
+                    fitViewPortOfMapToZones();
 
                     var layerSwitcher = new ol.control.LayerSwitcher({
                         tipLabel: 'Légende' // Optional label for button
@@ -88,7 +86,7 @@
 
                 function addScopeListeners() {
                     scope.$watch('selectedZone', function (newValue, oldValue) {
-                        if(!scope.inDrawMode) {
+                        if (!scope.inDrawMode) {
                             updateInteractionPossibilities(newValue);
                             updateStyle(newValue, oldValue);
                         }
@@ -161,6 +159,17 @@
                             }
                         }
                     });
+                }
+
+
+                function fitViewPortOfMapToZones() {
+                    var hasAnyPolygon = scope.zones.filter(function (zone) {
+                        return zone.polygon !== null;
+                    })[0];
+
+                    if (hasAnyPolygon) {
+                        scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
+                    }
                 }
 
                 function updateInteractionPossibilities(currentZone) {
