@@ -104,8 +104,7 @@ POST        /api/orders/:orderId/confirm/:customerId                controllers.
 POST        /api/orders/:orderId/delete                             controllers.api.OrderApiController.delete(orderId : java.util.UUID)
 
 ## Products
-GET         /api/products/                                          controllers.api.ProductsApiController.index()
-GET         /api/products/find-by-location/:lat/:lon                controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
+GET         /api/products/                                          controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
 
 # Mission
 GET         /api/missions/find-by-order/:orderId                    controllers.api.MissionApiController.findByOrder(orderId : java.util.UUID)
