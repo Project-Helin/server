@@ -267,8 +267,7 @@
                 }
 
                 activate();
-            },
-            controller: 'ZoneMapCtrl'
+            }
         };
 
 

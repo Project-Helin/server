@@ -117,7 +117,7 @@ public class ProjectsApiController extends Controller {
         if (isNewProject) {
             // create new project
             project = new Project();
-            project.setId(UUID.randomUUID());
+            project.setId(projectId);
             project.setOrganisation(getOrganisation());
         }
 
