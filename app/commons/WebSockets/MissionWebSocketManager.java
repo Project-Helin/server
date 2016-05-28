@@ -15,37 +15,35 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class MissionWebSocketManager {
 
-    private Map<UUID, List<WebSocketConnection>> missionWebSocketMap = new ConcurrentHashMap<>();
+    private Map<UUID, List<WebSocketConnection>> missionIdToOpenConnections = new ConcurrentHashMap<>();
 
     @Inject
-    JsonBasedMessageConverter jsonBasedMessageConverter;
-
+    private JsonBasedMessageConverter jsonBasedMessageConverter;
 
     public void addWebSocketConnection(UUID missionId, WebSocketConnection webSocketConnection) {
 
-        List<WebSocketConnection> connections = missionWebSocketMap.get(missionId);
+        List<WebSocketConnection> connections = missionIdToOpenConnections.get(missionId);
+
         if (connections == null) {
             connections = new ArrayList<>();
-            missionWebSocketMap.put(missionId, connections);
+            missionIdToOpenConnections.put(missionId, connections);
         }
-
 
         connections.add(webSocketConnection);
         webSocketConnection.setCloseCallback((connection) -> removeWebSocketConnection(missionId, connection));
     }
 
     public void sendDroneInfoToConnectedClients(UUID missionId, DroneInfoMessage droneInfoMessage) {
-        List<WebSocketConnection> webSocketConnections = missionWebSocketMap.get(missionId);
+        List<WebSocketConnection> webSocketConnections = missionIdToOpenConnections.get(missionId);
+
         if (webSocketConnections != null) {
             String message = jsonBasedMessageConverter.parseMessageToString(droneInfoMessage);
             webSocketConnections.forEach((c) -> c.sendMessage(message));
         }
-
     }
 
     private void removeWebSocketConnection(UUID missionId, WebSocketConnection connection) {
-        List<WebSocketConnection> webSocketConnections = missionWebSocketMap.get(missionId);
+        List<WebSocketConnection> webSocketConnections = missionIdToOpenConnections.get(missionId);
         webSocketConnections.remove(connection);
     }
-
 }
