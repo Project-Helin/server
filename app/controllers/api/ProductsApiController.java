@@ -18,9 +18,6 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-/**
- * @author Kirusanth Poopalasingam ( pkirusanth@gmail.com )
- */
 public class ProductsApiController extends Controller {
 
     @Inject
