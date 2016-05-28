@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class MissionDispatchingService {
+
     @Inject
     private Provider<DroneCommunicationManager> droneCommunicationManagerProvider;
 
@@ -28,19 +29,19 @@ public class MissionDispatchingService {
     private MissionsDao missionsDao;
 
     public void tryToDispatchWaitingMissions(UUID projectId) {
-
         List<Mission> waitingMissions = missionsDao.findWaitingMissions(projectId);
         waitingMissions.stream().forEach(this::tryAssignDroneForThisMission);
     }
 
-
     public boolean tryAssignDroneForThisMission(Mission mission) {
 
-        int minPayload = mission.getOrderProduct().getAmount() * mission.getOrderProduct().getProduct().getWeightGramm();
+        Integer amount = mission.getOrderProduct().getAmount();
+        Integer weightGramm = mission.getOrderProduct().getProduct().getWeightGramm();
+
+        int minPayload = amount * weightGramm;
         UUID projectId = mission.getOrder().getProject().getId();
 
         // find the best drone for the mission
-
         Drone matchingDrone = droneDao.findMatchingPayloadAndHighestBatteryRemain(projectId, minPayload);
 
         if(matchingDrone != null) {

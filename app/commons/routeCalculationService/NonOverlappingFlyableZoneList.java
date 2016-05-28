@@ -25,7 +25,12 @@ public class NonOverlappingFlyableZoneList {
     private List<NonOverlappingZone> zoneList;
 
     public NonOverlappingFlyableZoneList(Set<Zone> zones) {
-        zoneList = zones.stream().filter(x -> x.getType() != ZoneType.OrderZone).map(NonOverlappingZone::new).sorted(Comparator.comparing(x -> x.getHeight())).collect(Collectors.toList());
+        zoneList = zones.stream()
+            .filter(x -> x.getType() != ZoneType.OrderZone)
+            .map(NonOverlappingZone::new)
+            .sorted(Comparator.comparing(x -> x.getHeight()))
+            .collect(Collectors.toList());
+
         logger.debug("NonOverlappingFlyableZoneList Size {}", zoneList.size());
         removeOverlappingParts();
     }
@@ -36,7 +41,11 @@ public class NonOverlappingFlyableZoneList {
         while(zoneIterator.hasNext()){
             NonOverlappingZone zone = zoneIterator.next();
 
-            List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().filter(x -> !x.equals(zone)).map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
+            List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream()
+                .filter(x -> !x.equals(zone))
+                .map(this::convertZoneToPolygon)
+                .collect(Collectors.toList());
+
             Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
 
             Geometry difference = (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
@@ -47,15 +56,16 @@ public class NonOverlappingFlyableZoneList {
                 zoneIterator.remove();
                 return;
             }
+
             if(difference.getGeometryType() == "Polygon"){
                 Polygon subtractedZonePolygon = (Polygon) difference;
                 zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
                 return;
             }
+
             if(difference.getGeometryType() == "MultiPolygon"){
                 throw new RuntimeException("FUCK THIS SHIT!");
             }
-
         }
     }
 
