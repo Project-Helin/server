@@ -21,13 +21,13 @@
                     return error;
                 });
         };
-        
-        this.create = function(orderCargoDto){
+
+        this.create = function (orderCargoDto) {
             return $http.post(this.orderUrl, orderCargoDto);
         };
 
-        this.confirmOrder = function(orderId){
-            return $http.post(this.orderUrl + orderId + "/confirm", {});
+        this.confirmOrder = function (orderId, customerId) {
+            return $http.post(this.orderUrl + orderId + "/confirm/" + customerId, {});
         };
 
     }])
