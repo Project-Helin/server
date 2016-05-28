@@ -53,7 +53,13 @@ cd ..
 # don't remove CGAL here because it is needed for later installations!
 rm CGAL-4.3.tar.gz
 
-# download and compile SFCGAL
+# SFCGAL is a library which provides useful functions
+# which are exposed through postgis ( for example
+# calculate skeleton of a geometry )
+# We need it only during route calculation
+
+# There is no easy way to install SFCGAL, we need to download
+# and compile it
 wget https://github.com/Oslandia/SFCGAL/archive/v1.3.0.tar.gz
 tar -xvzf v1.3.0.tar.gz
 cd SFCGAL-1.3.0 &&\
@@ -92,7 +98,7 @@ rm -Rf postgis-2.2.0.tar.gz
 # update ld
 sudo ldconfig
 
-# signInPost new user and DB
+# Create DB for Test and develoment usage
 sudo -u postgres createdb $DB_USER
 sudo -u postgres createuser $DB_USER -s       # -s for superuser
 # change password
