@@ -5,11 +5,6 @@
 # Home page
 GET         /                                                       controllers.Application.index()
 
-# Message Viewer
-GET         /messageviewer                                          controllers.MessageViewer.index()
-GET         /sendSampleMessage                                      controllers.MessageViewer.sendSampleMessage()
-GET         /messageviewer/register                                 controllers.MessageViewer.register()
-
 #Organisation
 GET         /organisations/add                                      controllers.OrganisationsController.add()
 POST        /organisations/create                                   controllers.OrganisationsController.create()
