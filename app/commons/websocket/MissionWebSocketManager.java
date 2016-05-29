@@ -1,4 +1,4 @@
-package commons.WebSockets;
+package commons.websocket;
 
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;

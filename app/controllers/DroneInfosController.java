@@ -2,15 +2,13 @@ package controllers;
 
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import com.google.inject.Inject;
-import commons.WebSockets.MissionWebSocketManager;
+import commons.websocket.MissionWebSocketManager;
 import dao.DroneDao;
 import dao.DroneInfoDao;
 import mappers.DroneInfoMapper;
 import models.Drone;
 import models.DroneInfo;
 import models.Mission;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.db.jpa.JPAApi;
 
 import java.util.UUID;
