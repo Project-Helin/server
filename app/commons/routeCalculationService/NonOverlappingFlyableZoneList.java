@@ -2,8 +2,6 @@ package commons.routeCalculationService;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
@@ -22,13 +20,13 @@ public class NonOverlappingFlyableZoneList {
 
     private static final Logger logger = LoggerFactory.getLogger(NonOverlappingFlyableZoneList.class);
 
-    private List<NonOverlappingZone> zoneList;
+    private final List<NonOverlappingZone> zoneList;
 
     public NonOverlappingFlyableZoneList(Set<Zone> zones) {
         zoneList = zones.stream()
             .filter(x -> x.getType() != ZoneType.OrderZone)
             .map(NonOverlappingZone::new)
-            .sorted(Comparator.comparing(x -> x.getHeight()))
+            .sorted(Comparator.comparing(NonOverlappingZone::getHeight))
             .collect(Collectors.toList());
 
         logger.debug("NonOverlappingFlyableZoneList Size {}", zoneList.size());
@@ -57,14 +55,14 @@ public class NonOverlappingFlyableZoneList {
                 return;
             }
 
-            if(difference.getGeometryType() == "Polygon"){
+            if(difference.getGeometryType().equals("Polygon")){
                 Polygon subtractedZonePolygon = (Polygon) difference;
                 zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
                 return;
             }
 
-            if(difference.getGeometryType() == "MultiPolygon"){
-                throw new RuntimeException("FUCK THIS SHIT!");
+            if(difference.getGeometryType().equals("MultiPolygon")){
+                throw new RuntimeException("Case MULTIPOLYGON needs to be implemented!");
             }
         }
     }
@@ -101,18 +99,14 @@ public class NonOverlappingFlyableZoneList {
 
                     Coordinate[] coordinateArray = intersection.getCoordinates();
 
-                    for(int j=0; j<coordinateArray.length; j++) {
-                        Coordinate coordinate = coordinateArray[j];
+                    for (Coordinate coordinate : coordinateArray) {
                         returnLineStringCoordinates.add(coordinate);
                         logger.debug("Intersection Coordinate is {}", coordinate.toString());
                     }
-
                 }
             }
             returnLineStringCoordinates.add(coordinates[i+1]);
         }
-
-        List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream().map(x -> convertZoneToPolygon(x)).collect(Collectors.toList());
 
         GeometryFactory returnLineStringFactory = new GeometryFactory();
         Coordinate[] returnCoordinates = returnLineStringCoordinates.toArray(new Coordinate[]{});

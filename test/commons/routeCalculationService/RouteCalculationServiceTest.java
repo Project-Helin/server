@@ -106,27 +106,6 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
         assertEquals("SRID=4326;LINESTRING(1 1,0 1)", resultLineString.toString());
     }
 
-    ///COMMENT THIS SHIT!
-    @Test
-    public void noPathSplitNeeded(){
-
-        LineString line = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(0 1,1 1)");
-        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
-
-        assertTrue(routeCalculationService.isLineSplitNeeded(line, path));
-
-    }
-
-    @Test
-    public void pathSplitNeeded(){
-
-        LineString line = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(0 1,1 1)");
-        MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
-
-        assertFalse(routeCalculationService.isLineSplitNeeded(line, path));
-
-    }
-
     @Test
     public void splitMultiLineStringBasicCase(){
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 1)");

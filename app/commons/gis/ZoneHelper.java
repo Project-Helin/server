@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ZoneHelper {
 
@@ -83,19 +84,20 @@ public class ZoneHelper {
     }
 
     public static boolean checkAllZonesInisideOrderZone(Set<Zone> zones){
-        Zone orderZone = zones.stream()
-            .filter(x -> x.getType() == ZoneType.OrderZone)
-            .findFirst()
-            .get();
+        Polygon orderZonePolygon = zones.stream()
+                .filter(x -> x.getType() == ZoneType.OrderZone)
+                .map(ZoneHelper::convertZoneToJtsPolygon)
+                .findFirst()
+                .get();
 
-        int numOfZonesInside = (int) zones.stream()
+        int numberOfPolygonsOutsideOrderZone = (int) zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
-                .filter(x -> JTS.to(orderZone.getPolygon())
-                .contains(JTS.to(x.getPolygon())))
+                .map(ZoneHelper::convertZoneToJtsPolygon)
+                .filter(x -> orderZonePolygon.contains(x) == false)
                 .count();
 
         //zones - 1 because the order zone should not be contained by itself.
-        return ((zones.size() - 1) == numOfZonesInside);
+        return (numberOfPolygonsOutsideOrderZone == 0);
     }
 
     /**
