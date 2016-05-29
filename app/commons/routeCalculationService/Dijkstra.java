@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-public class DijkstraFactory {
+public class Dijkstra {
 
-    private static final Logger logger = LoggerFactory.getLogger(DijkstraFactory.class);
+    private static final Logger logger = LoggerFactory.getLogger(Dijkstra.class);
 
     private Pseudograph<Position, LineString> graph = new Pseudograph<>(LineString.class);
 
-    public DijkstraFactory(RawGraph rawGraph){
+    public Dijkstra(RawGraph rawGraph){
 
         for (LineString lineString : rawGraph.getLineStringList()) {
             graph.addVertex(lineString.getStartPosition());
@@ -32,7 +32,7 @@ public class DijkstraFactory {
 
     }
 
-    public List<Position> getResultFromDijkstra(Position dronePosition,
+    public List<Position> calculateShortestPath(Position dronePosition,
                                                 Position customerPosition){
 
         DijkstraShortestPath<Position, LineString> algorithm =

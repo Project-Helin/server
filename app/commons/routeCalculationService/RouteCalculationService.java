@@ -4,7 +4,6 @@ import ch.helin.commons.AssertUtils;
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.gis.GisHelper;
 import commons.gis.RouteHelper;
@@ -19,7 +18,10 @@ import org.geolatte.geom.jts.JTS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RouteCalculationService {
@@ -32,7 +34,8 @@ public class RouteCalculationService {
 
     private static final Logger logger = LoggerFactory.getLogger(RouteCalculationService.class);
 
-    public List<ch.helin.messages.dto.way.Position> calculateRoute(ch.helin.messages.dto.way.Position customerPosition, Project project) {
+    public List<ch.helin.messages.dto.way.Position> calculateRoute(ch.helin.messages.dto.way.Position customerPosition,
+                                                                   Project project) {
         Point pointOnPolygon = projectsDao.findPointOnLoadingZone(project.getId());
         AssertUtils.throwExceptionIfNull(pointOnPolygon, "Point on polygon could not be calculated.");
 
@@ -47,62 +50,65 @@ public class RouteCalculationService {
         logger.info("State of calculateRoute customerPosition {}", AssertUtils.throwExceptionIfNull(customerPosition));
         logger.info("State of calculateRoute Project {}", AssertUtils.throwExceptionIfNull(project));
 
-        logger.info("Drone position: {}", GisHelper.toWktStringWithoutSrid(GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat())) );
-        logger.info("Customer position: {}", GisHelper.toWktStringWithoutSrid(GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat())) );
-
-
         MultiLineString skeletonMultiLine = routeDao.calculateSkeleton(project.getId());
-        logger.info("Calculate skeleton {}", GisHelper.toWktStringWithoutSrid(skeletonMultiLine));
+        logger.debug("Calculated skeleton {}", GisHelper.toWktStringWithoutSrid(skeletonMultiLine));
 
-        RawGraph rawGraph = new RawGraph();
+        org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
 
         RouteHelper routeHelper = new RouteHelper();
-        org.geolatte.geom.Point dronePoint = GisHelper.createPoint(dronePosition.getLon(), dronePosition.getLat());
         LineString lineStringToDrone = routeHelper.calculateShortestLineToPoint(skeletonMultiLine, dronePoint);
         logger.debug("Drone-to-Skeleton: {}", GisHelper.toWktStringWithoutSrid(lineStringToDrone));
 
+        RawGraph rawGraph = new RawGraph();
         rawGraph.addLineString(lineStringToDrone);
         skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToDrone);
         logger.debug("Skeleton after split: {}", skeletonMultiLine);
 
         org.geolatte.geom.Point customerPoint = GisHelper.createPoint(customerPosition.getLon(), customerPosition.getLat());
-        LineString lineStringToCustomer;
 
         Point realDropPoint = customerPoint;
         if(!ZoneHelper.isCustomerInsideDeliveryZone(project.getZones(), customerPoint)){
-            logger.debug("Customer is not in DeliveryZone.");
-            List<com.vividsolutions.jts.geom.Polygon> polygonList = project.
-                    getZones().stream()
-                    .filter(x -> x.getType() == ZoneType.DeliveryZone)
-                    .map(ZoneHelper::convertZoneToJtsPolygon)
-                    .collect(Collectors.toList());
-
-            GeometryFactory polygonFactory = new GeometryFactory();
-            MultiPolygon deliveryZonePolygons = polygonFactory.createMultiPolygon(polygonList.toArray(new com.vividsolutions.jts.geom.Polygon[]{}));
-            org.geolatte.geom.MultiPolygon zoneMultiPolygon = (org.geolatte.geom.MultiPolygon) JTS.from(deliveryZonePolygons, GisHelper.getReferenceSystem());
-
-            realDropPoint = getIntersectionPointWithPolygon(zoneMultiPolygon, customerPoint);
+            realDropPoint = calculateDroPoint(project, customerPoint);
         }
 
-        lineStringToCustomer = routeHelper.calculateShortestLineToPoint(skeletonMultiLine, realDropPoint);
+        LineString lineStringToCustomer = routeHelper.calculateShortestLineToPoint(skeletonMultiLine, realDropPoint);
         rawGraph.addLineString(lineStringToCustomer);
-
 
         skeletonMultiLine = splitMultiLineStringOnLineString(skeletonMultiLine, lineStringToCustomer);
         rawGraph.addMultiLineString(skeletonMultiLine);
 
+        Dijkstra dijkstra = new Dijkstra(rawGraph);
+        List<Position> shortestPath = dijkstra.calculateShortestPath(
+            lineStringToDrone.getEndPosition(), lineStringToCustomer.getEndPosition());
 
-        DijkstraFactory dijkstraFactory = new DijkstraFactory(rawGraph);
-        List<Position> resultFromDijkstra =
-                dijkstraFactory.getResultFromDijkstra(lineStringToDrone.getEndPosition(), lineStringToCustomer.getEndPosition());
-
-
-        LineString lineStringFromPositions = getLineStringFromPositions(resultFromDijkstra);
+        LineString lineStringFromPositions = positionListtoLineString(shortestPath);
 
         return calculateHeightForFlightPath(project.getZones(), lineStringFromPositions);
     }
 
-    private List<ch.helin.messages.dto.way.Position> calculateHeightForFlightPath(Set<Zone> zones, LineString lineString) {
+    private Point calculateDroPoint(Project project, Point customerPoint) {
+        Point realDropPoint;
+        logger.debug("Customer is not in DeliveryZone.");
+
+        List<com.vividsolutions.jts.geom.Polygon> polygonList = project.
+                getZones().stream()
+                .filter(x -> x.getType() == ZoneType.DeliveryZone)
+                .map(ZoneHelper::convertZoneToJtsPolygon)
+                .collect(Collectors.toList());
+
+        GeometryFactory polygonFactory = new GeometryFactory();
+        com.vividsolutions.jts.geom.MultiPolygon deliveryZonePolygons =
+            polygonFactory.createMultiPolygon(polygonList.toArray(new com.vividsolutions.jts.geom.Polygon[]{}));
+
+        org.geolatte.geom.MultiPolygon zoneMultiPolygon = (org.geolatte.geom.MultiPolygon) JTS.from(deliveryZonePolygons, GisHelper.getReferenceSystem());
+
+        realDropPoint = getIntersectionPointWithPolygon(zoneMultiPolygon, customerPoint);
+        return realDropPoint;
+    }
+
+    private List<ch.helin.messages.dto.way.Position> calculateHeightForFlightPath(Set<Zone> zones,
+                                                                                  LineString lineString) {
+
         NonOverlappingFlyableZoneList nonOverlappingZoneList = new NonOverlappingFlyableZoneList(zones);
         nonOverlappingZoneList.debugZoneList();
         LineString lineString1 = nonOverlappingZoneList.cutLineStringOnPolygonBorder(lineString);
@@ -182,7 +188,7 @@ public class RouteCalculationService {
     }
 
 
-    public LineString getLineStringFromPositions(List<Position> positionList){
+    public LineString positionListtoLineString(List<Position> positionList){
         List<Coordinate> coordinateList = new ArrayList<>();
 
         for (org.geolatte.geom.Position position : positionList) {
