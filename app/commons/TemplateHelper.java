@@ -16,7 +16,6 @@ import java.util.*;
  */
 public class TemplateHelper {
 
-
     public static List<Organisation> getOrganisations(final String userId) {
         /**
          * This is a bit ugly, but Play has deprecated the static method JPA.withTransaction()

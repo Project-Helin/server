@@ -37,8 +37,14 @@ public class CustomApplicationLoader extends GuiceApplicationLoader {
     }
 
     private void addSettingForModelHelper() {
-        // TODO Marcel: could you explain this? Is this because no exception should be thrown?
-        BeanUtilsBean.getInstance().getConvertUtils().register(false, false, 0);
+        /**
+         * We use the BeanUtilsBean to copy properties, see ModelHelper.
+         * See for a detailed explanation here: http://stackoverflow.com/a/12719908
+         */
+        boolean throwException = false; // we don't want to get an exception if null need to be copied
+        boolean defaultNull = false;
+        int defaultArraySize = 0;
+        BeanUtilsBean.getInstance().getConvertUtils().register(throwException, defaultNull, defaultArraySize);
     }
 
     /**

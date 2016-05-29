@@ -10,7 +10,7 @@ public class NonOverlappingZone {
     private Polygon polygon;
     private int height;
 
-    private static final Logger logger = LoggerFactory.getLogger(NonOverlappingFlyableZoneList.class);
+    private static final Logger logger = LoggerFactory.getLogger(NonOverlappingZone.class);
 
     public NonOverlappingZone(Zone zone) {
         this.polygon = zone.getPolygon();

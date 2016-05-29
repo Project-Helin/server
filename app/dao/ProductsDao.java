@@ -103,4 +103,12 @@ public class ProductsDao extends AbstractDao<Product> {
         return geom;
     }
 
+    public List<Product> findByProjectId(UUID projectId) {
+        Query query = jpaApi.em().createQuery(
+            "select p from products  p " +
+                " join p.projects as pj " +
+                " where pj. id = :projectId", Product.class);
+        query.setParameter("projectId", projectId);
+        return query.getResultList();
+    }
 }

@@ -60,7 +60,9 @@
                     if ($scope.projectId) {
                         $scope.project.id = $scope.projectId;
                     } else {
-                        $scope.project.id = HelperService.generateUUID();
+                        var newId = HelperService.generateUUID();
+                        $scope.project.id = newId ;
+                        $scope.projectId = newId;
                     }
 
                     $scope.project.zones = $scope.zones;

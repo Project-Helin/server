@@ -23,7 +23,6 @@ public class GisHelper {
     private GisHelper() {
     }
 
-
     /*
      * Can be used to access the WGS84 reference system
      */
@@ -31,12 +30,10 @@ public class GisHelper {
         return WGS84_REFERENCE_SYSTEM;
     }
 
-
     /*
      * Can be used to access the WGS84 reference system
      */
     public static double getRoundoffPrecision(){ return ROUNDOFF_PRECISION; }
-
 
     /*
      * Converts the point to WKT without the SRID information
@@ -48,7 +45,6 @@ public class GisHelper {
         String wktWith = Wkt.toWkt(geometry);
         return wktWith.replace("SRID=4326;", "");
     }
-
 
     public static String toWktStringWithSrid(Geometry<?> geometry) {
         AssertUtils.throwExceptionIfNull(geometry);
@@ -83,7 +79,6 @@ public class GisHelper {
     }
 
     /**
-     *
      * @param wktString - a WellKnownBinary String
      * @return GeoLatte.geometry - parsed to a simple WKT format
      */
@@ -94,5 +89,4 @@ public class GisHelper {
 
         return (D) Wkt.fromWkt(wktString, WGS84_REFERENCE_SYSTEM);
     }
-
 }

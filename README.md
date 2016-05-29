@@ -53,3 +53,10 @@ Tested with IntelliJ IDEA 15.0.3.
  (This can take up to 30 Minutes, because it has to compile some database extensions
  which are needed for calculating routes.)
 5. Go to http://localhost:15672 to verify if Rabbit-MQ Broker has started correctly
+
+## Running all tests
+To run all test you need Firefox on your machine. Then call following command:
+ ```
+ <your-folder>/activator test
+ ```
+

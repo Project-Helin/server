@@ -5,11 +5,6 @@
 # Home page
 GET         /                                                       controllers.Application.index()
 
-# Message Viewer
-GET         /messageviewer                                          controllers.MessageViewer.index()
-GET         /sendSampleMessage                                      controllers.MessageViewer.sendSampleMessage()
-GET         /messageviewer/register                                 controllers.MessageViewer.register()
-
 #Organisation
 GET         /organisations/add                                      controllers.OrganisationsController.add()
 POST        /organisations/create                                   controllers.OrganisationsController.create()
@@ -82,11 +77,9 @@ GET         /assets/*file                                           controllers.
 GET         /registerDrone                                          controllers.RegisterDroneController.index()
 
 
-
 #API
 
 ##Drones
-
 POST        /api/drones/                                            controllers.api.DronesApiController.create()
 
 ##Project
@@ -94,7 +87,6 @@ GET         /api/projects/                                          controllers.
 GET         /api/projects/:projectId                                controllers.api.ProjectsApiController.show(projectId : java.util.UUID)
 POST        /api/projects/:projectId/update                         controllers.api.ProjectsApiController.updateOrInsert(projectId : java.util.UUID)
 GET         /api/projects/:projectId/calculate-route                controllers.api.ProjectsApiController.calculateRoute(projectId : java.util.UUID, dronePosition : String, customerPosition : String)
-#TODO Get Project including Zones
 
 ##Order
 POST        /api/orders/                                            controllers.api.OrderApiController.create()
@@ -104,8 +96,8 @@ POST        /api/orders/:orderId/confirm/:customerId                controllers.
 POST        /api/orders/:orderId/delete                             controllers.api.OrderApiController.delete(orderId : java.util.UUID)
 
 ## Products
-GET         /api/products/                                          controllers.api.ProductsApiController.index()
-GET         /api/products/find-by-location/:lat/:lon                controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
+GET         /api/products/                                          controllers.api.ProductsApiController.findByLocation(lat : Double, lon : Double)
+GET         /api/products/by-project                                controllers.api.ProductsApiController.findByProject(projectId :  String)
 
 # Mission
 GET         /api/missions/find-by-order/:orderId                    controllers.api.MissionApiController.findByOrder(orderId : java.util.UUID)

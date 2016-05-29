@@ -19,8 +19,8 @@ public class Wgs84Helper {
     }
 
     /**
-     * Haversin Formula
-     * Approx! -> Berlin to Tokio is 0.5% off to the real distance!
+     * Uses Haversine Formula to calculate the distance from two given LatLon values.
+     * This is only an approximation. E.g Berlin to Tokio is 0.5% off to the real distance!
      */
     public static double getDistanceFromLatLonInKm(double lat1, double lon1,
                                                    double lat2, double lon2) throws Wgs84CoordinateException {
@@ -32,13 +32,12 @@ public class Wgs84Helper {
         double deltaLat = degreeToRad(lat2 - lat1);  // degreeToRad below
         double deltaLon = degreeToRad(lon2 - lon1);
 
-        // TODO Martin: WAT - NaNaNa
-        double a =
+        double cumulatedAngle =
                 Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
                         Math.cos(degreeToRad(lat1)) * Math.cos(degreeToRad(lat2)) * Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
 
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = EARTH_RADIUS_IN_KM * c; // Distance in km
+        double segmentPiece = 2 * Math.atan2(Math.sqrt(cumulatedAngle), Math.sqrt(1 - cumulatedAngle));
+        double distance = EARTH_RADIUS_IN_KM * segmentPiece; // Distance in km
         return distance;
     }
 

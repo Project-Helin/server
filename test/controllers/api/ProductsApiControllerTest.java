@@ -1,5 +1,6 @@
 package controllers.api;
 
+import ch.helin.messages.dto.ProductDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
 import commons.AbstractWebServiceIntegrationTest;
@@ -49,7 +50,7 @@ public class ProductsApiControllerTest extends AbstractWebServiceIntegrationTest
     }
 
     @Test
-    public void shouldNotFindProductByLocationBecasueOutsideOfOrderZone() throws IOException {
+    public void shouldNotFindProductByLocationBecauseOutsideOfOrderZone() throws IOException {
         createProduct();
 
         // (40, 0) is outside of the order zone
@@ -59,6 +60,26 @@ public class ProductsApiControllerTest extends AbstractWebServiceIntegrationTest
         );
 
         assertThat(list).isEmpty();
+    }
+
+
+    @Test
+    public void shouldFindProductByLocationProject() {
+        Product product = createProduct();
+
+        Project project = product.getProjects().stream().findFirst().get();
+
+        List<ProductDto> foundProducts = apiHelper.doGetWithListResponse(
+            routes.ProductsApiController.findByProject(project.getIdAsString()),
+            new TypeReference<List<ProductDto>>() {}
+        );
+
+        assertThat(foundProducts).hasSize(1);
+
+        ProductDto foundProduct = foundProducts.get(0);
+        assertThat(foundProduct.getId()).isEqualTo(product.getId());
+        assertThat(foundProduct.getName()).isEqualTo(product.getName());
+        assertThat(foundProduct.getPrice()).isEqualTo(product.getPrice());
     }
 
     private Product createProduct() {

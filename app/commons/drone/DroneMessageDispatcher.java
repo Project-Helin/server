@@ -22,13 +22,14 @@ public class DroneMessageDispatcher {
     //circular dependencies, which point back to DroneCommunicationManager
 
     @Inject
-    public Provider<DroneInfosController> droneInfosControllerProvider;
+    private Provider<DroneInfosController> droneInfosControllerProvider;
 
     @Inject
     private Provider<MissionController> missionControllerProvider;
 
     public void dispatchMessageToController(UUID droneId, String jsonMessage) {
-        logger.debug("Received Message " + jsonMessage);
+        logger.debug("Received Message {}", jsonMessage);
+
         MessageConverter messageConverter = new JsonBasedMessageConverter();
         Message message = messageConverter.parseStringToMessage(jsonMessage);
 
@@ -46,8 +47,7 @@ public class DroneMessageDispatcher {
                 missionControllerProvider.get().onFinishedMissionMessageReceived(droneId, finishedMissionMessage);
                 break;
             default:
-                    logger.error("Message Type: " + message.getPayloadType() + " unknown");
-
+                logger.error("Message Type: {} unknown ", message.getPayloadType());
         }
     }
 

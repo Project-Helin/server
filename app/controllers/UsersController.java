@@ -82,12 +82,17 @@ public class UsersController extends Controller {
         if (form.hasErrors()) {
             return badRequest(add.render(form));
         } else {
-            User user = form.get();
-            user.setId(UUID.randomUUID());
-            user.setConfirmationToken(UUID.randomUUID().toString());
-            userDao.persist(user);
+            createUser(form);
+
             flash("info", "You should have received an E-Mail confirmation, please click on the link in the E-Mail");
             return redirect(routes.UsersController.login());
         }
+    }
+
+    private void createUser(Form<User> form) {
+        User user = form.get();
+        user.setId(UUID.randomUUID());
+        user.setConfirmationToken(UUID.randomUUID().toString());
+        userDao.persist(user);
     }
 }

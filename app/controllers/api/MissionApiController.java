@@ -2,8 +2,8 @@ package controllers.api;
 
 import ch.helin.messages.dto.MissionDto;
 import com.google.inject.Inject;
-import commons.WebSockets.MissionWebSocketManager;
-import commons.WebSockets.WebSocketConnection;
+import commons.websocket.MissionWebSocketManager;
+import commons.websocket.WebSocketConnection;
 import dao.MissionsDao;
 import mappers.MissionMapper;
 import models.Mission;
@@ -32,7 +32,10 @@ public class MissionApiController extends Controller {
     @Transactional
     public Result findByOrder(UUID orderId) {
         List<Mission> missions = missionsDao.findByOrder(orderId);
-        List<MissionDto> collect = missions.stream().map(missionMapper::convertToMissionDto).collect(Collectors.toList());
+        List<MissionDto> collect = missions.stream()
+            .map(missionMapper::convertToMissionDto)
+            .collect(Collectors.toList());
+
         return ok(Json.toJson(collect));
     }
 
@@ -55,8 +58,4 @@ public class MissionApiController extends Controller {
             webSocketManager.addWebSocketConnection(missionId, webSocketConnection);
         });
     }
-
-
-
-
 }

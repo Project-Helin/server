@@ -26,16 +26,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Transactional
 public class OrdersController extends Controller {
 
-    private static final Logger logger = getLogger(OrdersController.class);
-
     @Inject
     private SessionHelper sessionHelper;
 
     @Inject
     private OrderDao orderDao;
-
-    @Inject
-    private MissionsDao missionsDao;
 
     @Inject
     private ProjectsDao projectsDao;
@@ -57,6 +52,7 @@ public class OrdersController extends Controller {
 
         List<Order> orders =
             orderDao.findByProjectId(projectId, sessionHelper.getOrganisation(session()));
+
         List<Project> projects = findAllProjects();
 
         return ok(index.render(projects, orders, selectedProject));

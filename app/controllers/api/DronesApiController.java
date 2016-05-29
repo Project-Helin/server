@@ -37,6 +37,7 @@ public class DronesApiController extends Controller {
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result create () {
+
         JsonNode json = request().body().asJson();
         String name = json.findPath("name").textValue();
         int payload = Integer.valueOf(json.findPath("payload").textValue());
@@ -47,29 +48,33 @@ public class DronesApiController extends Controller {
         } else if (organisationToken == null) {
             return badRequest("Missing_Parameter_OrganisationToken");
         } else {
-            Drone drone = new Drone();
-            drone.setName(name);
-            drone.setPayload(payload);
             Organisation organisation = getOrganisation(organisationToken);
             if (organisation == null) {
                 return badRequest("Wrong_Organisation_Token");
             }
-            drone.setOrganisation(organisation);
 
-            drone.setId(UUID.randomUUID());
-            drone.setToken(UUID.randomUUID());
-            drone.setIsActive(true);
-
-            droneDao.persist(drone);
-
-            droneCommunicationManager.addDrone(drone);
-
-            if (drone.getProject() != null) {
-                missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
-            }
-
+            Drone drone = createDrone(name, payload, organisation);
             return ok(Json.toJson(droneMapper.getDroneDto(drone)));
         }
+    }
+
+    private Drone createDrone(String name, int payload, Organisation organisation) {
+        Drone drone = new Drone();
+        drone.setName(name);
+        drone.setPayload(payload);
+        drone.setOrganisation(organisation);
+        drone.setId(UUID.randomUUID());
+        drone.setToken(UUID.randomUUID());
+        drone.setIsActive(true);
+
+        droneDao.persist(drone);
+        droneCommunicationManager.addDrone(drone);
+
+        if (drone.getProject() != null) {
+            missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
+        }
+        
+        return drone;
     }
 
     private Organisation getOrganisation(String organisationToken) {
