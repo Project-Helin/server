@@ -20,8 +20,8 @@ public class UsersControllerTest extends AbstractE2ETest {
     @Test
     public void registerUser() {
         User user = new User();
-        user.setName("Anna Bolika");
-        user.setEmail("anna.bolika@example.com");
+        user.setName("Bruce Wayne");
+        user.setEmail("batman@wayneenterprise");
         user.setPassword(PLAIN_TEXT_PASSWORD);
 
         browser.goTo("/");
@@ -61,7 +61,7 @@ public class UsersControllerTest extends AbstractE2ETest {
     @Test
     public void registerUserWithoutEmail() {
         User userWithoutEmail = new User();
-        userWithoutEmail.setName("Anna Bolika");
+        userWithoutEmail.setName("Bruce Wayne");
         userWithoutEmail.setEmail("");
         userWithoutEmail.setPassword(PLAIN_TEXT_PASSWORD);
 
