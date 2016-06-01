@@ -66,7 +66,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
                 .setProjectId(project.getIdAsString())
-                .setOrderProducts(Arrays.asList(
+                .setOrderProducts(Collections.singletonList(
                     new OrderProductApiDto()
                         .setId(product.getIdAsString())
                         .setAmount(1)
@@ -82,12 +82,14 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             List<Order> all = orderDao.findAll();
             assertThat(all).hasSize(1);
 
+            Order order = all.get(0);
+            verifyOrder(orderToSent, order);
+
             // customer is not set yet
-            Customer customer = all.get(0).getCustomer();
-            assertThat(customer).isNull();
+            assertThat(order.getCustomer()).isNull();
 
             // should has one mission
-            List<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(order);
             assertThat(missions).hasSize(1);
 
             Mission first = missions.get(0);
@@ -103,27 +105,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
         });
     }
 
-    private void verifyWayPoints(Mission first) {
-        List<WayPoint> waypoints = first.getRoute().getWayPoints();
-
-        // -1 => because of drop way point
-        // (size-1) / 2 => number of waypoints from drone-to-customer
-        int dropWayPoint = (waypoints.size() - 1) / 2;
-
-        // first half is fly
-        for (int i = 0; i < dropWayPoint; i++) {
-            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
-        }
-
-        // then drop
-        assertThat(waypoints.get(dropWayPoint + 1).getAction()).isEqualTo(Action.FLY);
-
-        // then fly back
-        for (int i = dropWayPoint + 1; i < waypoints.size(); i++) {
-            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
-        }
-    }
-
     @Test
     public void shouldNotSplitBecauseOrderAmountIsSmallerThanMaxAmount() {
         OrderApiDto orderToSent = jpaApi.withTransaction((em) -> {
@@ -137,7 +118,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             return new OrderApiDto()
                 .setCustomerPosition(new Position(10.03, 30.200))
                 .setProjectId(project.getIdAsString())
-                .setOrderProducts(Arrays.asList(
+                .setOrderProducts(Collections.singletonList(
                     new OrderProductApiDto()
                         .setId(product.getIdAsString())
                         .setAmount(3) // <= we order 3 items
@@ -152,8 +133,10 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             List<Order> all = orderDao.findAll();
             assertThat(all).hasSize(1);
 
+            verifyOrder(orderToSent, all.get(0));
+
             // should has one mission
-            List<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(all.get(0));
             assertThat(missions).hasSize(1);
 
             Mission first = missions.get(0);
@@ -162,7 +145,6 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             assertThat(first.getOrderProduct().getAmount()).isEqualTo(3);
         });
     }
-
 
     @Test
     public void shouldSplitOrderIntoTwoExactMissions() {
@@ -193,6 +175,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             assertThat(all).hasSize(1);
 
             Order firstOrder = all.get(0);
+            verifyOrder(orderToSent, firstOrder);
 
             // should has one mission
             Set<Mission> missions = firstOrder.getMissions();
@@ -240,8 +223,10 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             List<Order> all = orderDao.findAll();
             assertThat(all).hasSize(1);
 
+            verifyOrder(orderToSent, all.get(0));
+
             // should has one mission
-            List<Mission> missions = getFirstMissionSortedByAmount(all);
+            List<Mission> missions = getFirstMissionSortedByAmount(all.get(0));
             assertThat(missions).hasSize(3);
 
             Mission first = missions.get(0);
@@ -260,6 +245,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             assertThat(third.getOrderProduct().getAmount()).isEqualTo(5);
         });
     }
+
 
     @Test
     public void confirmOrderTest() {
@@ -320,11 +306,42 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
         });
     }
 
-    private List<Mission> getFirstMissionSortedByAmount(List<Order> all) {
-        return all.get(0)
+    private List<Mission> getFirstMissionSortedByAmount(Order order) {
+        return order
             .getMissions()
             .stream()
             .sorted(Comparator.comparing((e) -> e.getOrderProduct().getAmount()))
             .collect(Collectors.toList());
+    }
+
+    private void verifyOrder(OrderApiDto orderToSent, Order order) {
+
+        assertThat(order.getCustomerPosition().getPosition().getCoordinate(0))
+            .isEqualTo(orderToSent.getCustomerPosition().getLat());
+        assertThat(order.getCustomerPosition().getPosition().getCoordinate(1))
+            .isEqualTo(orderToSent.getCustomerPosition().getLon());
+        assertThat(order.getProject().getIdAsString()).isEqualTo(orderToSent.getProjectId());
+
+    }
+
+    private void verifyWayPoints(Mission first) {
+        List<WayPoint> waypoints = first.getRoute().getWayPoints();
+
+        // -1 => because of drop way point
+        // (size-1) / 2 => number of waypoints from drone-to-customer
+        int dropWayPoint = (waypoints.size() - 1) / 2;
+
+        // first half is fly
+        for (int i = 0; i < dropWayPoint; i++) {
+            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
+        }
+
+        // then drop
+        assertThat(waypoints.get(dropWayPoint + 1).getAction()).isEqualTo(Action.FLY);
+
+        // then fly back
+        for (int i = dropWayPoint + 1; i < waypoints.size(); i++) {
+            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
+        }
     }
 }
