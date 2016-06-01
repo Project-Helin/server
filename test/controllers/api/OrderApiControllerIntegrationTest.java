@@ -1,5 +1,6 @@
 package controllers.api;
 
+import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
 import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
@@ -97,9 +98,30 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
 
             assertThat(first.getRoute()).isNotNull();
             assertThat(first.getRoute().getWayPoints()).isNotEmpty();
-            // TODO Kiru verify waypoint have action fly ( can be done if route is fixed )
 
+            verifyWayPoints(first);
         });
+    }
+
+    private void verifyWayPoints(Mission first) {
+        List<WayPoint> waypoints = first.getRoute().getWayPoints();
+
+        // -1 => because of drop way point
+        // (size-1) / 2 => number of waypoints from drone-to-customer
+        int dropWayPoint = (waypoints.size() - 1) / 2;
+
+        // first half is fly
+        for (int i = 0; i < dropWayPoint; i++) {
+            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
+        }
+
+        // then drop
+        assertThat(waypoints.get(dropWayPoint + 1).getAction()).isEqualTo(Action.FLY);
+
+        // then fly back
+        for (int i = dropWayPoint + 1; i < waypoints.size(); i++) {
+            assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
+        }
     }
 
     @Test
