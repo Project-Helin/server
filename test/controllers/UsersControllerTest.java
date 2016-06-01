@@ -1,7 +1,10 @@
 package controllers;
 
+import com.google.inject.Inject;
 import commons.AbstractE2ETest;
+import dao.UserDao;
 import models.User;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import play.i18n.Messages;
 
@@ -10,6 +13,9 @@ import static org.fest.assertions.Assertions.assertThat;
 public class UsersControllerTest extends AbstractE2ETest {
 
     private static final String PLAIN_TEXT_PASSWORD = "test-pasasdf ksajd f sword";
+
+    @Inject
+    private UserDao userDao;
 
     @Test
     public void registerUser() {
@@ -30,6 +36,27 @@ public class UsersControllerTest extends AbstractE2ETest {
         assertThat(browser.pageSource()).contains(user.getName());
     }
 
+    @Test
+    public void registerUserWithSameEmailTwice() {
+        User existingUser = new User();
+        existingUser.setConfirmationToken(RandomStringUtils.random(10));
+        existingUser.setName("Burce Wayne");
+        existingUser.setEmail("batman@example.com");
+        existingUser.setPassword(PLAIN_TEXT_PASSWORD);
+        jpaApi.withTransaction(() -> userDao.persist(existingUser));
+
+        browser.goTo("/");
+        browser.click("#register");
+
+        User newUserWithSameEmail = new User();
+        newUserWithSameEmail.setName("Batman B.");
+        newUserWithSameEmail.setEmail("batman@example.com");
+        newUserWithSameEmail.setPassword(PLAIN_TEXT_PASSWORD);
+
+        fillInRegisterForm(newUserWithSameEmail, PLAIN_TEXT_PASSWORD);
+
+        assertThat(browser.pageSource()).contains("Email address is already taken");
+    }
 
     @Test
     public void registerUserWithoutEmail() {

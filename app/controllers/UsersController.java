@@ -83,7 +83,7 @@ public class UsersController extends Controller {
 
         } else if(isEmailAddressTaken(form.get().getEmail())){
 
-            form.reject("Email address is alrady taken");
+            form.reject("Email address is already taken");
             return badRequest(add.render(form));
         } else {
             createUser(form);
