@@ -73,7 +73,7 @@
                                 <div class="col-xs-6" ng-show="zone.name">
                                     {{zone.name}}
                                 </div>
-                                <div class="col-xs-6">
+                                <div class="col-xs-6" ng-hide="zone.type == 'OrderZone'">
                                     Flyheight {{zone.height}}m
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                         <div class="col-xs-6">
                                             <input type="text" placeholder="Zone-Name" ng-model="data.selectedZone.name">
                                         </div>
-                                        <div class="col-xs-6">
+                                        <div class="col-xs-6" ng-hide="zone.type == 'OrderZone'">
                                             Flyheight <input type="number" min="5" max="500" ng-model="data.selectedZone.height">
                                             m
                                         </div>
