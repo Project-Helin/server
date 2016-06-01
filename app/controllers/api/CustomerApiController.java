@@ -30,8 +30,8 @@ public class CustomerApiController extends Controller {
         Customer found = jpaApi.withTransaction(em -> customerDao.findById(customerId));
 
         CustomerApiDto customerApiDto = new CustomerApiDto();
-        customerApiDto.setFamily_name(found.getFamilyName());
-        customerApiDto.setGiven_name(found.getGivenName());
+        customerApiDto.setFamilyName(found.getFamilyName());
+        customerApiDto.setGivenName(found.getGivenName());
         customerApiDto.setEmail(found.getEmail());
         customerApiDto.setId(found.getIdAsString());
 
@@ -59,8 +59,8 @@ public class CustomerApiController extends Controller {
 
     private CustomerApiDto createCustomer(CustomerApiDto customerApiDto) {
         Customer customer = new Customer();
-        customer.setFamilyName(customerApiDto.getFamily_name());
-        customer.setGivenName(customerApiDto.getGiven_name());
+        customer.setFamilyName(customerApiDto.getFamilyName());
+        customer.setGivenName(customerApiDto.getGivenName());
         customer.setEmail(customerApiDto.getEmail());
 
         jpaApi.withTransaction(() -> {

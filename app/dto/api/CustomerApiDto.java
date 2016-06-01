@@ -3,8 +3,9 @@ package dto.api;
 public class CustomerApiDto {
     private String id;
     private String email;
-    private String given_name;
-    private String family_name;
+
+    private String givenName;
+    private String familyName;
 
     public String getId() {
         return id;
@@ -22,19 +23,19 @@ public class CustomerApiDto {
         this.email = email;
     }
 
-    public String getGiven_name() {
-        return given_name;
+    public String getGivenName() {
+        return givenName;
     }
 
-    public void setGiven_name(String given_name) {
-        this.given_name = given_name;
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
     }
 
-    public String getFamily_name() {
-        return family_name;
+    public String getFamilyName() {
+        return familyName;
     }
 
-    public void setFamily_name(String family_name) {
-        this.family_name = family_name;
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 }
