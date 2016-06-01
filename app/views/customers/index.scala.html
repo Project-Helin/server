@@ -12,14 +12,12 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Token</th>
                             </tr>
                         </thead>
                         <tbody>
                             @for(customer <- allCustomers) {
                                 <tr>
-                                    <th>@customer.getFamilyName</th>
-                                    <th>@customer.getGivenName</th>
+                                    <th>@customer.getFamilyName @customer.getGivenName</th>
                                     <th>@customer.getEmail</th>
                                 </tr>
                             }
