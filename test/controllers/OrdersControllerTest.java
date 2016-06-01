@@ -42,7 +42,7 @@ public class OrdersControllerTest extends AbstractE2ETest {
         Order order = jpaApi.withTransaction((em) -> {
             return testHelper.createNewOrder(
                 testHelper.createNewProject(testHelper.createNewOrganisation()),
-                testHelper.createCustomer()
+                testHelper.createCustomer("Peter", "Mueller")
             );
         });
 

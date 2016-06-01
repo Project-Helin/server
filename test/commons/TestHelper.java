@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
 import models.*;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
@@ -319,11 +318,14 @@ public class TestHelper {
     }
 
     public Customer createCustomer() {
-        Customer customer = new Customer();
-        customer.setGivenName("Bruce");
-        customer.setFamilyName("Wayne");
-        customer.setEmail("testcustomer@helin.ch");
+        return createCustomer("Bruce", "Wayne");
+    }
 
+    public Customer createCustomer(String givenName, String familyName) {
+        Customer customer = new Customer();
+        customer.setGivenName(givenName);
+        customer.setFamilyName(familyName);
+        customer.setEmail("testcustomer@helin.ch");
         customerDao.persist(customer);
 
         return customer;
