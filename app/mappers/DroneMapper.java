@@ -15,6 +15,7 @@ public class DroneMapper {
         }
         dto.setOrganisationToken(drone.getOrganisation().getToken());
         dto.setToken(drone.getToken());
+        dto.setActive(drone.getIsActive());
 
         return dto;
     }

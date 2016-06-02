@@ -1,10 +1,14 @@
 package controllers;
 
+import ch.helin.messages.dto.message.DroneDtoMessage;
 import com.google.inject.Inject;
 import commons.ModelHelper;
 import commons.SessionHelper;
+import commons.drone.DroneCommunicationManager;
 import commons.order.MissionDispatchingService;
+import controllers.messages.DroneInfosController;
 import dao.DroneDao;
+import mappers.DroneMapper;
 import models.Drone;
 import models.Organisation;
 import org.slf4j.Logger;
@@ -36,6 +40,12 @@ public class DronesController extends Controller {
     @Inject
     private MissionDispatchingService missionDispatchingService;
 
+    @Inject
+    private DroneMapper droneMapper;
+
+    @Inject
+    private DroneCommunicationManager droneCommunicationManager;
+
     private static final Logger logger = LoggerFactory.getLogger(DronesController.class);
 
     @Security.Authenticated(SecurityAuthenticator.class)
@@ -66,10 +76,10 @@ public class DronesController extends Controller {
     }
 
     public Result update(UUID id) {
-        Drone found = getDroneById(id);
+        Drone foundDrone = getDroneById(id);
 
-        if (found == null) {
-            return forbidden("Drone not found!");
+        if (foundDrone == null) {
+            return forbidden("Drone not foundDrone!");
         }
 
         Form<Drone> form = formFactory
@@ -81,15 +91,20 @@ public class DronesController extends Controller {
             return badRequest(edit.render(form));
         } else {
 
-            ModelHelper.updateAttributes(found, form.get());
+            ModelHelper.updateAttributes(foundDrone, form.get());
             if (form.get().getIsActive() == null) {
-                found.setIsActive(false);
+                foundDrone.setIsActive(false);
             }
-            droneDao.persist(found);
+            droneDao.persist(foundDrone);
             flash("success", "Saved successfully");
 
-            if (found.getProject() != null) {
-                missionDispatchingService.tryToDispatchWaitingMissions(found.getProject().getId());
+            DroneDtoMessage droneDtoMessage = new DroneDtoMessage();
+            droneDtoMessage.setDroneDto(droneMapper.getDroneDto(foundDrone));
+
+            droneCommunicationManager.sendMessageToDrone(foundDrone.getId(), droneDtoMessage);
+
+            if (foundDrone.getProject() != null) {
+                missionDispatchingService.tryToDispatchWaitingMissions(foundDrone.getProject().getId());
             }
 
             return redirect(routes.DronesController.index());
