@@ -15,7 +15,7 @@ apt-get install -y autoconf build-essential cmake docbook-mathml docbook-xsl lib
 # RabbitMQ
 # Add RabbitMQ to source list
 echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
-curl http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | sudo apt-key add -
+wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
 
 # Add PostgreSQL 9.5 to source list
 echo "deb http://apt.postgresql.org/pub/repos/apt trusty-pgdg main" >> /etc/apt/sources.list
