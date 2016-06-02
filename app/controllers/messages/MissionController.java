@@ -1,4 +1,4 @@
-package controllers;
+package controllers.messages;
 
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;

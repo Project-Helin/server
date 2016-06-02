@@ -8,8 +8,8 @@ import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
 import ch.helin.messages.dto.message.missionMessage.FinishedMissionMessage;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import controllers.DroneInfosController;
-import controllers.MissionController;
+import controllers.messages.DroneInfosController;
+import controllers.messages.MissionController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

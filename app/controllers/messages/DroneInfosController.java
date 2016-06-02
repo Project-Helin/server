@@ -1,4 +1,4 @@
-package controllers;
+package controllers.messages;
 
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import com.google.inject.Inject;

@@ -4,6 +4,7 @@ import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.drone.DroneCommunicationManager;
+import controllers.messages.MissionController;
 import dao.DroneDao;
 import dao.MissionsDao;
 import mappers.MissionMapper;
