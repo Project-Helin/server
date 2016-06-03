@@ -134,8 +134,8 @@ public class ZoneHelper {
         int numberOfDeliveryZonesThatContainCustomer =
                 (int) zones.stream()
                         .filter(x -> x.getType() == ZoneType.DeliveryZone)
-                        .map(x -> JTS.to(x.getPolygon()))
-                        .filter(x -> x.contains(customerAsJtsPoint))
+                        .map(x -> JTS.to(x.getPolygon()).contains(JTS.to(customerPoint)))
+                        .filter(x -> x == Boolean.TRUE) // was needed because, Stream could not figure out the type
                         .count();
 
         return numberOfDeliveryZonesThatContainCustomer > 0;
