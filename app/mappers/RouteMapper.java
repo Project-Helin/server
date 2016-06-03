@@ -32,7 +32,11 @@ public class RouteMapper {
 
         wayPointDto.setId(wayPoint.getId());
         Position position = GisHelper.createPosition(wayPoint.getPosition());
-        position.setHeight(wayPoint.getHeight());
+
+        if (wayPoint.getHeight() != null) {
+            position.setHeight(wayPoint.getHeight());
+        }
+
         wayPointDto.setPosition(position);
         wayPointDto.setId(wayPoint.getId());
         wayPointDto.setAction(wayPoint.getAction());
