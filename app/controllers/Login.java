@@ -1,4 +1,4 @@
-package views.formdata;
+package controllers;
 
 import play.data.validation.Constraints;
 

@@ -2,14 +2,16 @@ package commons.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.converter.MessageConverter;
+import ch.helin.messages.dto.message.DroneActiveState;
+import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;
 import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
 import ch.helin.messages.dto.message.missionMessage.FinishedMissionMessage;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import controllers.DroneInfosController;
-import controllers.MissionController;
+import controllers.messages.DroneInfosController;
+import controllers.messages.MissionController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,15 +39,24 @@ public class DroneMessageDispatcher {
             case DroneInfo:
                 DroneInfoMessage droneInfoMessage = (DroneInfoMessage) message;
                 droneInfosControllerProvider.get().onDroneInfoReceived(droneId, droneInfoMessage);
+                logger.info("DroneInfoMessage {}", droneInfoMessage.getDroneInfo());
                 break;
             case ConfirmMission:
                 ConfirmMissionMessage missionMessage = (ConfirmMissionMessage) message;
                 missionControllerProvider.get().onConfirmMissionMessageReceived(droneId, missionMessage);
+                logger.info("ConfirmMissionMessage {}", missionMessage.getMissionConfirmType());
                 break;
             case FinishedMission:
                 FinishedMissionMessage finishedMissionMessage = (FinishedMissionMessage) message;
                 missionControllerProvider.get().onFinishedMissionMessageReceived(droneId, finishedMissionMessage);
+                logger.info("FinishedMissionMessage {}", finishedMissionMessage.getFinishedType());
                 break;
+            case DroneActiveState:
+                DroneActiveStateMessage droneActiveStateMessage = (DroneActiveStateMessage) message;
+                droneInfosControllerProvider.get().onDroneActiveStateReceived(droneId, droneActiveStateMessage);
+                logger.info("DroneActiveStateMessage {}", droneActiveStateMessage.getDroneActiveState());
+                break;
+
             default:
                 logger.error("Message Type: {} unknown ", message.getPayloadType());
         }

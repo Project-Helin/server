@@ -1,6 +1,6 @@
 (function () {
-    angular.module('RouteDebugger').controller('RouteDebuggerCtrl', ['$scope', 'ProjectsService',
-        function ($scope, ProjectsService) {
+    angular.module('RouteDebugger').controller('RouteDebuggerCtrl', ['$scope', 'ProjectsService', 'gisHelper',
+        function ($scope, ProjectsService, gisHelper) {
 
             function initialize() {
                 $scope.data = {
@@ -13,6 +13,7 @@
                 };
 
                 $scope.zoneTypes = ['OrderZone', 'FlightZone', 'DeliveryZone', 'LoadingZone'];
+                $scope.zoneColors = gisHelper.zoneColors;
 
                 ProjectsService.loadProjects().then(function (projects) {
                     $scope.data.projects = projects;

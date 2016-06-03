@@ -3,6 +3,7 @@ package dao;
 import models.User;
 import models.utils.AuthenticationHelper;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class UserDao extends AbstractDao<User> {
@@ -20,13 +21,24 @@ public class UserDao extends AbstractDao<User> {
         }
     }
 
-    public User findByEmail (String email) {
+    public User findByEmail(String email) {
         String sql = "select e from users e where e.email=:email";
 
-        TypedQuery<User> email1 = jpaApi.em()
+        TypedQuery<User> query = jpaApi.em()
             .createQuery(sql, getEntityClass())
             .setParameter("email", email);
 
-        return getSingleResultOrNull(email1);
+        return getSingleResultOrNull(query);
+    }
+
+    public boolean isEmailAvailable(String email) {
+        String sql = "select count(e) from users e where e.email=:email";
+
+        Query query = jpaApi.em()
+            .createQuery(sql)
+            .setParameter("email", email);
+
+        Long count = (Long) query.getSingleResult();
+        return count == 0;
     }
 }

@@ -33,7 +33,7 @@ public class MissionDispatchingService {
         waitingMissions.stream().forEach(this::tryAssignDroneForThisMission);
     }
 
-    public boolean tryAssignDroneForThisMission(Mission mission) {
+    public void tryAssignDroneForThisMission(Mission mission) {
 
         Integer amount = mission.getOrderProduct().getAmount();
         Integer weightGramm = mission.getOrderProduct().getProduct().getWeightGramm();
@@ -56,13 +56,7 @@ public class MissionDispatchingService {
             assignMissionMessage.setMission(missionMapper.convertToMissionDto(mission));
 
             droneCommunicationManagerProvider.get().sendMessageToDrone(matchingDrone.getId(), assignMissionMessage);
-
-            return true;
-        } else {
-            return false;
         }
-
     }
-
 
 }

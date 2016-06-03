@@ -38,7 +38,6 @@ public class OrdersController extends Controller {
     @Inject
     private FormFactory formFactory;
 
-
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         String selectedProject = getSelectedProject();

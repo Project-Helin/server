@@ -3,7 +3,6 @@ package controllers.api;
 import ch.helin.messages.dto.OrderDto;
 import com.google.inject.Inject;
 import commons.AbstractE2ETest;
-import commons.TestHelper;
 import dao.OrderDao;
 import mappers.RouteMapper;
 import models.Mission;
@@ -23,13 +22,13 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
     private Organisation currentOrganisation;
 
     @Inject
-    ApiHelper apiHelper;
+    private ApiHelper apiHelper;
 
     @Inject
-    RouteMapper routeMapper;
+    private RouteMapper routeMapper;
 
     @Inject
-    OrderDao orderDao;
+    private OrderDao orderDao;
 
     @Before
     public void login() {
@@ -55,12 +54,17 @@ public class OrderApiControllerE2ETest extends AbstractE2ETest {
             assertThat(orderDto.getState()).isEqualTo(order.getState().name());
             assertThat(orderDto.getCustomerName()).isEqualTo(order.getCustomer().getFamilyName());
             assertThat(orderDto.getMissions().size()).isEqualTo(3);
-            assertThat(orderDto.getCustomerPosition().getLon()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(0));
-            assertThat(orderDto.getCustomerPosition().getLat()).isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(1));
+
+            assertThat(orderDto.getCustomerPosition().getLon())
+                .isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(0));
+            assertThat(orderDto.getCustomerPosition().getLat())
+                .isEqualTo(order.getCustomerPosition().getPosition().getCoordinate(1));
+
             assertThat(orderDto.getProjectId()).isEqualTo(order.getProject().getId());
 
             Mission firstMission = order.getMissions().iterator().next();
-            assertThat(orderDto.getMissions().get(0).getRoute()).isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
+            assertThat(orderDto.getMissions().get(0).getRoute())
+                .isEqualTo(routeMapper.convertToRouteDto(firstMission.getRoute()));
         });
 
     }

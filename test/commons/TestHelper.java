@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import commons.gis.GisHelper;
 import dao.*;
 import models.*;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.geolatte.geom.Polygon;
 import play.db.jpa.JPAApi;
 
@@ -142,8 +141,8 @@ public class TestHelper {
     public User createUser(String plainTextPassword) {
         User user = new User();
         user.setConfirmationToken(UUID.randomUUID().toString());
-        user.setName("Anna Bolika");
-        user.setEmail("anna.bolika@example.com");
+        user.setName("Burce Wayne");
+        user.setEmail("batman@wayneenterprise");
         user.setPassword(plainTextPassword);
 
         userDao.persist(user);
@@ -158,8 +157,8 @@ public class TestHelper {
     public User createUserWithOrganisation(String plainTextPassword, Organisation organisation) {
         User user = new User();
         user.setConfirmationToken(UUID.randomUUID().toString());
-        user.setName("Anna Bolika");
-        user.setEmail("anna.bolika@example.com");
+        user.setName("Bruce Wayne");
+        user.setEmail("batman@wayneenterprise");
         user.setPassword(plainTextPassword);
 
         userDao.persist(user);
@@ -319,11 +318,14 @@ public class TestHelper {
     }
 
     public Customer createCustomer() {
-        Customer customer = new Customer();
-        customer.setGivenName("Bruce");
-        customer.setFamilyName("Wayne");
-        customer.setEmail("testcustomer@helin.ch");
+        return createCustomer("Bruce", "Wayne");
+    }
 
+    public Customer createCustomer(String givenName, String familyName) {
+        Customer customer = new Customer();
+        customer.setGivenName(givenName);
+        customer.setFamilyName(familyName);
+        customer.setEmail("testcustomer@helin.ch");
         customerDao.persist(customer);
 
         return customer;

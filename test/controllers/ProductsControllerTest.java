@@ -87,6 +87,27 @@ public class ProductsControllerTest extends AbstractE2ETest {
     }
 
     @Test
+    public void shouldAddNewProductWithDecimalPrice() {
+        browser.goTo(routes.ProductsController.add().url());
+
+        browser.fill(withId("Name")).with("Kaboom");
+        browser.fill(withId("Price")).with("100.50");
+        browser.fill(withId("weightGramm")).with("300");
+        browser.fill(withId("maxItemPerDrone")).with("99");
+        browser.click("#save");
+
+        // verify
+        List<Product> all = jpaApi.withTransaction((e) -> {
+            return productsDao.findAll();
+        });
+        assertThat(all).hasSize(1);
+        assertThat(all.get(0).getName()).isEqualTo("Kaboom");
+        assertThat(all.get(0).getPrice()).isEqualTo(100.50);
+        assertThat(all.get(0).getWeightGramm()).isEqualTo(300);
+        assertThat(all.get(0).getMaxItemPerDrone()).isEqualTo(99);
+    }
+
+    @Test
     public void shouldUpdateProduct() {
         Product product = jpaApi.withTransaction(em -> {
             return testHelper.createProduct(currentOrganisation);

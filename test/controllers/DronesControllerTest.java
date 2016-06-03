@@ -1,17 +1,35 @@
 package controllers;
 
 import commons.AbstractE2ETest;
+import commons.drone.DroneCommunicationManager;
+import controllers.messages.DroneInfosController;
 import models.Drone;
 import models.Organisation;
 import org.junit.Before;
 import org.junit.Test;
+import play.*;
+import play.inject.guice.GuiceApplicationBuilder;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withName;
+import static org.mockito.Mockito.mock;
+import static play.inject.Bindings.bind;
 
 public class DronesControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;
+
+    private DroneCommunicationManager droneCommunicationManager;
+
+    @Override
+    protected play.Application provideApplication() {
+
+        this.droneCommunicationManager = mock(DroneCommunicationManager.class);
+
+        return new GuiceApplicationBuilder()
+                .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
+                .build();
+    }
 
     @Before
     public void login() {

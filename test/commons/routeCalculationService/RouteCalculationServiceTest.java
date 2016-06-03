@@ -8,8 +8,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
-import dao.RouteDao;
-import models.*;
+import models.Project;
+import models.Zone;
+import models.ZoneType;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
@@ -24,29 +25,24 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
 
 public class RouteCalculationServiceTest extends AbstractIntegrationTest {
-
-    @Inject
-    private RouteDao routeDao;
 
     @Inject
     private RouteCalculationService routeCalculationService;
 
     private CoordinateReferenceSystem<?> wgs84ReferenceSystem =
-            CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
+        CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
 
 
     @Test
     @Ignore
     //This Test can not be executed at the moment, because of many constraint violating problems.
     //If you are bored, please fix it.
-    public void initTest(){
+    public void initTest() {
 
         List<Waypoint> waypointList = new ArrayList<>();
 
@@ -55,21 +51,21 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
         Zone zone = new Zone();
         org.geolatte.geom.Geometry geometry =
-                GisHelper.convertFromWktToGeometry("POLYGON((8.81647686634051 47.2235972073977," +
-                                                            "8.81666981124281 47.2234438666848," +
-                                                            "8.81619360680309 47.2231567001565," +
-                                                            "8.8160622400611 47.2230535428686," +
-                                                            "8.81595550458323 47.2230145103289," +
-                                                            "8.81565171899238 47.2232598572438," +
-                                                            "8.8154505636687 47.2234578067679," +
-                                                            "8.81533972298015 47.2237003636278," +
-                                                            "8.81538898550839 47.2238313996306," +
-                                                            "8.81543003761526 47.2238564915941," +
-                                                            "8.81599245147942 47.2233434979779," +
-                                                            "8.81607455569316 47.2233044656518," +
-                                                            "8.81609918695728 47.2233797422551," +
-                                                            "8.81609918695728 47.2233797422551," +
-                                                            "8.81647686634051 47.2235972073977))");
+            GisHelper.convertFromWktToGeometry("POLYGON((8.81647686634051 47.2235972073977," +
+                "8.81666981124281 47.2234438666848," +
+                "8.81619360680309 47.2231567001565," +
+                "8.8160622400611 47.2230535428686," +
+                "8.81595550458323 47.2230145103289," +
+                "8.81565171899238 47.2232598572438," +
+                "8.8154505636687 47.2234578067679," +
+                "8.81533972298015 47.2237003636278," +
+                "8.81538898550839 47.2238313996306," +
+                "8.81543003761526 47.2238564915941," +
+                "8.81599245147942 47.2233434979779," +
+                "8.81607455569316 47.2233044656518," +
+                "8.81609918695728 47.2233797422551," +
+                "8.81609918695728 47.2233797422551," +
+                "8.81647686634051 47.2235972073977))");
 
         zone.setPolygon((Polygon) geometry);
         zone.setName("testpolygon");
@@ -78,7 +74,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
 
         Project project = testHelper.createNewProject(testHelper.createNewOrganisation(), zone);
 
-        jpaApi.withTransaction(() ->{
+        jpaApi.withTransaction(() -> {
             List<Position> positions = routeCalculationService.calculateRoute(startPosition, endPosition, project);
         });
 
@@ -86,7 +82,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shortestPathFromPointToLine(){
+    public void shortestPathFromPointToLine() {
 
         //Test to understand how it works with JTS
 
@@ -107,7 +103,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void splitMultiLineStringBasicCase(){
+    public void splitMultiLineStringBasicCase() {
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 1)");
         MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
 
@@ -117,7 +113,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void splitMultiLineStringWithoutEffect(){
+    public void splitMultiLineStringWithoutEffect() {
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 1)");
         MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
 
@@ -127,7 +123,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void splitMultiLineStringOutOffBoundsWithoutEffect(){
+    public void splitMultiLineStringOutOffBoundsWithoutEffect() {
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(0 5)");
         MultiLineString path = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 1), (0 1, 0 2))");
 
@@ -137,7 +133,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldCheckComperatorInDijkstra(){
+    public void shouldCheckComperatorInDijkstra() {
         ArrayList<LineString> helperList = new ArrayList<>();
 
         LineString line1 = (LineString) GisHelper.convertFromWktToGeometry("LINESTRING(8.81305670365691 47.2226540354165,8.81247818470001 47.22380529011801)");

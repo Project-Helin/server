@@ -7,6 +7,7 @@ import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.gis.GisHelper;
+import controllers.messages.DroneInfosController;
 import dao.DroneDao;
 import dao.MissionsDao;
 import dao.OrderDao;

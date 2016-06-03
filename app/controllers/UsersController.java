@@ -10,7 +10,6 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.formdata.Login;
 import views.html.login;
 import views.html.users.add;
 
@@ -81,12 +80,21 @@ public class UsersController extends Controller {
 
         if (form.hasErrors()) {
             return badRequest(add.render(form));
+
+        } else if(isEmailAddressTaken(form.get().getEmail())){
+
+            form.reject("Email address is already taken");
+            return badRequest(add.render(form));
         } else {
             createUser(form);
 
             flash("info", "You should have received an E-Mail confirmation, please click on the link in the E-Mail");
             return redirect(routes.UsersController.login());
         }
+    }
+
+    private boolean isEmailAddressTaken(String email) {
+        return !userDao.isEmailAvailable(email);
     }
 
     private void createUser(Form<User> form) {

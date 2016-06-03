@@ -30,7 +30,7 @@ public class DroneApiControllerTest extends AbstractWebServiceIntegrationTest {
     private static final String BASE_URL = "http://localhost:19001";
 
     @Test
-    public void createDrone() throws ExecutionException, InterruptedException {
+    public void createDrone() {
         User user = jpaApi.withTransaction(em -> testHelper.createUserWithOrganisation("bla"));
 
         Organisation organisation = user.getOrganisations().stream().findFirst().get();

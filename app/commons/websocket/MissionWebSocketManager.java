@@ -22,12 +22,8 @@ public class MissionWebSocketManager {
 
     public void addWebSocketConnection(UUID missionId, WebSocketConnection webSocketConnection) {
 
-        List<WebSocketConnection> connections = missionIdToOpenConnections.get(missionId);
-
-        if (connections == null) {
-            connections = new ArrayList<>();
-            missionIdToOpenConnections.put(missionId, connections);
-        }
+        List<WebSocketConnection> connections =
+            missionIdToOpenConnections.computeIfAbsent(missionId, key -> new ArrayList<>());
 
         connections.add(webSocketConnection);
         webSocketConnection.setCloseCallback((connection) -> removeWebSocketConnection(missionId, connection));
