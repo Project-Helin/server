@@ -7,26 +7,26 @@ GET         /                                                       controllers.
 
 #Organisation
 GET         /organisations/add                                      controllers.OrganisationsController.add()
-POST        /organisations/create                                   controllers.OrganisationsController.create()
+POST        /organisations/                                         controllers.OrganisationsController.create()
 
 GET         /organisations/edit                                     controllers.OrganisationsController.edit()
-POST        /organisations/:id/update                               controllers.OrganisationsController.update(id : java.util.UUID)
+POST        /organisations/:id                                      controllers.OrganisationsController.update(id : java.util.UUID)
 
 #Project
 GET         /projects                                               controllers.ProjectsController.index()
-GET         /projects/create                                        controllers.ProjectsController.create()
+GET         /projects/add                                           controllers.ProjectsController.add()
 
 GET         /projects/:projectId/edit                               controllers.ProjectsController.edit(projectId : java.util.UUID)
 GET         /projects/:projectId/delete                             controllers.ProjectsController.delete(projectId : java.util.UUID)
 
 #Project Products
 GET         /projects/:projectId/products/                          controllers.ProjectsProductsController.index(projectId : java.util.UUID)
-POST        /projects/:projectId/products/add                       controllers.ProjectsProductsController.addProduct(projectId : java.util.UUID)
+POST        /projects/:projectId/products/                          controllers.ProjectsProductsController.addProduct(projectId : java.util.UUID)
 GET         /projects/:projectId/products/:productId/delete         controllers.ProjectsProductsController.delete(projectId : java.util.UUID, productId : java.util.UUID)
 
 #Projects Drones
 GET         /projects/:projectId/drones/                            controllers.ProjectsDronesController.index(projectId : java.util.UUID)
-POST        /projects/:projectId/drones/add                         controllers.ProjectsDronesController.addDrone(projectId : java.util.UUID)
+POST        /projects/:projectId/drones/                            controllers.ProjectsDronesController.addDrone(projectId : java.util.UUID)
 GET         /projects/:projectId/drones/:droneId/delete             controllers.ProjectsDronesController.delete(projectId : java.util.UUID, droneId : java.util.UUID)
 
 # Orders (all)
@@ -38,16 +38,16 @@ GET         /orders/:orderId/delete                                 controllers.
 #Product
 GET         /products/                                              controllers.ProductsController.index()
 GET         /products/add                                           controllers.ProductsController.add()
-POST        /products/create                                        controllers.ProductsController.create()
+POST        /products/                                              controllers.ProductsController.create()
 
 GET         /products/:id/edit                                      controllers.ProductsController.edit(id : java.util.UUID)
-POST        /products/:id/update                                    controllers.ProductsController.update(id : java.util.UUID)
+POST        /products/:id                                           controllers.ProductsController.update(id : java.util.UUID)
 GET         /products/:id/delete                                    controllers.ProductsController.delete(id : java.util.UUID)
 
 #Drones
 GET         /drones/                                                controllers.DronesController.index()
 GET         /drones/:id/edit                                        controllers.DronesController.edit(id : java.util.UUID)
-POST        /drones/:id/update                                      controllers.DronesController.update(id : java.util.UUID)
+POST        /drones/:id                                             controllers.DronesController.update(id : java.util.UUID)
 GET         /drones/:id/delete                                      controllers.DronesController.delete(id : java.util.UUID)
 
 # Customer
@@ -64,9 +64,9 @@ POST        /register                                               controllers.
 GET         /route-debugger                                         controllers.Application.routeDebugger(projectId : String)
 
 #Organisations-Users
-GET         /administrators                                         controllers.OrganisationsUsersController.index()
+GET         /administrators/                                        controllers.OrganisationsUsersController.index()
 GET         /administrators/add                                     controllers.OrganisationsUsersController.add()
-POST        /administrators/create                                  controllers.OrganisationsUsersController.create()
+POST        /administrators/                                        controllers.OrganisationsUsersController.create()
 GET         /administrators/:user_id/delete                         controllers.OrganisationsUsersController.delete(user_id : java.util.UUID)
 GET         /administrators/setOrganisation/:organisation_id        controllers.OrganisationsUsersController.setCurrentOrganisation(organisation_id : java.util.UUID)
 

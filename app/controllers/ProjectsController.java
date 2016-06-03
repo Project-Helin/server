@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import commons.SessionHelper;
 import dao.ProjectsDao;
 import models.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -32,12 +30,8 @@ public class ProjectsController extends Controller {
     }
 
     public Result add() {
-        UUID newProjectId = UUID.randomUUID();
-        return ok(edit.render(newProjectId));
-    }
-
-    public Result create() {
-        UUID id = null; // this is null by intention
+        UUID id = null;
+        // this is null by intention
         // null means in this context, that no a new project should be created
         return ok(edit.render(id));
     }
