@@ -33,10 +33,7 @@
                         $scope.$broadcast('DroneInfoReceived', {droneInfo: droneInfo, missionId: mission.id});
                     };
                 });
-
-               
             }
-
 
             initialize();
         }
