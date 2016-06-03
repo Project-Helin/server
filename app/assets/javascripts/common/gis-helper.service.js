@@ -1,6 +1,12 @@
 (function () {
     angular.module('common').service('gisHelper', function () {
 
+        this.zoneColors = {
+            "Order Zone": 'rgba(0, 192, 239, 1.0)',
+            "Flight Zone": 'rgba(0, 28, 247, 0.8)',
+            "Delivery Zone": 'rgba(0, 166, 90, 0.8)',
+            "Loading Zone": 'rgba(243, 156, 18, 0.8)'
+        };
         this.dataProjectionCode = 'EPSG:4326';
         this.mapProjectionCode = 'EPSG:3857';
 
@@ -78,7 +84,7 @@
             if (zoneType === 'OrderZone') {
                 styleForZoneType = new ol.style.Style({
                     stroke: new ol.style.Stroke({
-                        color: 'rgba(0, 192, 239, 1.0)',
+                        color: this.zoneColors["Order Zone"],
                         width: 3
                     }),
                     fill: null
@@ -87,21 +93,21 @@
                 styleForZoneType = new ol.style.Style({
                     stroke: null,
                     fill: new ol.style.Fill({
-                        color: 'rgba(0, 28, 247, 0.8)'
+                        color: this.zoneColors["Flight Zone"]
                     })
                 });
             } else if (zoneType === 'DeliveryZone') {
                 styleForZoneType = new ol.style.Style({
                     stroke: null,
                     fill: new ol.style.Fill({
-                        color: 'rgba(0, 166, 90, 0.8)'
+                        color: this.zoneColors["Delivery Zone"]
                     })
                 });
             } else if (zoneType === 'LoadingZone') {
                 styleForZoneType = new ol.style.Style({
                     stroke: null,
                     fill: new ol.style.Fill({
-                        color: 'rgba(243, 156, 18, 0.8)'
+                        color: this.zoneColors["Loading Zone"]
                     })
                 });
             }

@@ -39,6 +39,11 @@
 
                 </div>
             </div>
+            <div ng-repeat="(key, value) in zoneColors" style="display: inline-block" class="m-r-lg" >
+
+                <div ng-style="{'background-color': value }" class="p-l p-r zone-color-legend">
+                </div>
+                {{key}}
         </div>
 
 

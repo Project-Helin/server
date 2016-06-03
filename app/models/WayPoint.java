@@ -11,7 +11,7 @@ public class WayPoint extends BaseEntity{
     private Point position;
 
     @Column
-    private double height;
+    private Double height;
 
     @Enumerated(EnumType.STRING)
     private Action action;
@@ -52,11 +52,11 @@ public class WayPoint extends BaseEntity{
         this.action = action;
     }
 
-    public double getHeight() {
+    public Double getHeight() {
         return height;
     }
 
-    public void setHeight(double height) {
+    public void setHeight(Double height) {
         this.height = height;
     }
 

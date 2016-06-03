@@ -1,11 +1,12 @@
 (function () {
-    angular.module('OrderViewer').controller('OrderViewerCtrl', ['$scope', 'HelperService', 'OrdersService', 'ProjectsService',
-        function ($scope, HelperService, OrdersService, ProjectsService) {
+    angular.module('OrderViewer').controller('OrderViewerCtrl', ['$scope', 'HelperService', 'OrdersService', 'ProjectsService', 'gisHelper',
+        function ($scope, HelperService, OrdersService, ProjectsService, gisHelper) {
 
 
             function initialize() {
                 $scope.data = {};
                 $scope.data.focusDrone = false;
+                $scope.zoneColors = gisHelper.zoneColors;
 
                 OrdersService.loadOrder($scope.orderId).then(function(order) {
                     $scope.data.order = order;
