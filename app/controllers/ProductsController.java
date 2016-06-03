@@ -40,6 +40,7 @@ public class ProductsController extends Controller {
         return ok(index.render(all));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result add() {
         Form<Product> form = formFactory
             .form(Product.class)
@@ -48,6 +49,7 @@ public class ProductsController extends Controller {
         return ok(add.render(form));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result create() {
         Form<Product> form = formFactory
             .form(Product.class)
@@ -70,6 +72,7 @@ public class ProductsController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result edit(UUID id) {
         Product found = findProduct(id);
 
@@ -84,6 +87,7 @@ public class ProductsController extends Controller {
         return ok(edit.render(form));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result update(UUID id) {
         Product found = findProduct(id);
 
@@ -109,6 +113,7 @@ public class ProductsController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID id) {
         Product found = findProduct(id);
 

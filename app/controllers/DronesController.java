@@ -56,6 +56,7 @@ public class DronesController extends Controller {
         return ok(index.render(all, organisationToken));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result edit(UUID id) {
         Drone found = getDroneById(id);
 
@@ -75,6 +76,7 @@ public class DronesController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result update(UUID id) {
         Drone foundDrone = getDroneById(id);
 
@@ -111,6 +113,7 @@ public class DronesController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID droneId) {
         Drone found = getDroneById(droneId);
 

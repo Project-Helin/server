@@ -40,6 +40,7 @@ public class OrganisationsController extends Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(OrganisationsController.class);
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result add() {
         Form<Organisation> form = formFactory
                 .form(Organisation.class)
@@ -73,6 +74,7 @@ public class OrganisationsController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result edit() {
         Organisation organisation = sessionHelper.getOrganisation(session());
 
@@ -93,6 +95,7 @@ public class OrganisationsController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result update(UUID id) {
         Organisation organisation = organisationsDao.findById(id);
 
