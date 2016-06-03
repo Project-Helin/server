@@ -1,11 +1,14 @@
 package controllers;
 
 import ch.helin.messages.dto.DroneInfoDto;
+import ch.helin.messages.dto.message.DroneActiveState;
+import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.state.GpsState;
 import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
+import commons.drone.DroneCommunicationManager;
 import commons.gis.GisHelper;
 import controllers.messages.DroneInfosController;
 import dao.DroneDao;
@@ -14,11 +17,14 @@ import dao.OrderDao;
 import models.*;
 import org.geolatte.geom.Point;
 import org.junit.Test;
+import play.inject.guice.GuiceApplicationBuilder;
 
 import java.util.Date;
 import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static play.inject.Bindings.bind;
 
 
 public class DroneInfosControllerTest extends AbstractIntegrationTest {
@@ -34,6 +40,18 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
 
     @Inject
     private OrderDao orderDao;
+
+    private DroneCommunicationManager droneCommunicationManager;
+
+    @Override
+    protected play.Application provideApplication() {
+
+        this.droneCommunicationManager = mock(DroneCommunicationManager.class);
+
+        return new GuiceApplicationBuilder()
+                .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
+                .build();
+    }
 
     @Test
     public void testHandleNewDroneInfoMessage() {
@@ -125,5 +143,26 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
             assertThat(firstDroneInfo.getClientTime().getTime()).isEqualTo(newer.getTime());
             assertThat(secondDroneInfo.getClientTime().getTime()).isEqualTo(older.getTime());
         });
+    }
+
+    @Test
+    public void testHandleActiveUpdate() {
+        Drone drone = jpaApi.withTransaction((em) -> {
+            return testHelper.createNewDrone(testHelper.createNewOrganisation());
+        });
+
+        DroneActiveState droneActiveState = new DroneActiveState();
+        droneActiveState.setActive(false);
+
+        DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
+        droneActiveStateMessage.setDroneActiveState(droneActiveState);
+
+        droneInfosController.onDroneActiveStateReceived(drone.getId(), droneActiveStateMessage);
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            assertThat(droneFromDB.getIsActive().equals(false));
+        });
+
     }
 }

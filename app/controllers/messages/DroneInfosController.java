@@ -65,7 +65,6 @@ public class DroneInfosController {
 
             drone.setIsActive(droneActiveState.getActive());
 
-
             DroneDtoMessage droneDtoMessage = new DroneDtoMessage();
             droneDtoMessage.setDroneDto(droneMapper.getDroneDto(drone));
 
@@ -73,6 +72,7 @@ public class DroneInfosController {
             droneCommunicationManager.sendMessageToDrone(drone.getId(), droneDtoMessage);
 
         });
-
     }
+
+
 }
