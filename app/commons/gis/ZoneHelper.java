@@ -93,7 +93,7 @@ public class ZoneHelper {
         int numberOfPolygonsOutsideOrderZone = (int) zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
                 .map(ZoneHelper::convertZoneToJtsPolygon)
-                .filter(x -> orderZonePolygon.contains(x) == false)
+                .filter(x -> !orderZonePolygon.contains(x))
                 .count();
 
         //zones - 1 because the order zone should not be contained by itself.
