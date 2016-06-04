@@ -121,6 +121,7 @@ public class DronesController extends Controller {
         }
 
         flash("success", "Deleted successfully");
+        found.getDroneInfos().clear();;
         droneDao.delete(found);
         return redirect(routes.DronesController.index());
     }

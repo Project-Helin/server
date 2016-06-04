@@ -7,8 +7,8 @@
 
             var customer = {
                 "email": email,
-                "given_name" :  givenName,
-                "family_name" : familyName
+                "givenName" :  givenName,
+                "familyName" : familyName
             };
 
             return $http.post(this.apiUrl + 'save', customer)
