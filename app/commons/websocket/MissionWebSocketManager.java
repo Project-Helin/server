@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class MissionWebSocketManager {
 
-    private Map<UUID, List<WebSocketConnection>> missionIdToOpenConnections = new ConcurrentHashMap<>();
+    private final Map<UUID, List<WebSocketConnection>> missionIdToOpenConnections = new ConcurrentHashMap<>();
 
     @Inject
     private JsonBasedMessageConverter jsonBasedMessageConverter;

@@ -26,7 +26,7 @@ public class RouteCalculationServiceTest extends AbstractIntegrationTest {
     @Inject
     private RouteCalculationService routeCalculationService;
 
-    private CoordinateReferenceSystem<?> wgs84ReferenceSystem =
+    private final CoordinateReferenceSystem<?> wgs84ReferenceSystem =
         CrsRegistry.getCoordinateReferenceSystemForEPSG(4326, CoordinateReferenceSystems.PROJECTED_2D_METER);
 
     @Test

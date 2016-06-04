@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class DroneCommunicationManager {
 
-    private DroneMessageDispatcher droneMessageDispatcher;
+    private final DroneMessageDispatcher droneMessageDispatcher;
 
     @Inject
     private JsonBasedMessageConverter messageConverter;

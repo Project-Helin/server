@@ -14,7 +14,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class CustomApplicationLoaderTest {
 
-    private TestHelper testHelper = new TestHelper();
+    private final TestHelper testHelper = new TestHelper();
 
     @Test
     public void shouldParseJsonCorrectly(){

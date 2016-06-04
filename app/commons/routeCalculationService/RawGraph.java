@@ -8,7 +8,7 @@ import java.util.List;
 
 public class RawGraph {
 
-    private List<LineString> lineStrings = new ArrayList<>();
+    private final List<LineString> lineStrings = new ArrayList<>();
 
     public void addLineString(LineString lineString){
         lineStrings.add(lineString);

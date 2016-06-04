@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 public class WebSocketConnection {
 
-    private WebSocket.Out<String> out;
+    private final WebSocket.Out<String> out;
     private Consumer<WebSocketConnection> onClosedConnection;
 
     public WebSocketConnection(WebSocket.In<String> in, WebSocket.Out<String> out) {
