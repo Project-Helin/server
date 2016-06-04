@@ -26,12 +26,10 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
     @Inject
     private JPAApi jpaApi;
 
-    private DroneCommunicationManager droneCommunicationManager;
-
     @Override
     protected play.Application provideApplication() {
 
-        this.droneCommunicationManager = mock(DroneCommunicationManager.class);
+        DroneCommunicationManager droneCommunicationManager = mock(DroneCommunicationManager.class);
 
         return new GuiceApplicationBuilder()
                 .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))

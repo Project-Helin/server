@@ -19,12 +19,10 @@ public class DronesControllerTest extends AbstractE2ETest {
 
     private Organisation organisation;
 
-    private DroneCommunicationManager droneCommunicationManager;
-
     @Override
     protected play.Application provideApplication() {
 
-        this.droneCommunicationManager = mock(DroneCommunicationManager.class);
+        DroneCommunicationManager droneCommunicationManager = mock(DroneCommunicationManager.class);
 
         return new GuiceApplicationBuilder()
                 .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
