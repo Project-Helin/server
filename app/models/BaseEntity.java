@@ -50,7 +50,10 @@ public class BaseEntity {
     }
 
     public String getCreatedAtDateAndTime(){
-        return DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(getCreatedAt());
+        if (getCreatedAt() != null) {
+            return DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(getCreatedAt());
+        }
+        return "";
     }
 
     public LocalDateTime getUpdateAt() {
