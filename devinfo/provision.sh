@@ -99,8 +99,8 @@ rm -Rf postgis-2.2.0.tar.gz
 sudo ldconfig
 
 # Create DB for Test and develoment usage
-sudo -u postgres createdb $DB_USER
-sudo -u postgres createuser $DB_USER -s       # -s for superuser
+sudo -u postgres createdb ${DB_USER}
+sudo -u postgres createuser ${DB_USER} -s       # -s for superuser
 # change password
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_USER';"
 sudo -u postgres psql -d ${DB_USER} -c "CREATE EXTENSION postgis;"
