@@ -11,6 +11,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.organisationsUsers.add;
 import views.html.organisationsUsers.index;
 
@@ -32,17 +33,20 @@ public class OrganisationsUsersController extends Controller {
     @Inject
     FormFactory formFactory;
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         Organisation organisation = sessionHelper.getOrganisation(session());
         Set<User> administrators = organisation.getAdministrators();
         return ok(index.render(administrators, organisation));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result add() {
         Organisation organisation = sessionHelper.getOrganisation(session());
         return ok(add.render(organisation));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result create() {
         DynamicForm requestData = formFactory.form().bindFromRequest();
         String email = requestData.get("email");
@@ -62,6 +66,7 @@ public class OrganisationsUsersController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID userId) {
         Organisation organisation = sessionHelper.getOrganisation(session());
         User user = userDao.findById(userId);
@@ -82,6 +87,7 @@ public class OrganisationsUsersController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result setCurrentOrganisation (UUID organisationId) {
         User user = sessionHelper.getUser(session());
         Organisation organisation = organisationsDao.findById(organisationId);

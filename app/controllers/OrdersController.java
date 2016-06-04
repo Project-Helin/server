@@ -57,6 +57,7 @@ public class OrdersController extends Controller {
         return ok(index.render(projects, orders, selectedProject));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result show(UUID orderId) {
 
         Order order = orderDao.findById(orderId);
@@ -68,6 +69,7 @@ public class OrdersController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID ordersId) {
         Order found = orderDao.findById(ordersId);
         if (found == null) {

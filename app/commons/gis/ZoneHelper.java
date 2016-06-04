@@ -129,11 +129,13 @@ public class ZoneHelper {
 
     public static boolean isCustomerInsideDeliveryZone(Set<Zone> zones,
                                                        org.geolatte.geom.Point customerPoint){
+
+        Geometry customerAsJtsPoint = JTS.to(customerPoint);
         int numberOfDeliveryZonesThatContainCustomer =
                 (int) zones.stream()
                         .filter(x -> x.getType() == ZoneType.DeliveryZone)
                         .map(x -> JTS.to(x.getPolygon()).contains(JTS.to(customerPoint)))
-                        .filter(x -> x == Boolean.TRUE)
+                        .filter(x -> x == Boolean.TRUE) // was needed because, Stream could not figure out the type
                         .count();
 
         return numberOfDeliveryZonesThatContainCustomer > 0;

@@ -7,6 +7,7 @@ import models.Project;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.projects.edit;
 import views.html.projects.index;
 
@@ -22,6 +23,7 @@ public class ProjectsController extends Controller {
     @Inject
     private SessionHelper sessionHelper;
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
         UUID organisationId = sessionHelper.getOrganisation(session()).getId();
         List<Project> all = projectsDao.findByOrganisation(organisationId);
@@ -29,6 +31,7 @@ public class ProjectsController extends Controller {
         return ok(index.render(all));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result add() {
         UUID id = null;
         // this is null by intention
@@ -36,10 +39,12 @@ public class ProjectsController extends Controller {
         return ok(edit.render(id));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result edit(UUID id) {
         return ok(edit.render(id));
     }
-
+    
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID projectId) {
         Project found = projectsDao.findByIdAndOrganisation(projectId, sessionHelper.getOrganisation(session()));
 
