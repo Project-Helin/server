@@ -43,4 +43,8 @@ public class DroneActiveController {
         });
     }
 
+    public void removeMissionFromDrone(){
+
+    }
+
 }

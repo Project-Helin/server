@@ -118,5 +118,18 @@ public class Drone extends BaseEntity {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "Drone{" +
+                "name='" + name + '\'' +
+                ", token=" + token +
+                ", lastKnownPosition=" + lastKnownPosition +
+                ", payload=" + payload +
+                ", organisation=" + organisation +
+                ", project=" + project +
+                ", droneInfos=" + droneInfos +
+                ", currentMission=" + currentMission +
+                ", isActive=" + isActive +
+                '}';
+    }
 }
