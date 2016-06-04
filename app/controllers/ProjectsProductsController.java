@@ -87,7 +87,7 @@ public class ProjectsProductsController extends Controller {
         }
 
         foundProject.getProducts().remove(productToDelete);
-        productsDao.persist(productToDelete);;
+        productsDao.persist(productToDelete);
 
         return redirect(routes.ProjectsProductsController.index(projectId));
     }
