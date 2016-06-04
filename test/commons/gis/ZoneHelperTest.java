@@ -122,11 +122,6 @@ public class ZoneHelperTest{
     }
 
     @Test
-    public void testAssertAllZonesInisideOrderZone() throws Exception {
-
-    }
-
-    @Test
     public void testAssertNonOverlappingZones(){
         Set<Zone> zoneSet = new HashSet<>();
 
