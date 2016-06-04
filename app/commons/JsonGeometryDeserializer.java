@@ -19,7 +19,7 @@ public class JsonGeometryDeserializer<T extends Geometry> extends JsonDeserializ
 
     @Override
     public T deserialize(JsonParser parser,
-                             DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                             DeserializationContext ctxt) throws IOException {
 
         String stringValue = parser.readValueAs(String.class);
 

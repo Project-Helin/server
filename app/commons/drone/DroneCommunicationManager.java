@@ -20,7 +20,7 @@ public class DroneCommunicationManager {
     @Inject
     private JsonBasedMessageConverter messageConverter;
 
-    private Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
+    private final Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
 
     @Inject
     public DroneCommunicationManager(DroneDao droneDao,
