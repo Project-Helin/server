@@ -5,11 +5,16 @@ import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
 import commons.drone.DroneCommunicationManager;
+import commons.order.MissionDispatchingService;
 import dao.DroneDao;
-import models.Drone;
+import dao.MissionsDao;
+import models.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 import play.inject.guice.GuiceApplicationBuilder;
+
+import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -22,6 +27,12 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
 
     @Inject
     private DroneDao droneDao;
+
+    @Inject
+    private MissionsDao missionsDao;
+
+    @Inject
+    private MissionDispatchingService missionDispatchingService;
 
     @Inject
     private JPAApi jpaApi;
@@ -54,6 +65,53 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
             Drone droneFromDB = droneDao.findById(drone.getId());
             assertThat(droneFromDB.getIsActive().equals(false));
         });
+
+    }
+
+    @Ignore
+    @Test
+    public void testHandleInactiveWithMission(){
+        Drone drone = jpaApi.withTransaction((em) -> {
+            Project newProject = testHelper.createNewProject(testHelper.createNewOrganisation());
+            Drone newDroneForProject = testHelper.createNewDroneForProject(newProject, true);
+
+            Order testOrder = testHelper.createNewOrder(newProject, testHelper.createCustomer());
+            Mission newMission = testHelper.createNewMission(testOrder);
+            newMission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+
+            missionDispatchingService.tryToDispatchWaitingMissions(newProject.getId());
+
+            return newDroneForProject;
+        });
+
+
+        Mission mission = jpaApi.withTransaction((em) -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            return droneFromDB.getCurrentMission();
+        });
+
+        System.out.println(drone);
+
+        UUID currentMissionId = mission.getId();
+
+        DroneActiveState droneActiveState = new DroneActiveState();
+        droneActiveState.setActive(false);
+
+        DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
+        droneActiveStateMessage.setDroneActiveState(droneActiveState);
+
+        droneActiveController.onDroneActiveStateReceived(drone.getId(), droneActiveStateMessage);
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            assertThat(droneFromDB.getIsActive().equals(false));
+            assertThat(drone.getCurrentMission()).isNull();
+
+            Mission currentMissionFromDB = missionsDao.findById(currentMissionId);
+            assertThat(currentMissionFromDB.getDrone()).isNull();
+            assertThat(currentMissionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
+        });
+
 
     }
 
