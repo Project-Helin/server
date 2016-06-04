@@ -18,8 +18,7 @@ public class ShortestLineFactoryTest {
         Point point = (Point) GisHelper.convertFromWktToGeometry("POINT(1 1)");
         MultiLineString line = (MultiLineString) GisHelper.convertFromWktToGeometry("MULTILINESTRING((0 0, 0 2), (0 2, 0 4))");
 
-        RouteHelper slFactory = new RouteHelper();
-        LineString lineString = slFactory.calculateShortestLineToPoint(line, point);
+        LineString lineString = RouteHelper.calculateShortestLineToPoint(line, point);
 
         assertEquals("SRID=4326;LINESTRING(0 1,1 1)", lineString.toString());
 
@@ -40,8 +39,7 @@ public class ShortestLineFactoryTest {
         String positionString = "POINT(8.815975 47.223793)";
         Point point = (Point) GisHelper.convertFromWktToGeometry(positionString);
 
-        RouteHelper slFactory = new RouteHelper();
-        LineString lineString = slFactory.calculateShortestLineToPoint(multiLineStringGeom, point);
+        LineString lineString = RouteHelper.calculateShortestLineToPoint(multiLineStringGeom, point);
 
         assertEquals("SRID=4326;LINESTRING(8.81598105470067 47.2234210272835,8.815975 47.223793)", lineString.toString());
 
