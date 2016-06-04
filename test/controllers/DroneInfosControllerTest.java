@@ -41,18 +41,6 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
     @Inject
     private OrderDao orderDao;
 
-    private DroneCommunicationManager droneCommunicationManager;
-
-    @Override
-    protected play.Application provideApplication() {
-
-        this.droneCommunicationManager = mock(DroneCommunicationManager.class);
-
-        return new GuiceApplicationBuilder()
-                .overrides(bind(DroneCommunicationManager.class).toInstance(droneCommunicationManager))
-                .build();
-    }
-
     @Test
     public void testHandleNewDroneInfoMessage() {
         Position position = new Position(47.222645, 8.820594);
@@ -145,24 +133,4 @@ public class DroneInfosControllerTest extends AbstractIntegrationTest {
         });
     }
 
-    @Test
-    public void testHandleActiveUpdate() {
-        Drone drone = jpaApi.withTransaction((em) -> {
-            return testHelper.createNewDrone(testHelper.createNewOrganisation());
-        });
-
-        DroneActiveState droneActiveState = new DroneActiveState();
-        droneActiveState.setActive(false);
-
-        DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
-        droneActiveStateMessage.setDroneActiveState(droneActiveState);
-
-        droneInfosController.onDroneActiveStateReceived(drone.getId(), droneActiveStateMessage);
-
-        jpaApi.withTransaction(() -> {
-            Drone droneFromDB = droneDao.findById(drone.getId());
-            assertThat(droneFromDB.getIsActive().equals(false));
-        });
-
-    }
 }
