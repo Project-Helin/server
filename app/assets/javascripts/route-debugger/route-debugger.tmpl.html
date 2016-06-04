@@ -1,19 +1,31 @@
-<div>
-    <div class="col-xs-8 m-t-md m-b">
-        <div ng-repeat="(key, value) in zoneColors" style="display: inline-block" class="m-r-lg" >
-
-            <div ng-style="{'background-color': value }" class="p-l p-r zone-color-legend">
+<div class="col-xs-12">
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3>Route Debugger</h3>
+            <div class="box-tools pull-right">
+                <a class="btn btn-info" href="/projects/{{projectId}}/edit" role="button">Edit</a>
+                <div class="btn btn-warning" ng-show="data.routeWayPoints" ng-click="reset()">Reset</div>
+                <div class="btn btn-info" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">Calculate
+                    Route
+                </div>
             </div>
-            {{key}}
-    </div>
-    </div>
-    <div class="col-xs-4 m-t-md-lg m-b">
-        <div class="btn btn-warning pull-right" ng-show="data.routeWayPoints" ng-click="reset()">Reset</div>
-        <div class="btn btn-info pull-right" ng-hide="data.routeWayPoints" ng-click="calculateRoute()">Calculate Route</div>
-        <div class="pull-right m-r-md">
-            <a class="btn btn-info" href="/projects/{{projectId}}/edit" role="button">Edit</a>
+        </div>
+        <div class="box-body no-padding">
+            <div class="row">
+                <div class="col-xs-12">
+                    <route-map zones="data.selectedProject.zones" route-data="data.routeData"
+                               route="data.routeWayPoints"
+                               ng-if="data.selectedProject"></route-map>
+                </div>
+            </div>
+            <div ng-repeat="(key, value) in zoneColors" style="display: inline-block" class="m-r-lg">
+
+                <div ng-style="{'background-color': value }" class="p-l p-r zone-color-legend">
+                </div>
+                {{key}}
+            </div>
         </div>
     </div>
-    <route-map zones="data.selectedProject.zones" route-data="data.routeData" route="data.routeWayPoints" ng-if="data.selectedProject"></route-map>
-
 </div>
+
+
