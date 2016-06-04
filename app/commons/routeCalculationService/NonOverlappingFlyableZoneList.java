@@ -69,8 +69,7 @@ public class NonOverlappingFlyableZoneList {
             }
 
             /**
-             * Is the case, when there the current zone was
-             * splitted by the other zones
+             * Is the case, when there current zone was split by the other zones
              */
             boolean currentZoneSplit = difference.getGeometryType().equals("MultiPolygon");
             if(currentZoneSplit){

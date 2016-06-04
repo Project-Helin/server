@@ -236,7 +236,7 @@ public class ZoneHelperTest{
         zone7.setType(ZoneType.DeliveryZone);
         zoneSet.add(zone7);
 
-        assertTrue(ZoneHelper.checkAllZonesInisideOrderZone(zoneSet));
+        assertTrue(ZoneHelper.checkAllZonesInsideOrderZone(zoneSet));
 
 
     }
@@ -312,7 +312,7 @@ public class ZoneHelperTest{
         zone7.setType(ZoneType.DeliveryZone);
         zoneSet.add(zone7);
 
-        assertFalse(ZoneHelper.checkAllZonesInisideOrderZone(zoneSet));
+        assertFalse(ZoneHelper.checkAllZonesInsideOrderZone(zoneSet));
 
     }
 

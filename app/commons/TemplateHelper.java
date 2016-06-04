@@ -38,7 +38,7 @@ public class TemplateHelper {
                 Set<Organisation> loadedOrganisations = user.getOrganisations();
                 return new ArrayList<>(loadedOrganisations);
             } else {
-                return Collections.<Organisation>emptyList();
+                return Collections.emptyList();
             }
 
         });

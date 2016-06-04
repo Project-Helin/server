@@ -24,7 +24,7 @@ public class ZoneHelper {
         if(!checkOneOrderZone(zones)){
             throw new RuntimeException("There should be at least on order zone.");
         }
-        if(!checkAllZonesInisideOrderZone(zones)){
+        if(!checkAllZonesInsideOrderZone(zones)){
             throw new RuntimeException("All zones are not inside order zone.");
         }
         if(!checkAllZonesAreConnected(zones)){
@@ -81,7 +81,7 @@ public class ZoneHelper {
         return (numOfOrderZones == 1);
     }
 
-    public static boolean checkAllZonesInisideOrderZone(Set<Zone> zones){
+    public static boolean checkAllZonesInsideOrderZone(Set<Zone> zones){
         Polygon orderZonePolygon = zones.stream()
                 .filter(x -> x.getType() == ZoneType.OrderZone)
                 .map(ZoneHelper::convertZoneToJtsPolygon)
@@ -128,7 +128,6 @@ public class ZoneHelper {
     public static boolean isCustomerInsideDeliveryZone(Set<Zone> zones,
                                                        org.geolatte.geom.Point customerPoint){
 
-        Geometry customerAsJtsPoint = JTS.to(customerPoint);
         int numberOfDeliveryZonesThatContainCustomer =
                 (int) zones.stream()
                         .filter(x -> x.getType() == ZoneType.DeliveryZone)
