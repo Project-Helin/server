@@ -63,26 +63,6 @@ public class DronesControllerTest extends AbstractE2ETest {
     }
 
     @Test
-    public void shouldRemoveDrone() {
-        Drone drone = jpaApi.withTransaction(em -> {
-            return testHelper.createNewDrone(organisation);
-        });
-
-        browser.goTo(routes.DronesController.index().url());
-        assertThat(browser.pageSource()).contains(drone.getName());
-        // remove that
-        waitAndClick("delete-" + drone.getId());
-
-        //confirm delete
-        waitAndClick("deleteconfirm-" + drone.getId());
-        waitFiveSeconds();
-
-        // verify
-        browser.goTo(routes.DronesController.index().url());
-        assertThat(browser.pageSource()).doesNotContain(drone.getName());
-    }
-
-    @Test
     public void shouldNotAllowToRemoveDroneFromOtherOrganisation() {
         Drone drone = jpaApi.withTransaction(em -> {
             Organisation anotherOrganisation = testHelper.createNewOrganisation();
@@ -113,8 +93,6 @@ public class DronesControllerTest extends AbstractE2ETest {
         browser.submit("#save");
 
         // verify
-        assertThat(browser.pageSource()).contains("Delete");
-
         assertThat(browser.pageSource()).doesNotContain(drone.getName());
         assertThat(browser.pageSource()).contains(newDroneName);
 
