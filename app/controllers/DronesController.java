@@ -6,7 +6,6 @@ import commons.ModelHelper;
 import commons.SessionHelper;
 import commons.drone.DroneCommunicationManager;
 import commons.order.MissionDispatchingService;
-import controllers.messages.DroneInfosController;
 import dao.DroneDao;
 import mappers.DroneMapper;
 import models.Drone;

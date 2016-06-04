@@ -4,7 +4,6 @@ import commons.gis.GisHelper;
 import models.Organisation;
 import models.Project;
 import models.ZoneType;
-import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
 import org.slf4j.Logger;
 

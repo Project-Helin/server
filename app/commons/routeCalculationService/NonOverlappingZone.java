@@ -2,8 +2,6 @@ package commons.routeCalculationService;
 
 import models.Zone;
 import org.geolatte.geom.Polygon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NonOverlappingZone {
     private Polygon polygon;

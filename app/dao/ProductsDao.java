@@ -1,7 +1,5 @@
 package dao;
 
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 import commons.gis.GisHelper;
 import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;

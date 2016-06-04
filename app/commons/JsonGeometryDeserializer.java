@@ -1,12 +1,9 @@
 package commons;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.geolatte.geom.C2D;
 import org.geolatte.geom.Geometry;
-import org.geolatte.geom.Point;
 import org.geolatte.geom.codec.Wkt;
 import org.geolatte.geom.crs.*;
 

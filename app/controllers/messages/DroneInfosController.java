@@ -2,13 +2,10 @@ package controllers.messages;
 
 import ch.helin.messages.dto.message.*;
 import com.google.inject.Inject;
-import commons.drone.DroneCommunicationManager;
-import commons.order.MissionDispatchingService;
 import commons.websocket.MissionWebSocketManager;
 import dao.DroneDao;
 import dao.DroneInfoDao;
 import mappers.DroneInfoMapper;
-import mappers.DroneMapper;
 import models.Drone;
 import models.DroneInfo;
 import models.Mission;

@@ -2,16 +2,11 @@ package dao;
 
 import commons.gis.GisHelper;
 import models.Route;
-import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
-import org.geolatte.geom.Point;
-import org.geolatte.geom.Position;
 import org.slf4j.Logger;
 
 import javax.persistence.Query;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 

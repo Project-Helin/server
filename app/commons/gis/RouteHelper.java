@@ -2,10 +2,6 @@ package commons.gis;
 
 import ch.helin.messages.dto.way.Position;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.MultiPolygon;

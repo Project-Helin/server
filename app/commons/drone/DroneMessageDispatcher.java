@@ -2,7 +2,6 @@ package commons.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.converter.MessageConverter;
-import ch.helin.messages.dto.message.DroneActiveState;
 import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;

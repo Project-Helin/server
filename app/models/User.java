@@ -6,7 +6,6 @@ import play.data.validation.Constraints;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity(name = "users")
 public class User extends BaseEntity {
