@@ -68,7 +68,6 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
 
     }
 
-    @Ignore
     @Test
     public void testHandleInactiveWithMission(){
         Drone drone = jpaApi.withTransaction((em) -> {
@@ -83,7 +82,6 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
 
             return newDroneForProject;
         });
-
 
         Mission mission = jpaApi.withTransaction((em) -> {
             Drone droneFromDB = droneDao.findById(drone.getId());
@@ -105,7 +103,7 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
         jpaApi.withTransaction(() -> {
             Drone droneFromDB = droneDao.findById(drone.getId());
             assertThat(droneFromDB.getIsActive().equals(false));
-            assertThat(drone.getCurrentMission()).isNull();
+            assertThat(droneFromDB.getCurrentMission()).isNull();
 
             Mission currentMissionFromDB = missionsDao.findById(currentMissionId);
             assertThat(currentMissionFromDB.getDrone()).isNull();
@@ -114,5 +112,7 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
 
 
     }
+
+
 
 }

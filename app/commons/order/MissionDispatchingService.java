@@ -59,4 +59,18 @@ public class MissionDispatchingService {
         }
     }
 
+    public void withdrawDroneFromMission(Drone drone){
+        if(drone.getCurrentMission() != null){
+            UUID missionId = drone.getCurrentMission().getId();
+            Mission currentMissionAssignedToDrone = missionsDao.findById(missionId);
+            currentMissionAssignedToDrone.setDrone(null);
+            currentMissionAssignedToDrone.setState(MissionState.WAITING_FOR_FREE_DRONE);
+            drone.setCurrentMission(null);
+
+            droneDao.persist(drone);
+            missionsDao.persist(currentMissionAssignedToDrone);
+        }
+
+    }
+
 }
