@@ -337,4 +337,20 @@ public class TestHelper {
     public Polygon createSamplePolygon() {
         return GisHelper.convertFromWktToGeometry("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))");
     }
+
+    public Drone createDroneWithAssignedMission(){
+        Customer customer = this.createCustomer();
+        Project project = this.createNewProject(this.createNewOrganisation());
+        Order order = this.createNewOrderWithThreeMissions(project, customer);
+        Drone newDrone = this.createNewDroneForProject(project, true);
+        Mission newMission = this.createNewMission(order);
+
+        newDrone.setCurrentMission(newMission);
+        newMission.setDrone(newDrone);
+
+        droneDao.persist(newDrone);
+        missionsDao.persist(newMission);
+
+        return newDrone;
+    }
 }

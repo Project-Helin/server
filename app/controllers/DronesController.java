@@ -104,7 +104,11 @@ public class DronesController extends Controller {
 
             droneCommunicationManager.sendMessageToDrone(foundDrone.getId(), droneDtoMessage);
 
-            if (foundDrone.getProject() != null) {
+            if(foundDrone.getIsActive() == false) {
+                missionDispatchingService.withdrawDroneFromMission(foundDrone);
+            }
+
+            if (foundDrone.getProject() != null && foundDrone.getIsActive() == true) {
                 missionDispatchingService.tryToDispatchWaitingMissions(foundDrone.getProject().getId());
             }
 
