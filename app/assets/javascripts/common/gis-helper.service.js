@@ -7,6 +7,8 @@
             "Delivery Zone": 'rgba(0, 166, 90, 0.8)',
             "Loading Zone": 'rgba(243, 156, 18, 0.8)'
         };
+
+        this.calculatedRouteColor = 'rgba(33, 231, 6, 1)';
         this.dataProjectionCode = 'EPSG:4326';
         this.mapProjectionCode = 'EPSG:3857';
 
@@ -117,7 +119,7 @@
         this.getRouteStyle = function () {
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: 'rgba(119, 17, 0, 0.8)',
+                    color: this.calculatedRouteColor,
                     width: 2
                 })
             });
@@ -152,9 +154,9 @@
             }
 
             var circle = new ol.style.Circle({
-                radius: 8,
+                radius: 7,
                 fill: new ol.style.Fill({
-                    color: 'rgba(119, 17, 0, 0.8)'
+                    color: this.calculatedRouteColor
                 }),
                 stroke: null
             });
