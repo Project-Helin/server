@@ -109,10 +109,47 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
             assertThat(currentMissionFromDB.getDrone()).isNull();
             assertThat(currentMissionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
         });
-
-
     }
 
+    @Test
+    public void testHandleStateChangeToActive(){
+        Drone drone = jpaApi.withTransaction((em) -> {
+            Project newProject = testHelper.createNewProject(testHelper.createNewOrganisation());
+            Drone newDroneForProject = testHelper.createNewDroneForProject(newProject, false);
+
+            Order testOrder = testHelper.createNewOrder(newProject, testHelper.createCustomer());
+            Mission newMission = testHelper.createNewMission(testOrder);
+            newMission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+
+            missionDispatchingService.tryToDispatchWaitingMissions(newProject.getId());
+
+            assertThat(newDroneForProject.getIsActive().equals(false));
+            assertThat(newDroneForProject.getCurrentMission()).isNull();
+            assertThat(newMission.getDrone()).isNull();
+
+            return newDroneForProject;
+        });
+
+        DroneActiveState droneActiveState = new DroneActiveState();
+        droneActiveState.setActive(true);
+
+        DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
+        droneActiveStateMessage.setDroneActiveState(droneActiveState);
+
+        droneActiveController.onDroneActiveStateReceived(drone.getId(), droneActiveStateMessage);
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            assertThat(droneFromDB.getIsActive().equals(true));
+
+            Mission currentMissionFromDb = droneFromDB.getCurrentMission();
+            assertThat(currentMissionFromDb).isNotNull();
+
+            assertThat(droneFromDB.equals(currentMissionFromDb.getDrone()));
+            assertThat(droneFromDB.getCurrentMission().equals(currentMissionFromDb));
+            assertThat(currentMissionFromDb.getState()).isEqualTo(MissionState.WAITING_FOR_DRONE_CONFIRMATION);
+        });
+    }
 
 
 }
