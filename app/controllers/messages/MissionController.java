@@ -56,12 +56,14 @@ public class MissionController {
                 order.setState(OrderState.IN_DELIVERY);
                 orderDao.persist(order);
             } else {
-                mission.setState(MissionState.WAITING_FOR_FREE_DRONE);
-                drone.setCurrentMission(null);
+                drone.setIsActive(false);
+                missionDispatchingService.withdrawDroneFromMission(drone);
+                missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
             }
 
             droneDao.persist(drone);
         });
+
     }
 
     private void sendAssignMissionMessage(Drone drone, Mission mission) {

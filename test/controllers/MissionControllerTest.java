@@ -100,26 +100,29 @@ public class MissionControllerTest extends AbstractIntegrationTest {
         });
     }
 
+    //Drone Message Reject Test
     @Test
-    public void onFailedFinishedMissionMessageReceivedTest() {
+    public void onRejectConfirmMissionMessageReceivedTest() {
         Drone drone = createDroneWithAssignedMission();
 
         UUID missionId = jpaApi.withTransaction((em) -> {
-            FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
-            finishedMissionMessage.setFinishedType(MissionFinishedType.FAILED);
+            UUID currentMissionId = drone.getCurrentMission().getId();
+            ConfirmMissionMessage confirmMissionMessage = new ConfirmMissionMessage();
+            confirmMissionMessage.setMissionConfirmType(MissionConfirmType.REJECT);
 
-            missionController.onFinishedMissionMessageReceived(drone.getId(), finishedMissionMessage);
+            missionController.onConfirmMissionMessageReceived(drone.getId(), confirmMissionMessage);
 
-            return drone.getCurrentMission().getId();
+            return currentMissionId;
         });
 
         jpaApi.withTransaction(() -> {
-            //should reassign failed mission
             Drone droneFromDB = droneDao.findById(drone.getId());
             Mission missionFromDB = missionsDao.findById(missionId);
 
-            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_DRONE_CONFIRMATION);
-            assertThat(droneFromDB.getCurrentMission()).isEqualTo(missionFromDB);
+            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
+            assertThat(missionFromDB.getDrone()).isNull();
+
+            assertThat(droneFromDB.getCurrentMission()).isNull();
         });
     }
 

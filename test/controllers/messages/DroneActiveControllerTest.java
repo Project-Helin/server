@@ -9,7 +9,6 @@ import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import dao.MissionsDao;
 import models.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 import play.inject.guice.GuiceApplicationBuilder;
