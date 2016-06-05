@@ -3,7 +3,7 @@
 
 @main("",
     styleSheets = List(
-        "http://openlayers.org/en/v3.14.2/css/ol.css",
+        routes.Assets.at("stylesheets/ol.css").toString,
         routes.Assets.at("stylesheets/xeditable.css").toString,
         routes.Assets.at("stylesheets/toastr.min.css").toString,
         routes.Assets.at("stylesheets/ol3-layerswitcher.css").toString

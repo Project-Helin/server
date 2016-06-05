@@ -8,6 +8,7 @@
             "Loading Zone": 'rgba(243, 156, 18, 0.8)'
         };
 
+        this.flownRouteColor = '#e50be8';
         this.calculatedRouteColor = 'rgba(33, 231, 6, 1)';
         this.dataProjectionCode = 'EPSG:4326';
         this.mapProjectionCode = 'EPSG:3857';
@@ -117,9 +118,10 @@
         };
 
         this.getRouteStyle = function () {
+            var _this = this;
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: this.calculatedRouteColor,
+                    color: _this.calculatedRouteColor,
                     width: 2
                 })
             });
@@ -145,6 +147,7 @@
         };
 
         function createRouteMarker(coordinates, id) {
+            var _this = this;
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });
@@ -156,7 +159,7 @@
             var circle = new ol.style.Circle({
                 radius: 7,
                 fill: new ol.style.Fill({
-                    color: this.calculatedRouteColor
+                    color: 'rgba(33, 231, 6, 1)'
                 }),
                 stroke: null
             });
@@ -171,6 +174,7 @@
         }
 
         this.createDroneInfoMarker = function (coordinates, id) {
+            var _this = this;
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });
@@ -180,9 +184,9 @@
             }
 
             var circle = new ol.style.Circle({
-                radius: 4,
+                radius: 6,
                 fill: new ol.style.Fill({
-                    color: '#3c8dbc'
+                    color: _this.flownRouteColor
                 }),
                 stroke: null
             });

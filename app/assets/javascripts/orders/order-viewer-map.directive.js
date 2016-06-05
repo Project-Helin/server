@@ -10,6 +10,7 @@
             },
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
+
                 function initialize() {
                     scope.route = scope.missions[0].route.wayPoints;
                     scope.allDroneInfos = flatDroneInfosToOneArray();
@@ -200,7 +201,7 @@
                 function flownRouteStyle() {
                     return new ol.style.Style({
                         stroke: new ol.style.Stroke({
-                            color: '#49bcff',
+                            color: gisHelper.flownRouteColor,
                             width: 1
                         })
                     });
