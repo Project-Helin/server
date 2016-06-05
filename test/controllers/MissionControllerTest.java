@@ -2,6 +2,7 @@ package controllers;
 
 import ch.helin.messages.dto.message.DroneActiveState;
 import ch.helin.messages.dto.message.DroneActiveStateMessage;
+import ch.helin.messages.dto.message.DroneDtoMessage;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
@@ -9,6 +10,7 @@ import commons.drone.DroneCommunicationManager;
 import controllers.messages.MissionController;
 import dao.DroneDao;
 import dao.MissionsDao;
+import mappers.DroneMapper;
 import mappers.MissionMapper;
 import models.*;
 import org.junit.Test;
@@ -37,6 +39,9 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Inject
     private MissionMapper missionMapper;
+
+    @Inject
+    private DroneMapper droneMapper;
 
 
     private DroneCommunicationManager droneCommunicationManager;
@@ -104,23 +109,22 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void onRejectConfirmMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMissionInTransaction();
+        UUID droneId = createDroneWithAssignedMissionInTransaction().getId();
 
         jpaApi.withTransaction(() -> {
             ConfirmMissionMessage confirmMissionMessage = new ConfirmMissionMessage();
             confirmMissionMessage.setMissionConfirmType(MissionConfirmType.REJECT);
 
-            missionController.onConfirmMissionMessageReceived(drone.getId(), confirmMissionMessage);
+            missionController.onConfirmMissionMessageReceived(droneId, confirmMissionMessage);
         });
 
         jpaApi.withTransaction(() ->  {
-            DroneActiveState droneActiveState = new DroneActiveState();
-            droneActiveState.setActive(false);
+            Drone droneFromDb = droneDao.findById(droneId);
 
-            DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
-            droneActiveStateMessage.setDroneActiveState(droneActiveState);
+            DroneDtoMessage droneDtoMessage = new DroneDtoMessage();
+            droneDtoMessage.setDroneDto(droneMapper.getDroneDto(droneFromDb));
 
-            verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone.getId(), droneActiveStateMessage);
+            verify(droneCommunicationManager, times(1)).sendMessageToDrone(droneId, droneDtoMessage);
         });
     }
 
