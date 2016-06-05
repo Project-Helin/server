@@ -1,5 +1,6 @@
 package controllers.messages;
 
+import ch.helin.messages.dto.message.DroneDtoMessage;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.drone.DroneCommunicationManager;
@@ -7,6 +8,7 @@ import commons.order.MissionDispatchingService;
 import dao.DroneDao;
 import dao.MissionsDao;
 import dao.OrderDao;
+import mappers.DroneMapper;
 import mappers.MissionMapper;
 import models.*;
 import play.db.jpa.JPAApi;
@@ -18,6 +20,9 @@ public class MissionController {
 
     @Inject
     private DroneDao droneDao;
+
+    @Inject
+    private DroneMapper droneMapper;
 
     @Inject
     private MissionsDao missionsDao;
@@ -59,6 +64,12 @@ public class MissionController {
                 drone.setIsActive(false);
                 missionDispatchingService.withdrawDroneFromMission(drone);
                 missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
+
+
+                DroneDtoMessage droneDtoMessage = new DroneDtoMessage();
+                droneDtoMessage.setDroneDto(droneMapper.getDroneDto(drone));
+
+                droneCommunicationManager.sendMessageToDrone(drone.getId(), droneDtoMessage);
             }
 
             droneDao.persist(drone);

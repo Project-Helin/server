@@ -1,5 +1,7 @@
 package controllers;
 
+import ch.helin.messages.dto.message.DroneActiveState;
+import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
@@ -56,7 +58,7 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void onConfirmMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
+        Drone drone = createDroneWithAssignedMissionInTransaction();
 
         jpaApi.withTransaction(() -> {
 
@@ -79,7 +81,7 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void onSuccessfulFinishedMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
+        Drone drone = createDroneWithAssignedMissionInTransaction();
 
         UUID missionId = jpaApi.withTransaction((em) -> {
             FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
@@ -100,45 +102,33 @@ public class MissionControllerTest extends AbstractIntegrationTest {
         });
     }
 
-    //Drone Message Reject Test
     @Test
     public void onRejectConfirmMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
+        Drone drone = createDroneWithAssignedMissionInTransaction();
 
-        UUID missionId = jpaApi.withTransaction((em) -> {
-            UUID currentMissionId = drone.getCurrentMission().getId();
+        jpaApi.withTransaction(() -> {
             ConfirmMissionMessage confirmMissionMessage = new ConfirmMissionMessage();
             confirmMissionMessage.setMissionConfirmType(MissionConfirmType.REJECT);
 
             missionController.onConfirmMissionMessageReceived(drone.getId(), confirmMissionMessage);
-
-            return currentMissionId;
         });
 
-        jpaApi.withTransaction(() -> {
-            Drone droneFromDB = droneDao.findById(drone.getId());
-            Mission missionFromDB = missionsDao.findById(missionId);
+        jpaApi.withTransaction(() ->  {
+            DroneActiveState droneActiveState = new DroneActiveState();
+            droneActiveState.setActive(false);
 
-            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_FREE_DRONE);
-            assertThat(missionFromDB.getDrone()).isNull();
+            DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
+            droneActiveStateMessage.setDroneActiveState(droneActiveState);
 
-            assertThat(droneFromDB.getCurrentMission()).isNull();
+            verify(droneCommunicationManager, times(1)).sendMessageToDrone(drone.getId(), droneActiveStateMessage);
         });
     }
 
-    private Drone createDroneWithAssignedMission() {
-        return jpaApi.withTransaction((em) -> {
-
-            Customer customer = testHelper.createCustomer();
-            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
-            Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
-            Drone newDrone = testHelper.createNewDroneForProject(project, true);
-            Mission newMission = testHelper.createNewMission(order);
-
-            newDrone.setCurrentMission(newMission);
-            droneDao.persist(newDrone);
-
-            return newDrone;
+    public Drone createDroneWithAssignedMissionInTransaction(){
+        Drone drone = jpaApi.withTransaction((em) -> {
+            return testHelper.createDroneWithAssignedMission();
         });
+
+        return drone;
     }
 }
