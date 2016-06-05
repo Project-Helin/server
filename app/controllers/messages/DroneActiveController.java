@@ -12,6 +12,7 @@ import mappers.DroneMapper;
 import models.Drone;
 import models.Mission;
 import models.MissionState;
+import models.Project;
 import play.db.jpa.JPAApi;
 
 import java.util.UUID;
@@ -47,11 +48,13 @@ public class DroneActiveController {
             droneDao.persist(drone);
 
             missionDispatchingService.withdrawDroneFromMission(drone);
-            missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
+
+            Project currentProjectForDrone = drone.getProject();
+            if(currentProjectForDrone != null){
+                missionDispatchingService.tryToDispatchWaitingMissions(drone.getProject().getId());
+            }
 
             droneCommunicationManager.sendMessageToDrone(drone.getId(), droneDtoMessage);
-
-            //missionDispatchingService.tryAssignDroneForThisMission();
         });
 
     }

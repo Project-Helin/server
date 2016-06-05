@@ -151,5 +151,41 @@ public class DroneActiveControllerTest extends AbstractIntegrationTest{
         });
     }
 
+    @Test
+    public void testNotReassignNewMission(){
+        Drone drone = jpaApi.withTransaction((em) -> {
+            Project newProject = testHelper.createNewProject(testHelper.createNewOrganisation());
+            Drone newDroneForProject = testHelper.createNewDroneForProject(newProject, false);
+
+            Order testOrder = testHelper.createNewOrder(newProject, testHelper.createCustomer());
+            Mission newMission = testHelper.createNewMission(testOrder);
+            newMission.setState(MissionState.WAITING_FOR_FREE_DRONE);
+
+            missionDispatchingService.tryToDispatchWaitingMissions(newProject.getId());
+
+            assertThat(newDroneForProject.getIsActive().equals(false));
+            assertThat(newDroneForProject.getCurrentMission()).isNull();
+            assertThat(newMission.getDrone()).isNull();
+
+            return newDroneForProject;
+        });
+
+        DroneActiveState droneActiveState = new DroneActiveState();
+        droneActiveState.setActive(false);
+
+        DroneActiveStateMessage droneActiveStateMessage = new DroneActiveStateMessage();
+        droneActiveStateMessage.setDroneActiveState(droneActiveState);
+
+        droneActiveController.onDroneActiveStateReceived(drone.getId(), droneActiveStateMessage);
+
+        jpaApi.withTransaction(() -> {
+            Drone droneFromDB = droneDao.findById(drone.getId());
+            assertThat(droneFromDB.getIsActive().equals(true));
+
+            assertThat(droneFromDB.getIsActive().equals(false));
+            assertThat(droneFromDB.getCurrentMission()).isNull();
+        });
+    }
+
 
 }
