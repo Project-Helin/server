@@ -27,7 +27,7 @@
 
             function initializeWebSocketConnection(missions) {
                 missions.forEach(function (mission) {
-                    var ws = new WebSocket("wss://localhost:9000/api/missions/" + mission.id + "/ws");
+                    var ws = new WebSocket("wss://my.helin.ch/api/missions/" + mission.id + "/ws");
 
                     ws.onmessage = function (event) {
                         var droneInfoMessage = JSON.parse(event.data);
