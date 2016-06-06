@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
 import commons.gis.GisHelper;
+import commons.gis.RouteHelper;
 import models.Zone;
 import models.ZoneType;
 import org.geolatte.geom.*;
@@ -37,31 +38,41 @@ public class NonOverlappingFlyableZoneList {
         Iterator<NonOverlappingZone> zoneIterator = zoneList.iterator();
 
         while(zoneIterator.hasNext()){
-            NonOverlappingZone zone = zoneIterator.next();
+            NonOverlappingZone currentZone = zoneIterator.next();
 
-            List<com.vividsolutions.jts.geom.Polygon> collect = zoneList.stream()
-                .filter(x -> !x.equals(zone))
+            List<com.vividsolutions.jts.geom.Polygon> polygonsWithoutCurrentPolygon = zoneList.stream()
+                .filter(x -> !x.equals(currentZone))
                 .map(this::convertZoneToPolygon)
                 .collect(Collectors.toList());
 
-            Geometry unifiedPolygons = CascadedPolygonUnion.union(collect);
+            Geometry unifiedPolygons = CascadedPolygonUnion.union(polygonsWithoutCurrentPolygon);
 
-            Geometry difference = (JTS.to(zone.getPolygon())).difference(unifiedPolygons);
+            Geometry difference = (JTS.to(currentZone.getPolygon())).difference(unifiedPolygons);
             logger.debug("Difference of Polygons {}", difference.toString());
             logger.debug("Type of Polygon is {}", difference.getGeometryType());
 
-            if(difference.isEmpty()){
+            /**
+             * Is the case, when there were two identical polygon.
+             * So the difference between current and ( rest polygon ) is empty.
+             */
+            boolean thereWasTwoSamePolygon = difference.isEmpty();
+            if(thereWasTwoSamePolygon){
                 zoneIterator.remove();
                 return;
             }
 
-            if(difference.getGeometryType().equals("Polygon")){
+            boolean noZoneSplit = difference.getGeometryType().equals("Polygon");
+            if(noZoneSplit){
                 Polygon subtractedZonePolygon = (Polygon) difference;
-                zone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
+                currentZone.setPolygon((org.geolatte.geom.Polygon) JTS.from(subtractedZonePolygon, GisHelper.getReferenceSystem()));
                 return;
             }
 
-            if(difference.getGeometryType().equals("MultiPolygon")){
+            /**
+             * Is the case, when there current zone was split by the other zones
+             */
+            boolean currentZoneSplit = difference.getGeometryType().equals("MultiPolygon");
+            if(currentZoneSplit){
                 throw new RuntimeException("Case MULTIPOLYGON needs to be implemented!");
             }
         }
@@ -71,7 +82,7 @@ public class NonOverlappingFlyableZoneList {
         return (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
     }
 
-    public void debugZoneList() {
+    public void logAllZones() {
         for (NonOverlappingZone zone : zoneList) {
             logger.info("ZoneList Debug {}", zone.getPolygon().toString());
         }
@@ -86,35 +97,46 @@ public class NonOverlappingFlyableZoneList {
         List<Coordinate> returnLineStringCoordinates = new ArrayList<>();
         returnLineStringCoordinates.add(coordinates[0]); //add this point, because it is never part of a line...
 
-        for(int i=0; i<coordinates.length-1; i++){
+        /**
+         * For each segment of the line String
+         */
+        for (int i = 0; i < coordinates.length - 1; i++) {
             GeometryFactory geometryFactory = new GeometryFactory();
-            com.vividsolutions.jts.geom.LineString lineStringSegment = geometryFactory.createLineString(new Coordinate[]{coordinates[i], coordinates[i + 1]});
+
+
+            Coordinate startOfSegment = coordinates[i];
+            Coordinate endOfSegment = coordinates[i + 1];
+
+            com.vividsolutions.jts.geom.LineString lineStringSegment =
+                geometryFactory.createLineString(new Coordinate[]{startOfSegment, endOfSegment});
 
             for (NonOverlappingZone zone : zoneList) {
+
                 com.vividsolutions.jts.geom.Polygon currentPolygon = (com.vividsolutions.jts.geom.Polygon) JTS.to(zone.getPolygon());
                 com.vividsolutions.jts.geom.LineString exteriorRing = currentPolygon.getExteriorRing();
-                if(exteriorRing.intersects(lineStringSegment)){
-                    Geometry intersection = exteriorRing.intersection(lineStringSegment);
-                    logger.debug("Intersection object is {}", intersection.toString());
 
-                    Coordinate[] coordinateArray = intersection.getCoordinates();
+                boolean segmentIntersectsWithPolygonBorder = exteriorRing.intersects(lineStringSegment);
+                if(segmentIntersectsWithPolygonBorder){
 
-                    for (Coordinate coordinate : coordinateArray) {
+                    Geometry intersections = exteriorRing.intersection(lineStringSegment);
+                    logger.debug("Intersection object is {}", intersections.toString());
+
+                    Coordinate[] intersectionPoints = intersections.getCoordinates();
+
+                    for (Coordinate coordinate : intersectionPoints) {
                         returnLineStringCoordinates.add(coordinate);
                         logger.debug("Intersection Coordinate is {}", coordinate.toString());
                     }
                 }
             }
-            returnLineStringCoordinates.add(coordinates[i+1]);
+
+            /**
+             *  Because we want a LineSting finally
+             */
+            returnLineStringCoordinates.add(endOfSegment);
         }
 
-        GeometryFactory returnLineStringFactory = new GeometryFactory();
-        Coordinate[] returnCoordinates = returnLineStringCoordinates.toArray(new Coordinate[]{});
-        com.vividsolutions.jts.geom.LineString returnLineString = returnLineStringFactory.createLineString(returnCoordinates);
-
-        logger.debug("Output to cutLineStringOnPolygonBorder geometry {}", returnLineString.toString());
-
-        return (org.geolatte.geom.LineString) JTS.from(returnLineString, GisHelper.getReferenceSystem());
+        return RouteHelper.coordinatesToLineString(returnLineStringCoordinates);
     }
 
     public List<ch.helin.messages.dto.way.Position> assignHeightForPositions(List<Position> positionList) {

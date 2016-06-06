@@ -2,13 +2,11 @@ package controllers;
 
 import com.google.inject.Inject;
 import commons.SessionHelper;
-import dao.MissionsDao;
 import dao.OrderDao;
 import dao.ProjectsDao;
 import models.Order;
 import models.Project;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.db.jpa.Transactional;
@@ -20,8 +18,6 @@ import views.html.orders.show;
 
 import java.util.List;
 import java.util.UUID;
-
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Transactional
 public class OrdersController extends Controller {
@@ -57,6 +53,7 @@ public class OrdersController extends Controller {
         return ok(index.render(projects, orders, selectedProject));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result show(UUID orderId) {
 
         Order order = orderDao.findById(orderId);
@@ -68,6 +65,7 @@ public class OrdersController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID ordersId) {
         Order found = orderDao.findById(ordersId);
         if (found == null) {

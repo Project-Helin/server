@@ -6,7 +6,6 @@ import commons.ModelHelper;
 import commons.SessionHelper;
 import commons.drone.DroneCommunicationManager;
 import commons.order.MissionDispatchingService;
-import controllers.messages.DroneInfosController;
 import dao.DroneDao;
 import mappers.DroneMapper;
 import models.Drone;
@@ -56,6 +55,7 @@ public class DronesController extends Controller {
         return ok(index.render(all, organisationToken));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result edit(UUID id) {
         Drone found = getDroneById(id);
 
@@ -75,6 +75,7 @@ public class DronesController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result update(UUID id) {
         Drone foundDrone = getDroneById(id);
 
@@ -103,7 +104,11 @@ public class DronesController extends Controller {
 
             droneCommunicationManager.sendMessageToDrone(foundDrone.getId(), droneDtoMessage);
 
-            if (foundDrone.getProject() != null) {
+            if(foundDrone.getIsActive() == false) {
+                missionDispatchingService.withdrawDroneFromMission(foundDrone);
+            }
+
+            if (foundDrone.getProject() != null && foundDrone.getIsActive() == true) {
                 missionDispatchingService.tryToDispatchWaitingMissions(foundDrone.getProject().getId());
             }
 
@@ -111,6 +116,7 @@ public class DronesController extends Controller {
         }
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     public Result delete(UUID droneId) {
         Drone found = getDroneById(droneId);
 
@@ -119,6 +125,7 @@ public class DronesController extends Controller {
         }
 
         flash("success", "Deleted successfully");
+        found.getDroneInfos().clear();;
         droneDao.delete(found);
         return redirect(routes.DronesController.index());
     }

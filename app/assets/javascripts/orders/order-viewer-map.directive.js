@@ -10,6 +10,7 @@
             },
             template: '<div id="map" class="map"></div>',
             link: function (scope) {
+
                 function initialize() {
                     scope.route = scope.missions[0].route.wayPoints;
                     scope.allDroneInfos = flatDroneInfosToOneArray();
@@ -43,9 +44,7 @@
                 }
 
                 function createMap() {
-                    var raster = new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                    });
+                    var mapLayers = gisHelper.getBaseAndSatelliteLayer();
 
                     scope.format = new ol.format.WKT();
 
@@ -53,13 +52,20 @@
 
                     scope.map = new ol.Map({
                         target: 'map',
-                        layers: [raster, scope.vectorLayer],
+                        layers: [mapLayers, scope.vectorLayer],
                         view: new ol.View({
                             center: [981481.3, 5978619.7],
                             zoom: 18
                         })
                     });
+
                     scope.map.getView().fit(scope.vectorLayer.getSource().getExtent(), scope.map.getSize());
+
+                    var layerSwitcher = new ol.control.LayerSwitcher({
+                        tipLabel: 'Legende'
+                    });
+
+                    scope.map.addControl(layerSwitcher);
                 }
 
                 function addRouteLayer(calculatedRoute) {
@@ -195,7 +201,7 @@
                 function flownRouteStyle() {
                     return new ol.style.Style({
                         stroke: new ol.style.Stroke({
-                            color: '#49bcff',
+                            color: gisHelper.flownRouteColor,
                             width: 1
                         })
                     });

@@ -13,10 +13,10 @@ public class DroneConnection {
 
     private static final Logger logger = getLogger(DroneConnection.class);
 
-    private DroneMessageDispatcher droneMessageDispatcher;
+    private final DroneMessageDispatcher droneMessageDispatcher;
     private Channel channel;
 
-    private Drone drone;
+    private final Drone drone;
 
     private Connection connection;
     private String consumerQueueName;

@@ -11,6 +11,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.projectsProducts.index;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class ProjectsProductsController extends Controller {
     @Inject
     private FormFactory formFactory;
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result index(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -50,6 +52,7 @@ public class ProjectsProductsController extends Controller {
         return ok(index.render(projectId, products, missingProducts));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result addProduct(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -69,6 +72,7 @@ public class ProjectsProductsController extends Controller {
         return index(projectId);
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result delete(UUID projectId, UUID productId) {
         Project foundProject = getProject(projectId);
@@ -83,7 +87,7 @@ public class ProjectsProductsController extends Controller {
         }
 
         foundProject.getProducts().remove(productToDelete);
-        productsDao.persist(productToDelete);;
+        productsDao.persist(productToDelete);
 
         return redirect(routes.ProjectsProductsController.index(projectId));
     }

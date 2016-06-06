@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class AbstractDao<T extends BaseEntity> {
-    private String tableName;
-    private Class<T> entityClass;
+    private final String tableName;
+    private final Class<T> entityClass;
 
     @Inject
     protected JPAApi jpaApi;

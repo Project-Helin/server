@@ -78,13 +78,12 @@ public class ApiHelper {
         }
     }
 
-    public ProjectApiDto doPost(Call urlRouteLink, Object bodyWhichIsSentAsJson, TestBrowser testBrowser) {
+    public void doPost(Call urlRouteLink, Object bodyWhichIsSentAsJson, TestBrowser testBrowser) {
         try {
             doPostCareFree(urlRouteLink, bodyWhichIsSentAsJson, testBrowser);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     public <T> T doPost(Call urlRouteLink, JsonNode data, Class<T> expectedReturnType) {

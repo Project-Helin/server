@@ -15,12 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class DroneCommunicationManager {
 
-    private DroneMessageDispatcher droneMessageDispatcher;
+    private final DroneMessageDispatcher droneMessageDispatcher;
 
     @Inject
     private JsonBasedMessageConverter messageConverter;
 
-    private Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
+    private final Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
 
     @Inject
     public DroneCommunicationManager(DroneDao droneDao,

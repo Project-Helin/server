@@ -1,7 +1,5 @@
 package dao;
 
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 import commons.gis.GisHelper;
 import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;
@@ -89,18 +87,6 @@ public class ProductsDao extends AbstractDao<Product> {
                 return productApiDto;
             })
             .collect(Collectors.toList());
-    }
-
-
-    private com.vividsolutions.jts.geom.Geometry wktToGeometry(String wktPoint) {
-        WKTReader fromText = new WKTReader();
-        com.vividsolutions.jts.geom.Geometry geom = null;
-        try {
-            geom = fromText.read(wktPoint);
-        } catch (ParseException e) {
-            throw new RuntimeException("Not a WKT string:" + wktPoint);
-        }
-        return geom;
     }
 
     public List<Product> findByProjectId(UUID projectId) {

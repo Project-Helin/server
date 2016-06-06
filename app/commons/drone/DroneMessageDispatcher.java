@@ -2,7 +2,6 @@ package commons.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.converter.MessageConverter;
-import ch.helin.messages.dto.message.DroneActiveState;
 import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.Message;
@@ -10,6 +9,7 @@ import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
 import ch.helin.messages.dto.message.missionMessage.FinishedMissionMessage;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import controllers.messages.DroneActiveController;
 import controllers.messages.DroneInfosController;
 import controllers.messages.MissionController;
 import org.slf4j.Logger;
@@ -25,6 +25,9 @@ public class DroneMessageDispatcher {
 
     @Inject
     private Provider<DroneInfosController> droneInfosControllerProvider;
+
+    @Inject
+    private Provider<DroneActiveController> droneActiveControllerProvider;
 
     @Inject
     private Provider<MissionController> missionControllerProvider;
@@ -53,7 +56,7 @@ public class DroneMessageDispatcher {
                 break;
             case DroneActiveState:
                 DroneActiveStateMessage droneActiveStateMessage = (DroneActiveStateMessage) message;
-                droneInfosControllerProvider.get().onDroneActiveStateReceived(droneId, droneActiveStateMessage);
+                droneActiveControllerProvider.get().onDroneActiveStateReceived(droneId, droneActiveStateMessage);
                 logger.info("DroneActiveStateMessage {}", droneActiveStateMessage.getDroneActiveState());
                 break;
 

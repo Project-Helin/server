@@ -6,7 +6,10 @@
             function initialize() {
                 $scope.data = {};
                 $scope.data.focusDrone = false;
-                $scope.zoneColors = gisHelper.zoneColors;
+                
+                $scope.zoneColors = angular.copy(gisHelper.zoneColors);
+                $scope.zoneColors["Calculated Route"] = gisHelper.calculatedRouteColor;
+                $scope.zoneColors["Flown Route"] = gisHelper.flownRouteColor;
 
                 OrdersService.loadOrder($scope.orderId).then(function(order) {
                     $scope.data.order = order;
@@ -24,7 +27,7 @@
 
             function initializeWebSocketConnection(missions) {
                 missions.forEach(function (mission) {
-                    var ws = new WebSocket("ws://localhost:9000/api/missions/" + mission.id + "/ws");
+                    var ws = new WebSocket("wss://localhost:9000/api/missions/" + mission.id + "/ws");
 
                     ws.onmessage = function (event) {
                         var droneInfoMessage = JSON.parse(event.data);
@@ -33,10 +36,7 @@
                         $scope.$broadcast('DroneInfoReceived', {droneInfo: droneInfo, missionId: mission.id});
                     };
                 });
-
-               
             }
-
 
             initialize();
         }

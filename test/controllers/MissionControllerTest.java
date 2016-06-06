@@ -1,5 +1,8 @@
 package controllers;
 
+import ch.helin.messages.dto.message.DroneActiveState;
+import ch.helin.messages.dto.message.DroneActiveStateMessage;
+import ch.helin.messages.dto.message.DroneDtoMessage;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
 import commons.AbstractIntegrationTest;
@@ -7,6 +10,7 @@ import commons.drone.DroneCommunicationManager;
 import controllers.messages.MissionController;
 import dao.DroneDao;
 import dao.MissionsDao;
+import mappers.DroneMapper;
 import mappers.MissionMapper;
 import models.*;
 import org.junit.Test;
@@ -36,6 +40,9 @@ public class MissionControllerTest extends AbstractIntegrationTest {
     @Inject
     private MissionMapper missionMapper;
 
+    @Inject
+    private DroneMapper droneMapper;
+
 
     private DroneCommunicationManager droneCommunicationManager;
 
@@ -56,7 +63,7 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void onConfirmMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
+        Drone drone = createDroneWithAssignedMissionInTransaction();
 
         jpaApi.withTransaction(() -> {
 
@@ -79,7 +86,7 @@ public class MissionControllerTest extends AbstractIntegrationTest {
 
     @Test
     public void onSuccessfulFinishedMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
+        Drone drone = createDroneWithAssignedMissionInTransaction();
 
         UUID missionId = jpaApi.withTransaction((em) -> {
             FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
@@ -101,41 +108,31 @@ public class MissionControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void onFailedFinishedMissionMessageReceivedTest() {
-        Drone drone = createDroneWithAssignedMission();
-
-        UUID missionId = jpaApi.withTransaction((em) -> {
-            FinishedMissionMessage finishedMissionMessage = new FinishedMissionMessage();
-            finishedMissionMessage.setFinishedType(MissionFinishedType.FAILED);
-
-            missionController.onFinishedMissionMessageReceived(drone.getId(), finishedMissionMessage);
-
-            return drone.getCurrentMission().getId();
-        });
+    public void onRejectConfirmMissionMessageReceivedTest() {
+        UUID droneId = createDroneWithAssignedMissionInTransaction().getId();
 
         jpaApi.withTransaction(() -> {
-            //should reassign failed mission
-            Drone droneFromDB = droneDao.findById(drone.getId());
-            Mission missionFromDB = missionsDao.findById(missionId);
+            ConfirmMissionMessage confirmMissionMessage = new ConfirmMissionMessage();
+            confirmMissionMessage.setMissionConfirmType(MissionConfirmType.REJECT);
 
-            assertThat(missionFromDB.getState()).isEqualTo(MissionState.WAITING_FOR_DRONE_CONFIRMATION);
-            assertThat(droneFromDB.getCurrentMission()).isEqualTo(missionFromDB);
+            missionController.onConfirmMissionMessageReceived(droneId, confirmMissionMessage);
+        });
+
+        jpaApi.withTransaction(() ->  {
+            Drone droneFromDb = droneDao.findById(droneId);
+
+            DroneDtoMessage droneDtoMessage = new DroneDtoMessage();
+            droneDtoMessage.setDroneDto(droneMapper.getDroneDto(droneFromDb));
+
+            verify(droneCommunicationManager, times(1)).sendMessageToDrone(droneId, droneDtoMessage);
         });
     }
 
-    private Drone createDroneWithAssignedMission() {
-        return jpaApi.withTransaction((em) -> {
-
-            Customer customer = testHelper.createCustomer();
-            Project project = testHelper.createNewProject(testHelper.createNewOrganisation());
-            Order order = testHelper.createNewOrderWithThreeMissions(project, customer);
-            Drone newDrone = testHelper.createNewDroneForProject(project, true);
-            Mission newMission = testHelper.createNewMission(order);
-
-            newDrone.setCurrentMission(newMission);
-            droneDao.persist(newDrone);
-
-            return newDrone;
+    public Drone createDroneWithAssignedMissionInTransaction(){
+        Drone drone = jpaApi.withTransaction((em) -> {
+            return testHelper.createDroneWithAssignedMission();
         });
+
+        return drone;
     }
 }

@@ -18,7 +18,8 @@
                 </div>
                 <div class="col-xs-3">
                     <h3>Missions</h3>
-                    <div ng-repeat="mission in data.order.missions" class="pad box-pane-right bg-gray m-t" ng-class="{'bg-blue': mission.active}" ng-click="mission.active = !mission.active">
+                    <div ng-repeat="mission in data.order.missions" class="pad box-pane-right bg-gray m-t"
+                         ng-class="{'bg-blue': mission.active}" ng-click="mission.active = !mission.active">
 
                         <div class="description-block m-b">
                             <i class="glyphicon glyphicon-road" style="font-size: 40px;"/>
@@ -39,13 +40,14 @@
 
                 </div>
             </div>
-            <div ng-repeat="(key, value) in zoneColors" style="display: inline-block" class="m-r-lg" >
+            <div ng-repeat="(key, value) in zoneColors" style="display: inline-block" class="m-r-lg">
 
                 <div ng-style="{'background-color': value }" class="p-l p-r zone-color-legend">
                 </div>
                 {{key}}
+            </div>
+
+
         </div>
-
-
     </div>
 </div>

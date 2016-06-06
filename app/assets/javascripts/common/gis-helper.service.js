@@ -7,6 +7,9 @@
             "Delivery Zone": 'rgba(0, 166, 90, 0.8)',
             "Loading Zone": 'rgba(243, 156, 18, 0.8)'
         };
+
+        this.flownRouteColor = '#e50be8';
+        this.calculatedRouteColor = 'rgba(33, 231, 6, 1)';
         this.dataProjectionCode = 'EPSG:4326';
         this.mapProjectionCode = 'EPSG:3857';
 
@@ -115,9 +118,10 @@
         };
 
         this.getRouteStyle = function () {
+            var _this = this;
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    color: 'rgba(119, 17, 0, 0.8)',
+                    color: _this.calculatedRouteColor,
                     width: 2
                 })
             });
@@ -143,6 +147,7 @@
         };
 
         function createRouteMarker(coordinates, id) {
+            var _this = this;
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });
@@ -152,9 +157,9 @@
             }
 
             var circle = new ol.style.Circle({
-                radius: 8,
+                radius: 7,
                 fill: new ol.style.Fill({
-                    color: 'rgba(119, 17, 0, 0.8)'
+                    color: 'rgba(33, 231, 6, 1)'
                 }),
                 stroke: null
             });
@@ -169,6 +174,7 @@
         }
 
         this.createDroneInfoMarker = function (coordinates, id) {
+            var _this = this;
             var marker = new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             });
@@ -178,9 +184,9 @@
             }
 
             var circle = new ol.style.Circle({
-                radius: 4,
+                radius: 6,
                 fill: new ol.style.Fill({
-                    color: '#3c8dbc'
+                    color: _this.flownRouteColor
                 }),
                 stroke: null
             });
@@ -215,7 +221,35 @@
             })[0];
 
             return isOnMap;
-        }
+        };
+
+
+        this.getBaseAndSatelliteLayer = function () {
+            return new ol.layer.Group({
+                'title': 'Base maps',
+                layers: [
+                    new ol.layer.Tile({
+                        title: 'OSM',
+                        type: 'base',
+                        visible: true,
+                        source: new ol.source.OSM()
+                    }),
+                    new ol.layer.Tile({
+                        title: 'Bing Sattelite',
+                        type: 'base',
+                        visible: true,
+                        preload: Infinity,
+                        source: new ol.source.BingMaps({
+                            key: 'Asp51bKxq0601cQL6hIYa-figI3wTNxsTX-kw8wzVZD16nwy2mNGmCA1xXlliZxx',
+                            imagerySet: 'Aerial',
+                            // use maxZoom 19 to see stretched tiles instead of the BingMaps
+                            // "no photos at this zoom level" tiles
+                            maxZoom: 19
+                        })
+                    })
+                ]
+            });
+        };
 
 
     })

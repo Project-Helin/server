@@ -12,6 +12,7 @@ import play.data.FormFactory;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.projectsDrones.index;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class ProjectsDronesController extends Controller {
     @Inject
     private MissionDispatchingService missionDispatchingService;
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result index(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -54,6 +56,7 @@ public class ProjectsDronesController extends Controller {
         return ok(index.render(projectId, drones, missingDrones));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result addDrone(UUID projectId) {
         Project foundProject = getProject(projectId);
@@ -75,6 +78,7 @@ public class ProjectsDronesController extends Controller {
         return redirect(routes.ProjectsDronesController.index(projectId));
     }
 
+    @Security.Authenticated(SecurityAuthenticator.class)
     @Transactional
     public Result delete(UUID projectId, UUID droneId) {
         Project foundProject = getProject(projectId);

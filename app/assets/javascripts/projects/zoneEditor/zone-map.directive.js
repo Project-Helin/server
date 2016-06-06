@@ -18,39 +18,14 @@
                 }
 
                 function createMap() {
-                    var group =
-                        new ol.layer.Group({
-                            'title': 'Base maps',
-                            layers: [
-                                new ol.layer.Tile({
-                                    title: 'OSM',
-                                    type: 'base',
-                                    visible: true,
-                                    source: new ol.source.OSM()
-                                }),
-                                new ol.layer.Tile({
-                                    title: 'Bing Sattelite',
-                                    type: 'base',
-                                    visible: true,
-                                    preload: Infinity,
-                                    source: new ol.source.BingMaps({
-                                        key: 'Asp51bKxq0601cQL6hIYa-figI3wTNxsTX-kw8wzVZD16nwy2mNGmCA1xXlliZxx',
-                                        imagerySet: 'Aerial',
-                                        // use maxZoom 19 to see stretched tiles instead of the BingMaps
-                                        // "no photos at this zoom level" tiles
-                                        maxZoom: 19
-                                    })
-                                })
-                            ]
-                        });
-
+                    var mapLayers = gisHelper.getBaseAndSatelliteLayer();
                     scope.format = new ol.format.WKT();
 
                     createVectorLayer();
 
                     scope.map = new ol.Map({
                         target: 'map',
-                        layers: [group, scope.vectorLayer],
+                        layers: [mapLayers, scope.vectorLayer],
                         view: new ol.View({
                             center: [981481.3, 5978619.7],
                             zoom: 18

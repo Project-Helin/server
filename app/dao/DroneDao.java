@@ -15,60 +15,59 @@ public class DroneDao extends AbstractDao<Drone> {
 
     public List<Drone> findByOrganisation(Organisation organisation) {
         return jpaApi
-                .em()
-                .createQuery("select d from drones d where d.organisation = :organisation", Drone.class)
-                .setParameter("organisation", organisation)
-                .getResultList();
+            .em()
+            .createQuery("select d from drones d where d.organisation = :organisation", Drone.class)
+            .setParameter("organisation", organisation)
+            .getResultList();
     }
 
     public Drone findByIdAndOrganisation(UUID droneId, Organisation organisation) {
         TypedQuery<Drone> droneTypedQuery = jpaApi
-                .em()
-                .createQuery(
-                        "select d from drones d " +
-                                " where d.organisation = :organisation and d.id = :droneId",
-                        Drone.class
-                )
-                .setParameter("organisation", organisation)
-                .setParameter("droneId", droneId);
+            .em()
+            .createQuery(
+                "select d from drones d " +
+                    " where d.organisation = :organisation and d.id = :droneId",
+                Drone.class
+            )
+            .setParameter("organisation", organisation)
+            .setParameter("droneId", droneId);
 
         return getSingleResultOrNull(droneTypedQuery);
     }
 
     public Drone findMatchingPayloadAndHighestBatteryRemain(UUID projectId, int payload) {
         TypedQuery<Drone> droneTypedQuery = jpaApi
-                .em()
-                .createQuery(
-                        "select d from drones d " +
-                                " where d.project.id = :project_id " +
-                                " and d.payload >= :payload " +
-                                " and d.isActive = true " +
-                                " and d.currentMission = null " +
-                                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t " +
-                                    " where t.project.id = :project_id " +
-                                    " and t.payload >= :payload " +
-                                    " and t.isActive = true " +
-                                    " and t.currentMission = null " +
-                                ")"
-                        ,
-                        Drone.class
-                )
-                .setParameter("project_id", projectId)
-                .setParameter("payload", payload);
+            .em()
+            .createQuery(
+                "select d from drones d " +
+                " where d.project.id = :project_id " +
+                " and d.payload >= :payload " +
+                " and d.isActive = true " +
+                " and d.currentMission = null " +
+                " and abs(1 - d.payload) = (select min( abs(1 - t.payload)) from drones t " +
+                " where t.project.id = :project_id " +
+                " and t.payload >= :payload " +
+                " and t.isActive = true " +
+                " and t.currentMission = null " +
+                ")",
+                Drone.class
+            )
+            .setParameter("project_id", projectId)
+            .setParameter("payload", payload);
 
         return getSingleResultOrNull(droneTypedQuery);
     }
 
     public List<Drone> findWithoutProjectByOrganisation(Organisation organisation) {
         return jpaApi
-                .em()
-                .createQuery(
-                        "select d from drones d " +
-                                " where d.organisation = :organisation" +
-                                " and d.project = null "
-                        ,
-                        Drone.class)
-                .setParameter("organisation", organisation)
-                .getResultList();
+            .em()
+            .createQuery(
+                "select d from drones d " +
+                " where d.organisation = :organisation" +
+                " and d.project = null "
+                ,
+                Drone.class)
+            .setParameter("organisation", organisation)
+            .getResultList();
     }
 }

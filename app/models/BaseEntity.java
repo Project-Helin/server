@@ -2,6 +2,7 @@ package models;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -46,6 +47,13 @@ public class BaseEntity {
     public BaseEntity setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
+    }
+
+    public String getCreatedAtDateAndTime(){
+        if (getCreatedAt() != null) {
+            return DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").format(getCreatedAt());
+        }
+        return "";
     }
 
     public LocalDateTime getUpdateAt() {

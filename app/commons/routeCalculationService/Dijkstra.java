@@ -18,7 +18,7 @@ public class Dijkstra {
 
     private static final Logger logger = LoggerFactory.getLogger(Dijkstra.class);
 
-    private Pseudograph<Position, LineString> graph = new Pseudograph<>(LineString.class);
+    private final Pseudograph<Position, LineString> graph = new Pseudograph<>(LineString.class);
 
     public Dijkstra(RawGraph rawGraph){
 

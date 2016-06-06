@@ -9,10 +9,8 @@ import org.geolatte.geom.Point;
 import org.geolatte.geom.jts.JTS;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ZoneHelper {
 
@@ -26,7 +24,7 @@ public class ZoneHelper {
         if(!checkOneOrderZone(zones)){
             throw new RuntimeException("There should be at least on order zone.");
         }
-        if(!checkAllZonesInisideOrderZone(zones)){
+        if(!checkAllZonesInsideOrderZone(zones)){
             throw new RuntimeException("All zones are not inside order zone.");
         }
         if(!checkAllZonesAreConnected(zones)){
@@ -83,7 +81,7 @@ public class ZoneHelper {
         return (numOfOrderZones == 1);
     }
 
-    public static boolean checkAllZonesInisideOrderZone(Set<Zone> zones){
+    public static boolean checkAllZonesInsideOrderZone(Set<Zone> zones){
         Polygon orderZonePolygon = zones.stream()
                 .filter(x -> x.getType() == ZoneType.OrderZone)
                 .map(ZoneHelper::convertZoneToJtsPolygon)
@@ -93,7 +91,7 @@ public class ZoneHelper {
         int numberOfPolygonsOutsideOrderZone = (int) zones.stream()
                 .filter(x -> x.getType() != ZoneType.OrderZone)
                 .map(ZoneHelper::convertZoneToJtsPolygon)
-                .filter(x -> orderZonePolygon.contains(x) == false)
+                .filter(x -> !orderZonePolygon.contains(x))
                 .count();
 
         //zones - 1 because the order zone should not be contained by itself.
@@ -129,11 +127,12 @@ public class ZoneHelper {
 
     public static boolean isCustomerInsideDeliveryZone(Set<Zone> zones,
                                                        org.geolatte.geom.Point customerPoint){
+
         int numberOfDeliveryZonesThatContainCustomer =
                 (int) zones.stream()
                         .filter(x -> x.getType() == ZoneType.DeliveryZone)
                         .map(x -> JTS.to(x.getPolygon()).contains(JTS.to(customerPoint)))
-                        .filter(x -> x == Boolean.TRUE)
+                        .filter(x -> x == Boolean.TRUE) // was needed because, Stream could not figure out the type
                         .count();
 
         return numberOfDeliveryZonesThatContainCustomer > 0;
