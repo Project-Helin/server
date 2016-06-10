@@ -1,4 +1,4 @@
-package commons.gis;
+package service.gis;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryType;

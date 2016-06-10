@@ -1,4 +1,4 @@
-package commons;
+package service;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
 

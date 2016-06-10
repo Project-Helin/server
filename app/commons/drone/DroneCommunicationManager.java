@@ -1,8 +1,8 @@
-package commons.drone;
+package service.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.dto.message.Message;
-import commons.SettingsHelper;
+import service.SettingsHelper;
 import dao.DroneDao;
 import models.Drone;
 import play.db.jpa.JPAApi;

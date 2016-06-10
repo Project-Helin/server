@@ -1,6 +1,6 @@
 package controllers;
 
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import models.Order;
 import models.Organisation;
 import org.junit.Before;

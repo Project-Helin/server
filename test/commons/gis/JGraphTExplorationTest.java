@@ -1,4 +1,4 @@
-package commons.gis;
+package service.gis;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;

@@ -1,11 +1,11 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import com.google.inject.Inject;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
-import commons.AbstractIntegrationTest;
-import commons.gis.GisHelper;
+import service.AbstractIntegrationTest;
+import service.gis.GisHelper;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;

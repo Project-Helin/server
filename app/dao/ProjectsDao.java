@@ -1,6 +1,6 @@
 package dao;
 
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.Organisation;
 import models.Project;
 import models.ZoneType;

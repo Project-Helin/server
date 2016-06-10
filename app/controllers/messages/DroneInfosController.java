@@ -2,7 +2,7 @@ package controllers.messages;
 
 import ch.helin.messages.dto.message.*;
 import com.google.inject.Inject;
-import commons.websocket.MissionWebSocketManager;
+import service.websocket.MissionWebSocketManager;
 import dao.DroneDao;
 import dao.DroneInfoDao;
 import mappers.DroneInfoMapper;

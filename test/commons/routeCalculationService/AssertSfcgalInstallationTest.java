@@ -1,9 +1,6 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
-import commons.AbstractE2ETest;
-import commons.AbstractIntegrationTest;
-import org.apache.commons.collections.comparators.BooleanComparator;
-import org.apache.xpath.operations.Bool;
+import service.AbstractIntegrationTest;
 import org.junit.Test;
 import play.db.jpa.JPAApi;
 

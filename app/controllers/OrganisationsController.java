@@ -1,9 +1,9 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.ModelHelper;
-import commons.SessionHelper;
-import commons.SessionKey;
+import service.ModelHelper;
+import service.SessionHelper;
+import service.SessionKey;
 import dao.OrganisationsDao;
 import dao.UserDao;
 import models.Organisation;

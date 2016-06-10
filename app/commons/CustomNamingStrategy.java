@@ -1,4 +1,4 @@
-package commons;
+package service;
 
 import com.google.common.base.CaseFormat;
 import org.hibernate.boot.model.naming.Identifier;

@@ -1,4 +1,4 @@
-package commons.drone;
+package service.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.converter.MessageConverter;

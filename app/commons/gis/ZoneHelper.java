@@ -1,4 +1,4 @@
-package commons.gis;
+package service.gis;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;

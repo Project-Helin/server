@@ -1,7 +1,7 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import commons.AbstractWebServiceIntegrationTest;
+import service.AbstractWebServiceIntegrationTest;
 import dao.CustomerDao;
 import dto.api.CustomerApiDto;
 import models.Customer;

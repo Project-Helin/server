@@ -43,7 +43,7 @@
                     <div class="navbar-custom-menu">
 
                         <ul class="nav navbar-nav">
-                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+                        @if(session.get(service.SessionKey.USER_ID.name) != null) {
                             @usermenu()
                         } else {
                             <li>
@@ -56,8 +56,8 @@
 
                         </ul>
                         <ul class="nav navbar-nav">
-                        @if(session.get(commons.SessionKey.USER_ID.name) != null) {
-                            @if(session.get(commons.SessionKey.ORGANISATION_ID.name) == null) {
+                        @if(session.get(service.SessionKey.USER_ID.name) != null) {
+                            @if(session.get(service.SessionKey.ORGANISATION_ID.name) == null) {
                                 <li>
                                     <a href="@routes.OrganisationsController.add()" id="register-organisation">
                                         Register your Organisation</a>

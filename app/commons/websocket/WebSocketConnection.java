@@ -1,4 +1,4 @@
-package commons.websocket;
+package service.websocket;
 
 import play.mvc.WebSocket;
 

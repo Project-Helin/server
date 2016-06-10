@@ -1,4 +1,4 @@
-package commons;
+package service;
 
 import ch.helin.commons.AssertUtils;
 import com.google.inject.Inject;

@@ -1,13 +1,11 @@
 package controllers;
 
-import commons.AbstractE2ETest;
-import commons.drone.DroneCommunicationManager;
-import controllers.messages.DroneInfosController;
+import service.AbstractE2ETest;
+import service.drone.DroneCommunicationManager;
 import models.Drone;
 import models.Organisation;
 import org.junit.Before;
 import org.junit.Test;
-import play.*;
 import play.inject.guice.GuiceApplicationBuilder;
 
 import static org.fest.assertions.Assertions.assertThat;

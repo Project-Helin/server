@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.SessionHelper;
+import service.SessionHelper;
 import dao.ProjectsDao;
 import models.Project;
 import play.db.jpa.Transactional;

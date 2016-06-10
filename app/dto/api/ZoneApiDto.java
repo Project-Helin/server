@@ -2,8 +2,8 @@ package dto.api;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import commons.JsonGeometryDeserializer;
-import commons.JsonGeometrySerializer;
+import service.JsonGeometryDeserializer;
+import service.JsonGeometrySerializer;
 import models.ZoneType;
 import org.geolatte.geom.Polygon;
 

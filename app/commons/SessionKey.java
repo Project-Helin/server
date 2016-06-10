@@ -1,4 +1,4 @@
-package commons;
+package service;
 
 public enum SessionKey {
     USER_ID,

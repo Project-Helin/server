@@ -6,7 +6,7 @@ import ch.helin.messages.dto.state.BatteryState;
 import ch.helin.messages.dto.state.DroneState;
 import ch.helin.messages.dto.state.GpsState;
 import ch.helin.messages.dto.way.Position;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.DroneInfo;
 import org.geolatte.geom.Point;
 

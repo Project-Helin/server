@@ -12,7 +12,7 @@
         <a href="@routes.Application.index()"><i class="glyphicon glyphicon-home"></i> <span>Home</span></a>
     </li>
 
-    @if(session.get(commons.SessionKey.ORGANISATION_ID.name) != null) {
+    @if(session.get(service.SessionKey.ORGANISATION_ID.name) != null) {
         <li class="@activeLink(controllers.routes.OrganisationsController.edit())">
             <a href="@controllers.routes.OrganisationsController.edit()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Organisation Settings</span></a>
         </li>
@@ -22,7 +22,7 @@
         </li>
     }
 
-    @if(session.get(commons.SessionKey.USER_ID.name) != null) {
+    @if(session.get(service.SessionKey.USER_ID.name) != null) {
         <li class="@activeLink(controllers.routes.ProductsController.index())">
             <a href="@controllers.routes.ProductsController.index()" ><i class="glyphicon glyphicon-sound-stereo"></i> <span>Products</span></a>
         </li>

@@ -1,7 +1,7 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
-import commons.gis.GisHelper;
-import commons.gis.RouteHelper;
+import service.gis.GisHelper;
+import service.gis.RouteHelper;
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Point;
