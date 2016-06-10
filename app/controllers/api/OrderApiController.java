@@ -115,9 +115,8 @@ public class OrderApiController extends Controller {
         List<Position> positionList =
             routeCalculationService.calculateRoute(orderApiDto.getCustomerPosition(), order.getProject());
 
-        Route route = RouteHelper.positionListToRoute(positionList);
 
-        addMissionsToOrder(order, route);
+        addMissionsToOrder(order, positionList);
         orderDao.persist(order);
 
         return orderMapper.convertToOrderDto(order);
@@ -190,7 +189,7 @@ public class OrderApiController extends Controller {
         return order;
     }
 
-    private void addMissionsToOrder(Order order, Route route) {
+    private void addMissionsToOrder(Order order, List<Position> positionList) {
         Set<Mission> createdMissions =
             order.getOrderProducts()
                 .stream()
@@ -199,10 +198,12 @@ public class OrderApiController extends Controller {
                     mission.setOrder(order);
                     mission.setState(MissionState.NEW);
                     mission.setOrderProduct(orderProduct);
-                    mission.setRoute(route);
 
-                    route.setMission(mission);
+
+                    Route route = RouteHelper.positionListToRoute(positionList);
                     mission.setRoute(route);
+                    route.setMission(mission);
+
                     return mission;
                 })
                 .collect(Collectors.toSet());
