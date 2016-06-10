@@ -1,7 +1,10 @@
 package controllers.api;
 
+import ch.helin.messages.dto.message.DroneDto;
+import ch.helin.messages.dto.message.RabbitMqInformation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import commons.SettingsHelper;
 import commons.drone.DroneCommunicationManager;
 import commons.order.MissionDispatchingService;
 import dao.DroneDao;
@@ -34,6 +37,9 @@ public class DronesApiController extends Controller {
     @Inject
     private DroneCommunicationManager droneCommunicationManager;
 
+    @Inject
+    private SettingsHelper settingsHelper;
+
     @Transactional
     @BodyParser.Of(BodyParser.Json.class)
     public Result create () {
@@ -54,7 +60,14 @@ public class DronesApiController extends Controller {
             }
 
             Drone drone = createDrone(name, payload, organisation);
-            return ok(Json.toJson(droneMapper.getDroneDto(drone)));
+            DroneDto droneDto = droneMapper.getDroneDto(drone);
+
+            RabbitMqInformation rabbitMq = new RabbitMqInformation();
+            rabbitMq.setUsername(settingsHelper.getRabbitMQUserName());
+            rabbitMq.setPassword(settingsHelper.getRabbitMQPassword());
+            droneDto.setRabbitMqInformation(rabbitMq);
+
+            return ok(Json.toJson(droneDto));
         }
     }
 

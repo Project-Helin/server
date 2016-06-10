@@ -2,6 +2,7 @@ package commons.drone;
 
 import ch.helin.commons.ConnectionUtils;
 import com.rabbitmq.client.*;
+import commons.SettingsHelper;
 import models.Drone;
 import org.slf4j.Logger;
 
@@ -22,7 +23,7 @@ public class DroneConnection {
     private String consumerQueueName;
     private String producerQueueName;
 
-    public DroneConnection(Drone drone, DroneMessageDispatcher droneMessageDispatcher) {
+    public DroneConnection(Drone drone, DroneMessageDispatcher droneMessageDispatcher, SettingsHelper settingsHelper) {
         //Create two queues, based on token of the drone
 
         this.drone = drone;
@@ -31,8 +32,8 @@ public class DroneConnection {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setPort(5672);
-        factory.setUsername("admin");
-        factory.setPassword("helin");
+        factory.setUsername(settingsHelper.getRabbitMQUserName());
+        factory.setPassword(settingsHelper.getRabbitMQPassword());
 
         try {
             connection = factory.newConnection();
