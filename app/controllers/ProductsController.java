@@ -1,8 +1,8 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.ModelHelper;
-import commons.SessionHelper;
+import service.ModelHelper;
+import service.SessionHelper;
 import dao.ProductsDao;
 import models.Product;
 import org.slf4j.Logger;

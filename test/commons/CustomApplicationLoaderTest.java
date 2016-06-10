@@ -1,7 +1,7 @@
-package commons;
+package service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import dto.api.ZoneApiDto;
 import org.geolatte.geom.Polygon;
 import org.junit.Test;

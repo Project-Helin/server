@@ -1,10 +1,10 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import ch.helin.commons.AssertUtils;
 import com.google.inject.Inject;
-import commons.gis.GisHelper;
-import commons.gis.RouteHelper;
-import commons.gis.ZoneHelper;
+import service.gis.GisHelper;
+import service.gis.RouteHelper;
+import service.gis.ZoneHelper;
 import dao.ProjectsDao;
 import dao.RouteDao;
 import models.Project;

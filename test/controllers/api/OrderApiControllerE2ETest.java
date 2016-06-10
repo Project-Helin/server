@@ -2,7 +2,7 @@ package controllers.api;
 
 import ch.helin.messages.dto.OrderDto;
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.OrderDao;
 import mappers.RouteMapper;
 import models.Mission;

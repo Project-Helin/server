@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.SessionHelper;
+import service.SessionHelper;
 import dao.ProductsDao;
 import dao.ProjectsDao;
 import models.Product;

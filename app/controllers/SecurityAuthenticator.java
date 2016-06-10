@@ -1,6 +1,6 @@
 package controllers;
 
-import commons.SessionKey;
+import service.SessionKey;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;

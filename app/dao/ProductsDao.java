@@ -1,6 +1,6 @@
 package dao;
 
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;
 import models.*;

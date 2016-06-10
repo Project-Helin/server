@@ -1,4 +1,4 @@
-package commons;
+package service;
 
 import com.google.inject.Inject;
 import org.junit.After;

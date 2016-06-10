@@ -3,7 +3,7 @@ package mappers;
 import ch.helin.messages.dto.way.Position;
 import ch.helin.messages.dto.way.RouteDto;
 import ch.helin.messages.dto.way.Waypoint;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.Route;
 import models.WayPoint;
 

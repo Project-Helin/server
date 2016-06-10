@@ -1,7 +1,7 @@
 package models;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.OrganisationsDao;
 import dao.UserDao;
 import org.hamcrest.CoreMatchers;

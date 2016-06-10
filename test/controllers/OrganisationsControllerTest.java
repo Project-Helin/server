@@ -1,10 +1,9 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.OrganisationsDao;
 import models.Organisation;
-import models.User;
 import org.junit.Test;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.UserDao;
 import models.User;
 import org.apache.commons.lang3.RandomStringUtils;

@@ -1,15 +1,14 @@
-package commons.drone;
+package service.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.dto.DroneInfoDto;
-import ch.helin.messages.dto.message.DroneDto;
 import ch.helin.messages.dto.message.DroneDtoMessage;
 import ch.helin.messages.dto.message.DroneInfoMessage;
 import ch.helin.messages.dto.message.missionMessage.ConfirmMissionMessage;
 import ch.helin.messages.dto.message.missionMessage.MissionConfirmType;
 import ch.helin.messages.dto.state.DroneState;
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
+import service.AbstractIntegrationTest;
 import controllers.messages.DroneInfosController;
 import dao.DroneDao;
 import mappers.DroneMapper;

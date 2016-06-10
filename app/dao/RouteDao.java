@@ -1,6 +1,6 @@
 package dao;
 
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.Route;
 import org.geolatte.geom.MultiLineString;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 package dao;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import models.Organisation;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;

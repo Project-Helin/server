@@ -1,7 +1,7 @@
 package controllers.api;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.ProjectsDao;
 import dto.api.ProjectApiDto;
 import dto.api.ZoneApiDto;

@@ -1,4 +1,4 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import models.Zone;
 import org.geolatte.geom.Polygon;

@@ -1,18 +1,12 @@
-package commons.gis;
+package service.gis;
 
 import ch.helin.messages.dto.way.Position;
-import ch.helin.messages.dto.way.Waypoint;
-import org.geolatte.geom.ByteBuffer;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Point;
-import org.geolatte.geom.codec.Wkb;
 import org.geolatte.geom.codec.Wkt;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;

@@ -1,4 +1,4 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import org.geolatte.geom.LineString;
 import org.geolatte.geom.MultiLineString;

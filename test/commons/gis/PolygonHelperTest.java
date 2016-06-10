@@ -1,8 +1,7 @@
-package commons.gis;
+package service.gis;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.Polygon;
-import org.geolatte.geom.jts.JTS;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

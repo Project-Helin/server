@@ -3,7 +3,7 @@ package controllers.api;
 import ch.helin.messages.dto.Action;
 import ch.helin.messages.dto.way.Position;
 import com.google.common.collect.Lists;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.Route;
 import models.WayPoint;
 

@@ -4,14 +4,11 @@ import ch.helin.messages.dto.message.DroneActiveState;
 import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneDtoMessage;
 import com.google.inject.Inject;
-import commons.drone.DroneCommunicationManager;
-import commons.order.MissionDispatchingService;
+import service.drone.DroneCommunicationManager;
+import service.order.MissionDispatchingService;
 import dao.DroneDao;
-import dao.MissionsDao;
 import mappers.DroneMapper;
 import models.Drone;
-import models.Mission;
-import models.MissionState;
 import models.Project;
 import play.db.jpa.JPAApi;
 

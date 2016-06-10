@@ -2,8 +2,8 @@ package dao;
 
 import ch.helin.messages.dto.Action;
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
-import commons.gis.GisHelper;
+import service.AbstractIntegrationTest;
+import service.gis.GisHelper;
 import models.*;
 import org.geolatte.geom.MultiLineString;
 import org.geolatte.geom.Polygon;

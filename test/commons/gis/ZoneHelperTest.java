@@ -1,4 +1,4 @@
-package commons.gis;
+package service.gis;
 
 import models.Zone;
 import models.ZoneType;

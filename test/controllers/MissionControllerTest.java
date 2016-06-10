@@ -1,12 +1,10 @@
 package controllers;
 
-import ch.helin.messages.dto.message.DroneActiveState;
-import ch.helin.messages.dto.message.DroneActiveStateMessage;
 import ch.helin.messages.dto.message.DroneDtoMessage;
 import ch.helin.messages.dto.message.missionMessage.*;
 import com.google.inject.Inject;
-import commons.AbstractIntegrationTest;
-import commons.drone.DroneCommunicationManager;
+import service.AbstractIntegrationTest;
+import service.drone.DroneCommunicationManager;
 import controllers.messages.MissionController;
 import dao.DroneDao;
 import dao.MissionsDao;

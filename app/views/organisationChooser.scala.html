@@ -1,8 +1,8 @@
 @import java.util
-@(organisations: util.List[Organisation] = commons.TemplateHelper.getOrganisations(session.get(commons.SessionKey.USER_ID.name)))
+@(organisations: util.List[Organisation] = service.TemplateHelper.getOrganisations(session.get(service.SessionKey.USER_ID.name)))
 <li class="dropdown user user-menu">
     <a href="#" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        @session.get(commons.SessionKey.ORGANISATION_NAME.name)
+        @session.get(service.SessionKey.ORGANISATION_NAME.name)
     <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -11,7 +11,7 @@
             <li>
                 <div>
                     <div class="col-xs-1">
-                    @if(organisation.getId.toString.equals(session.get(commons.SessionKey.ORGANISATION_ID.name))) {
+                    @if(organisation.getId.toString.equals(session.get(service.SessionKey.ORGANISATION_ID.name))) {
                         <i class="glyphicon glyphicon-ok"></i>
                     }
                     </div>

@@ -3,7 +3,7 @@ package controllers.api;
 import ch.helin.messages.dto.message.DroneDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
-import commons.AbstractWebServiceIntegrationTest;
+import service.AbstractWebServiceIntegrationTest;
 import models.Drone;
 import models.Organisation;
 import models.User;

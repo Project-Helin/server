@@ -2,7 +2,7 @@ package mappers;
 
 import ch.helin.messages.dto.OrderDto;
 import com.google.inject.Inject;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import models.Order;
 
 import java.time.LocalDateTime;

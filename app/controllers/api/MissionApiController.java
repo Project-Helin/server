@@ -2,8 +2,8 @@ package controllers.api;
 
 import ch.helin.messages.dto.MissionDto;
 import com.google.inject.Inject;
-import commons.websocket.MissionWebSocketManager;
-import commons.websocket.WebSocketConnection;
+import service.websocket.MissionWebSocketManager;
+import service.websocket.WebSocketConnection;
 import dao.MissionsDao;
 import mappers.MissionMapper;
 import models.Mission;

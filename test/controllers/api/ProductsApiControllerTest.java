@@ -3,7 +3,7 @@ package controllers.api;
 import ch.helin.messages.dto.ProductDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
-import commons.AbstractWebServiceIntegrationTest;
+import service.AbstractWebServiceIntegrationTest;
 import dto.api.OrganisationApiDto;
 import dto.api.ProductApiDto;
 import models.Organisation;

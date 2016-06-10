@@ -1,9 +1,9 @@
-package commons;
+package service;
 
 import ch.helin.messages.dto.state.DroneState;
 import ch.helin.messages.dto.way.Position;
 import com.google.inject.Inject;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import dao.*;
 import models.*;
 import org.geolatte.geom.Polygon;

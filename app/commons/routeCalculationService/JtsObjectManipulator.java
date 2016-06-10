@@ -1,4 +1,4 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LinearGeometryBuilder;

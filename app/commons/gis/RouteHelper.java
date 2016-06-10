@@ -1,4 +1,4 @@
-package commons.gis;
+package service.gis;
 
 import ch.helin.messages.dto.way.Position;
 import com.vividsolutions.jts.geom.*;

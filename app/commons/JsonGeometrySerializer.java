@@ -1,9 +1,9 @@
-package commons;
+package service;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import commons.gis.GisHelper;
+import service.gis.GisHelper;
 import org.geolatte.geom.Geometry;
 
 import java.io.IOException;

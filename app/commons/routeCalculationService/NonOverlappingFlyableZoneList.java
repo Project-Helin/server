@@ -1,12 +1,12 @@
-package commons.routeCalculationService;
+package service.routeCalculationService;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
-import commons.gis.GisHelper;
-import commons.gis.RouteHelper;
+import service.gis.GisHelper;
+import service.gis.RouteHelper;
 import models.Zone;
 import models.ZoneType;
 import org.geolatte.geom.*;

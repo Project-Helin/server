@@ -1,9 +1,9 @@
-package commons.order;
+package service.order;
 
 import ch.helin.messages.dto.message.missionMessage.AssignMissionMessage;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import commons.drone.DroneCommunicationManager;
+import service.drone.DroneCommunicationManager;
 import dao.DroneDao;
 import dao.MissionsDao;
 import mappers.MissionMapper;

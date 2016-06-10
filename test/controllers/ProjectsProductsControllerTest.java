@@ -1,17 +1,13 @@
 package controllers;
 
 import com.google.inject.Inject;
-import commons.AbstractE2ETest;
+import service.AbstractE2ETest;
 import dao.ProjectsDao;
 import models.Organisation;
 import models.Product;
 import models.Project;
-import models.User;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Set;
-import java.util.UUID;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fluentlenium.core.filter.FilterConstructor.withId;
