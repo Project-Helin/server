@@ -29,8 +29,10 @@ public class DroneCommunicationManager {
     @Inject
     public DroneCommunicationManager(DroneDao droneDao,
                                      JPAApi jpaApi,
-                                     DroneMessageDispatcher droneMessageDispatcher) {
+                                     DroneMessageDispatcher droneMessageDispatcher,
+                                     SettingsHelper settingsHelper) {
 
+        this.settingsHelper = settingsHelper;
         this.droneMessageDispatcher = droneMessageDispatcher;
         jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);

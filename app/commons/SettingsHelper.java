@@ -1,14 +1,15 @@
 package commons;
 
-import com.typesafe.config.ConfigFactory;
-
 public class SettingsHelper {
 
+    public static final String RABBIT_MQ_USER = "admin";
+    public static final String RABBIT_MQ_PASSWORD = "helin";
+
     public String getRabbitMQUserName(){
-        return ConfigFactory.load().getString("rabbitmq.user");
+        return RABBIT_MQ_USER;
     }
 
     public String getRabbitMQPassword(){
-        return ConfigFactory.load().getString("rabbitmq.password");
+        return RABBIT_MQ_PASSWORD;
     }
 }
