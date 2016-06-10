@@ -12,6 +12,7 @@ import dto.api.OrderApiDto;
 import dto.api.OrderProductApiDto;
 import mappers.MissionMapper;
 import models.*;
+import org.geolatte.geom.Point;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -192,6 +193,8 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             assertThat(second.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(second.getOrderProduct().getAmount()).isEqualTo(5);
+
+            verifyHasSameRoute(first, second);
         });
     }
 
@@ -243,9 +246,11 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
             assertThat(third.getOrderProduct().getProduct().getIdAsString())
                 .isEqualTo(orderToSent.getOrderProducts().get(0).getId());
             assertThat(third.getOrderProduct().getAmount()).isEqualTo(5);
+
+            verifyHasSameRoute(first, second);
+            verifyHasSameRoute(second, third);
         });
     }
-
 
     @Test
     public void confirmOrderTest() {
@@ -306,6 +311,7 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
         });
     }
 
+
     private List<Mission> getFirstMissionSortedByAmount(Order order) {
         return order
             .getMissions()
@@ -343,5 +349,20 @@ public class OrderApiControllerIntegrationTest extends AbstractWebServiceIntegra
         for (int i = dropWayPoint + 1; i < waypoints.size(); i++) {
             assertThat(waypoints.get(i).getAction()).isEqualTo(Action.FLY);
         }
+    }
+
+    private void verifyHasSameRoute(Mission first, Mission second) {
+        assertThat(first.getRoute()).isNotNull();
+        assertThat(second.getRoute()).isNotNull();
+
+        Route firstRoute = first.getRoute();
+        Route secondRoute = second.getRoute();
+
+        assertThat(getPositions(firstRoute.getWayPoints()))
+            .isEqualTo(getPositions(secondRoute.getWayPoints()));
+    }
+
+    private List<Point> getPositions(List<WayPoint> wayPoints) {
+        return wayPoints.stream().map(WayPoint::getPosition).collect(Collectors.toList());
     }
 }

@@ -15,8 +15,7 @@ import play.libs.ws.WSResponse;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 public class DroneApiControllerTest extends AbstractWebServiceIntegrationTest {
@@ -50,10 +49,14 @@ public class DroneApiControllerTest extends AbstractWebServiceIntegrationTest {
         DroneDto returnedDrone = apiHelper.doPost(routes.DronesApiController.create(), wrapper, DroneDto.class);
 
         assertNotNull(returnedDrone.getId());
-        assertThat(returnedDrone.getName(), equalTo(newDrone.getName()));
-        assertThat(returnedDrone.getPayload(), equalTo(newDrone.getPayload()));
+        assertThat(returnedDrone.getName()).isEqualTo(newDrone.getName());
+        assertThat(returnedDrone.getPayload()).isEqualTo(newDrone.getPayload());
         assertNotNull(returnedDrone.getOrganisationToken());
         assertNotNull(returnedDrone.getToken());
+
+        assertNotNull(returnedDrone.getRabbitMqInformation());
+        assertThat(returnedDrone.getRabbitMqInformation().getUsername()).isNotEmpty();
+        assertThat(returnedDrone.getRabbitMqInformation().getPassword()).isNotEmpty();
     }
 
     @Test(expected = ExecutionException.class)

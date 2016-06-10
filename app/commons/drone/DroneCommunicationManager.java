@@ -2,6 +2,7 @@ package commons.drone;
 
 import ch.helin.messages.converter.JsonBasedMessageConverter;
 import ch.helin.messages.dto.message.Message;
+import commons.SettingsHelper;
 import dao.DroneDao;
 import models.Drone;
 import play.db.jpa.JPAApi;
@@ -20,13 +21,18 @@ public class DroneCommunicationManager {
     @Inject
     private JsonBasedMessageConverter messageConverter;
 
+    @Inject
+    private SettingsHelper settingsHelper;
+
     private final Map<UUID, DroneConnection> droneIdToConnection = new ConcurrentHashMap<>();
 
     @Inject
     public DroneCommunicationManager(DroneDao droneDao,
                                      JPAApi jpaApi,
-                                     DroneMessageDispatcher droneMessageDispatcher) {
+                                     DroneMessageDispatcher droneMessageDispatcher,
+                                     SettingsHelper settingsHelper) {
 
+        this.settingsHelper = settingsHelper;
         this.droneMessageDispatcher = droneMessageDispatcher;
         jpaApi.withTransaction(() -> {
             droneDao.findAll().stream().forEach(this::addDrone);
@@ -35,7 +41,7 @@ public class DroneCommunicationManager {
     }
 
     public void addDrone(Drone drone) {
-        droneIdToConnection.put(drone.getId(), new DroneConnection(drone, droneMessageDispatcher));
+        droneIdToConnection.put(drone.getId(), new DroneConnection(drone, droneMessageDispatcher, settingsHelper));
     }
 
     public void sendMessageToDrone(UUID droneId, Message message) {

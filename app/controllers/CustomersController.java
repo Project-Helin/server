@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
+import commons.SessionHelper;
 import dao.CustomerDao;
 import models.Customer;
 import play.db.jpa.Transactional;
@@ -16,10 +17,15 @@ public class CustomersController extends Controller {
     @Inject
     private CustomerDao customerDao;
 
+    @Inject
+    private SessionHelper sessionHelper;
+
     @Transactional
     @Security.Authenticated(SecurityAuthenticator.class)
     public Result index() {
-        List<Customer> allCustomers = customerDao.findAll();
+        List<Customer> allCustomers = customerDao.findCustomerByOrganisation(
+            sessionHelper.getOrganisation(session())
+        );
         return ok(index.render(allCustomers));
     }
 }

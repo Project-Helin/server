@@ -38,8 +38,9 @@ Tested with IntelliJ IDEA 15.0.3.
 6. Now you should see the commons module at top of the server project in the Project Tree View   
 7. Open Gradle Projects in the right sidebar and start the following Task: commons -> Tasks -> publishing -> publishToMavenLocal
 8. Start up Virtual machine with Database and RabbitMQ-Broker (see RabbitMQ and Postgresql with vagrant)
-9. Right Click on ApplicationController in app -> controllers -> Run Play 2 App
-10. The Server App is now reacheable at localhost:9000
+9. Set RabbitMQ credentials in the class SettingsHelper
+10. Right Click on ApplicationController in app -> controllers -> Run Play 2 App
+11. The Server App is now reacheable at localhost:9000
 
 
 ## RabbitMQ and Postgresql with vagrant
